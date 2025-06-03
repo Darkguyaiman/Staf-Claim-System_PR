@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Creation Form</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Select2 for better dropdowns -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- Flatpickr for date/time -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    :root {
+      --color-primary: #2D0C31;
+      --color-secondary: #004D4D;
+      --color-accent: #00B894;
+      --color-light: #B8B5FF;
+      --color-lighter: #B8FFB5;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--color-primary);
+      background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .container.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--color-primary);
+      font-size: 2.5rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+      border-radius: 2px;
+    }
+    
+    h2 {
+      color: var(--color-secondary);
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    h2 i {
+      margin-right: 10px;
+      color: var(--color-accent);
+    }
+    
+    .form-section {
+      margin-bottom: 30px;
+      padding: 25px;
+      border-radius: 10px;
+      background-color: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .form-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--color-secondary);
+      transition: color 0.3s ease;
+    }
+    
+    .form-group:focus-within label {
+      color: var(--color-accent);
+    }
+    
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background-color: #f9f9f9;
+    }
+    
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+      outline: none;
+      background-color: white;
+    }
+    
+    /* Custom styling for Select2 */
+    .select2-container--default .select2-selection--multiple {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 6px;
+      min-height: 50px;
+      background-color: #f9f9f9;
+    }
+    
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+      background-color: white;
+    }
+    
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      background-color: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 5px 10px;
+      margin: 3px;
+    }
+    
+    .select2-container--default .select2-selection__choice__remove {
+      color: white;
+      margin-right: 5px;
+    }
+    
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: var(--color-accent);
+    }
+    
+    .select2-dropdown {
+      border-color: #e0e0e0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Custom styling for Flatpickr */
+    .flatpickr-calendar {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+    
+    .flatpickr-day.selected {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+    
+    .flatpickr-day:hover {
+      background: rgba(0, 184, 148, 0.2);
+    }
+    
+    .flatpickr-time input:hover,
+    .flatpickr-time .flatpickr-am-pm:hover,
+    .flatpickr-time input:focus,
+    .flatpickr-time .flatpickr-am-pm:focus {
+      background: rgba(0, 184, 148, 0.1);
+    }
+    
+    button {
+      background-color: var(--color-accent);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button i {
+      margin-right: 8px;
+    }
+    
+    button:hover {
+      background-color: #00a080;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary {
+      background-color: var(--color-secondary);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #003a3a;
+      box-shadow: 0 5px 15px rgba(0, 77, 77, 0.3);
+    }
+    
+    .btn-danger {
+      background-color: #e74c3c;
+    }
+    
+    .btn-danger:hover {
+      background-color: #c0392b;
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+    
+    .time-slot {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .time-slot:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .time-slot input {
+      margin-right: 10px;
+      flex: 1;
+    }
+    
+    .budget-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .budget-item:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .budget-item select,
+    .budget-item input {
+      margin-right: 10px;
+      flex: 1;
+    }
+    
+    .file-upload {
+      border: 2px dashed #e0e0e0;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      background-color: #f9f9f9;
+      cursor: pointer;
+    }
+    
+    .file-upload:hover {
+      border-color: var(--color-accent);
+      background-color: rgba(0, 184, 148, 0.05);
+    }
+    
+    .file-upload.dragover {
+      background-color: rgba(0, 184, 148, 0.1);
+      border-color: var(--color-accent);
+    }
+    
+    .file-upload i {
+      font-size: 48px;
+      color: var(--color-accent);
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    .file-upload p {
+      color: var(--color-secondary);
+      font-weight: 500;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .location-status {
+      margin-top: 15px;
+      font-weight: 500;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+    }
+    
+    .error {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+    
+    #map {
+      height: 300px;
+      margin-top: 15px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0, 184, 148, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--color-accent);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .submit-section {
+      text-align: center;
+      margin-top: 40px;
+    }
+    
+    .submit-section button {
+      padding: 15px 40px;
+      font-size: 18px;
+    }
+    
+    .success-message {
+      background-color: rgba(0, 184, 148, 0.1);
+      color: var(--color-accent);
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      text-align: center;
+      border-left: 5px solid var(--color-accent);
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .error-message {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: #e74c3c;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      text-align: center;
+      border-left: 5px solid #e74c3c;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Initial loader */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .loader {
+      width: 80px;
+      height: 80px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--color-accent);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    .loader-text {
+      position: absolute;
+      margin-top: 120px;
+      color: var(--color-primary);
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .form-section {
+        padding: 20px;
+      }
+      
+      .time-slot, .budget-item {
+        flex-direction: column;
+      }
+      
+      .time-slot input, .budget-item select, .budget-item input {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+    
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    /* File name display */
+    .file-name {
+      margin-top: 10px;
+      padding: 8px 15px;
+      background-color: rgba(0, 184, 148, 0.1);
+      border-radius: 20px;
+      display: inline-block;
+      color: var(--color-secondary);
+      font-weight: 500;
+    }
+    
+    .file-name i {
+      margin-right: 5px;
+      color: var(--color-accent);
+    }
+
+    /* For WebKit Browsers (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--color-lighter); /* light green */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--color-primary); /* deep purple */
+      border-radius: 10px;
+      border: 2px solid var(--color-lighter);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-secondary); /* dark teal */
+    }
+
+    /* For Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-primary) var(--color-lighter);
+    }
+
+/* CSS Variables */
+:root {
+  --color-primary: #2D0C31;
+  --color-secondary: #004D4D;
+  --color-accent: #00B894;
+  --color-light: #B8B5FF;
+  --color-lighter: #B8FFB5;
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+  </style>
+</head>
+
+<body>
+  <!-- Initial Loader -->
+  <div class="loader-container" id="initialLoader">
+    <div class="loader"></div>
+    <div class="loader-text">Loading form data...</div>
+  </div>
+
+  <div class="container" id="formContainer">
+    <h1><i class="fas fa-calendar-plus"></i> Event Creation Form</h1>
+    
+    <form id="eventForm">
+      <!-- User Information Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-user-circle"></i> User Information</h2>
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" readonly>
+        </div>
+      </div>
+      
+      <!-- Event Details Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-info-circle"></i> Event Details</h2>
+        <div class="form-group">
+          <label for="eventName">Event Name:</label>
+          <input type="text" id="eventName" name="eventName" required>
+        </div>
+        <div class="form-group">
+          <label for="eventType">Event Type:</label>
+          <select id="eventType" name="eventType" required>
+            <option value="">Select Event Type</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Location Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
+        <div class="form-group">
+          <label for="location">Search Location:</label>
+          <input type="text" id="location" name="location" placeholder="Enter a location" required>
+          <div id="locationStatus" class="location-status"></div>
+          <div id="map" class="hidden"></div>
+        </div>
+      </div>
+      
+      <!-- Date and Time Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-clock"></i> Date and Time</h2>
+        <div class="form-group">
+          <label for="startDate">Start Date:</label>
+          <input type="text" id="startDate" name="startDate" class="datepicker" placeholder="Select start date" required>
+        </div>
+        <div class="form-group">
+          <label for="endDate">End Date:</label>
+          <input type="text" id="endDate" name="endDate" class="datepicker" placeholder="Select end date" required>
+        </div>
+        <div class="form-group">
+          <label>Time Slots:</label>
+          <div id="timeSlots"></div>
+          <button type="button" id="addTimeSlot" class="btn-secondary">
+            <i class="fas fa-plus-circle"></i> Add Time Slot
+          </button>
+        </div>
+      </div>
+      
+      <!-- Supporting Document Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-file-alt"></i> Supporting Document</h2>
+        <div class="form-group">
+          <label>Upload Document (Max 5MB):</label>
+          <div id="documentUpload" class="file-upload">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Drag & drop a file here or click to select</p>
+            <input type="file" id="documentFile" name="documentFile" style="display: none;">
+          </div>
+          <div id="documentName" class="file-name hidden"></div>
+          <div id="documentError" class="error"></div>
+        </div>
+      </div>
+      
+      <!-- Office Assets Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-building"></i> Office Assets</h2>
+        <div class="form-group">
+          <label for="officeAssets">Select Office Assets:</label>
+          <select id="officeAssets" name="officeAssets" multiple class="multiselect"></select>
+        </div>
+      </div>
+      
+      <!-- Devices Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-laptop"></i> Devices (Optional)</h2>
+        <div class="form-group">
+          <label for="devices">Select Devices:</label>
+          <select id="devices" name="devices" multiple class="multiselect"></select>
+        </div>
+      </div>
+      
+      <!-- Accompanying Colleagues Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-users"></i> Accompanying Colleagues</h2>
+        <div class="form-group">
+          <label for="colleagues">Select Colleagues:</label>
+          <select id="colleagues" name="colleagues" multiple class="multiselect"></select>
+        </div>
+      </div>
+      
+      <!-- Affiliated Company Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-briefcase"></i> Affiliated Company</h2>
+        <div class="form-group">
+          <label for="company">Select Company:</label>
+          <select id="company" name="company" required>
+            <option value="">Select Company</option>
+            <option value="QSS">QSS</option>
+            <option value="PMS">PMS</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Budgeting Section -->
+      <div class="form-section">
+        <h2><i class="fas fa-money-bill-wave"></i> Budgeting</h2>
+        <div id="budgetItems"></div>
+        <button type="button" id="addBudget" class="btn-secondary">
+          <i class="fas fa-plus-circle"></i> Add Budget
+        </button>
+        
+        <!-- Quotation upload (initially hidden) -->
+        <div id="quotationSection" class="form-group hidden">
+          <label>Upload Quotation (XLSX only):</label>
+          <div id="quotationUpload" class="file-upload">
+            <i class="fas fa-file-excel"></i>
+            <p>Drag & drop an Excel file here or click to select</p>
+            <input type="file" id="quotationFile" name="quotationFile" accept=".xlsx" style="display: none;">
+          </div>
+          <div id="quotationName" class="file-name hidden"></div>
+          <div id="quotationError" class="error"></div>
+        </div>
+      </div>
+      
+      <!-- Submit Button -->
+      <div class="submit-section">
+        <button type="submit" id="submitBtn" class="pulse">
+          <i class="fas fa-paper-plane"></i> Submit Event
+        </button>
+        <div id="submitStatus"></div>
+      </div>
+    </form>
+  </div>
+
+  <!-- jQuery (required for Select2) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Select2 for better dropdowns -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Flatpickr for date/time -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <script>
+    
+    var userInfo = {};
+    var formOptions = {};
+    var timeSlotCounter = 0;
+    var budgetCounter = 0;
+    var documentFile = null;
+    var quotationFile = null;
+    var map = null;
+    var autocomplete = null;
+    var mapsApiKey = "";
+    var formLoaded = false;
+    
+    
+    function initForm() {
+      
+      document.getElementById('initialLoader').classList.remove('hidden');
+      document.getElementById('formContainer').classList.remove('loaded');
+      
+      
+      google.script.run
+        .withSuccessHandler(handleUserInfo)
+        .withFailureHandler(handleError)
+        .getUserInfo();
+      
+      
+      google.script.run
+        .withSuccessHandler(handleFormOptions)
+        .withFailureHandler(handleError)
+        .getFormOptions();
+      
+      
+      google.script.run
+        .withSuccessHandler(initMapsApi)
+        .withFailureHandler(handleError)
+        .getMapsApiKey();
+      
+      
+      document.getElementById('addTimeSlot').addEventListener('click', addTimeSlot);
+      document.getElementById('addBudget').addEventListener('click', addBudgetItem);
+      document.getElementById('eventForm').addEventListener('submit', handleSubmit);
+      
+      
+      document.getElementById('timeSlots').addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('btn-danger')) {
+          var slotId = e.target.getAttribute('data-id');
+          if (slotId) {
+            removeTimeSlot(slotId);
+          }
+        }
+      });
+      
+      document.getElementById('budgetItems').addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('btn-danger')) {
+          var budgetId = e.target.getAttribute('data-id');
+          if (budgetId) {
+            removeBudgetItem(budgetId);
+          }
+        }
+      });
+      
+      
+      setupFileUpload('documentUpload', 'documentFile', 'documentName', 'documentError', function(file) {
+        if (file.size > 5 * 1024 * 1024) {
+          document.getElementById('documentError').textContent = 'File size exceeds 5MB limit';
+          return false;
+        }
+        documentFile = file;
+        return true;
+      });
+      
+      
+      setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
+        if (!file.name.endsWith('.xlsx')) {
+          document.getElementById('quotationError').textContent = 'Only XLSX files are allowed';
+          return false;
+        }
+        quotationFile = file;
+        return true;
+      });
+      
+      
+      initDatepickers();
+    }
+    
+    
+    function initDatepickers() {
+      flatpickr("#startDate", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+          
+          endDatePicker.set("minDate", dateStr);
+          validateDates();
+        }
+      });
+      
+      var endDatePicker = flatpickr("#endDate", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function() {
+          validateDates();
+        }
+      });
+    }
+    
+    
+    function initMapsApi(apiKey) {
+      mapsApiKey = apiKey;
+      
+      
+      var script = document.createElement('script');
+      script.src = "https://maps.googleapis.com/maps/api/js?key=" + apiKey + "&libraries=places&callback=initGoogleMaps";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+    
+    
+    function handleUserInfo(info) {
+      userInfo = info;
+      document.getElementById('username').value = info.username;
+      checkFormLoaded();
+    }
+    
+    
+    function handleFormOptions(options) {
+      formOptions = options;
+      
+      
+      var eventTypeSelect = document.getElementById('eventType');
+      eventTypeSelect.innerHTML = '<option value="">Select Event Type</option>';
+      options.eventTypes.forEach(function(type) {
+        var option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        eventTypeSelect.appendChild(option);
+      });
+      
+      
+      var assetsSelect = document.getElementById('officeAssets');
+      assetsSelect.innerHTML = '';
+      options.officeAssets.forEach(function(asset) {
+        var option = document.createElement('option');
+        option.value = asset;
+        option.textContent = asset;
+        assetsSelect.appendChild(option);
+      });
+      
+      
+      var devicesSelect = document.getElementById('devices');
+      devicesSelect.innerHTML = '';
+      options.devices.forEach(function(device) {
+        var option = document.createElement('option');
+        option.value = device;
+        option.textContent = device;
+        devicesSelect.appendChild(option);
+      });
+      
+      
+      var colleaguesSelect = document.getElementById('colleagues');
+      colleaguesSelect.innerHTML = '';
+      options.colleagues.forEach(function(colleague) {
+        var option = document.createElement('option');
+        option.value = colleague;
+        option.textContent = colleague;
+        colleaguesSelect.appendChild(option);
+      });
+      
+      
+      $('.multiselect').select2({
+        placeholder: "Select options",
+        closeOnSelect: false,
+        tags: false,
+        width: '100%'
+      });
+      
+      checkFormLoaded();
+    }
+    
+    
+    function checkFormLoaded() {
+      if (userInfo.username && formOptions.eventTypes && !formLoaded) {
+        formLoaded = true;
+        
+        
+        setTimeout(function() {
+          document.getElementById('initialLoader').classList.add('hidden');
+          document.getElementById('formContainer').classList.add('loaded');
+        }, 1000);
+      }
+    }
+    
+    
+    function addTimeSlot() {
+      var startDate = document.getElementById('startDate').value;
+      var endDate = document.getElementById('endDate').value;
+      
+      if (!startDate || !endDate) {
+        alert('Please select start and end dates first');
+        return;
+      }
+      
+      var id = timeSlotCounter++;
+      var timeSlotDiv = document.createElement('div');
+      timeSlotDiv.className = 'time-slot';
+      timeSlotDiv.id = 'timeSlot-' + id;
+      
+      var dateInput = document.createElement('input');
+      dateInput.type = 'text';
+      dateInput.name = 'timeSlotDate-' + id;
+      dateInput.placeholder = 'Select date';
+      dateInput.className = 'timeslot-date';
+      dateInput.required = true;
+      
+      var startTimeInput = document.createElement('input');
+      startTimeInput.type = 'text';
+      startTimeInput.name = 'timeSlotStartTime-' + id;
+      startTimeInput.placeholder = 'Start time';
+      startTimeInput.className = 'timeslot-time';
+      startTimeInput.required = true;
+
+      var endTimeInput = document.createElement('input');
+      endTimeInput.type = 'text';
+      endTimeInput.name = 'timeSlotEndTime-' + id;
+      endTimeInput.placeholder = 'End time';
+      endTimeInput.className = 'timeslot-time';
+      endTimeInput.required = true;
+      
+      var removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'btn-danger';
+      removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+      removeButton.setAttribute('data-id', id);
+      
+      timeSlotDiv.appendChild(dateInput);
+      timeSlotDiv.appendChild(startTimeInput);
+      timeSlotDiv.appendChild(endTimeInput);
+      timeSlotDiv.appendChild(removeButton);
+      
+      document.getElementById('timeSlots').appendChild(timeSlotDiv);
+      
+      
+      flatpickr(dateInput, {
+        dateFormat: "Y-m-d",
+        minDate: startDate,
+        maxDate: endDate
+      });
+      
+      flatpickr(startTimeInput, {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+      });
+
+      flatpickr(endTimeInput, {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+      });
+      
+      
+      timeSlotDiv.style.opacity = '0';
+      timeSlotDiv.style.transform = 'translateY(20px)';
+      
+      setTimeout(function() {
+        timeSlotDiv.style.transition = 'all 0.3s ease';
+        timeSlotDiv.style.opacity = '1';
+        timeSlotDiv.style.transform = 'translateY(0)';
+      }, 10);
+    }
+    
+    
+    function removeTimeSlot(id) {
+      var timeSlot = document.getElementById('timeSlot-' + id);
+      if (timeSlot) {
+        
+        timeSlot.style.transition = 'all 0.3s ease';
+        timeSlot.style.opacity = '0';
+        timeSlot.style.transform = 'translateY(-20px)';
+        
+        setTimeout(function() {
+          timeSlot.parentNode.removeChild(timeSlot);
+        }, 300);
+      }
+    }
+    
+    
+    function addBudgetItem() {
+      var id = budgetCounter++;
+      var budgetDiv = document.createElement('div');
+      budgetDiv.className = 'budget-item';
+      budgetDiv.id = 'budget-' + id;
+      
+      var budgetTypeSelect = document.createElement('select');
+      budgetTypeSelect.name = 'budgetType-' + id;
+      budgetTypeSelect.required = true;
+      
+      
+      var defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Select Budget Type';
+      budgetTypeSelect.appendChild(defaultOption);
+      
+      
+      formOptions.budgetTypes.forEach(function(type) {
+        var option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        budgetTypeSelect.appendChild(option);
+      });
+      
+      var amountInput = document.createElement('input');
+      amountInput.type = 'number';
+      amountInput.name = 'budgetAmount-' + id;
+      amountInput.placeholder = 'Amount (RM)';
+      amountInput.min = '0';
+      amountInput.step = '0.01';
+      amountInput.required = true;
+      
+      var removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'btn-danger';
+      removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+      removeButton.setAttribute('data-id', id);
+      
+      budgetDiv.appendChild(budgetTypeSelect);
+      budgetDiv.appendChild(amountInput);
+      budgetDiv.appendChild(removeButton);
+      
+      document.getElementById('budgetItems').appendChild(budgetDiv);
+      
+      
+      document.getElementById('quotationSection').classList.remove('hidden');
+      
+      
+      budgetDiv.style.opacity = '0';
+      budgetDiv.style.transform = 'translateY(20px)';
+      
+      setTimeout(function() {
+        budgetDiv.style.transition = 'all 0.3s ease';
+        budgetDiv.style.opacity = '1';
+        budgetDiv.style.transform = 'translateY(0)';
+      }, 10);
+    }
+    
+    
+    function removeBudgetItem(id) {
+      var budgetItem = document.getElementById('budget-' + id);
+      if (budgetItem) {
+        
+        budgetItem.style.transition = 'all 0.3s ease';
+        budgetItem.style.opacity = '0';
+        budgetItem.style.transform = 'translateY(-20px)';
+        
+        setTimeout(function() {
+          budgetItem.parentNode.removeChild(budgetItem);
+          
+          
+          var budgetItems = document.getElementById('budgetItems');
+          if (budgetItems.children.length === 0) {
+            
+            document.getElementById('quotationSection').classList.add('hidden');
+          }
+        }, 300);
+      }
+    }
+    
+    
+    function setupFileUpload(dropAreaId, fileInputId, fileNameId, errorId, validateFn) {
+      var dropArea = document.getElementById(dropAreaId);
+      var fileInput = document.getElementById(fileInputId);
+      var fileNameDisplay = document.getElementById(fileNameId);
+      var errorDisplay = document.getElementById(errorId);
+      
+      
+      dropArea.addEventListener('click', function() {
+        fileInput.click();
+      });
+      
+      
+      fileInput.addEventListener('change', function() {
+        if (fileInput.files.length > 0) {
+          var file = fileInput.files[0];
+          errorDisplay.textContent = '';
+          
+          if (validateFn(file)) {
+            fileNameDisplay.innerHTML = '<i class="fas fa-file"></i> ' + file.name;
+            fileNameDisplay.classList.remove('hidden');
+          } else {
+            fileInput.value = '';
+            fileNameDisplay.classList.add('hidden');
+          }
+        }
+      });
+      
+      
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(eventName) {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(function(eventName) {
+        dropArea.addEventListener(eventName, function() {
+          dropArea.classList.add('dragover');
+        });
+      });
+      
+      ['dragleave', 'drop'].forEach(function(eventName) {
+        dropArea.addEventListener(eventName, function() {
+          dropArea.classList.remove('dragover');
+        });
+      });
+      
+      dropArea.addEventListener('drop', function(e) {
+        var file = e.dataTransfer.files[0];
+        errorDisplay.textContent = '';
+        
+        if (validateFn(file)) {
+          fileNameDisplay.innerHTML = '<i class="fas fa-file"></i> ' + file.name;
+          fileNameDisplay.classList.remove('hidden');
+          
+          
+          var dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          fileInput.files = dataTransfer.files;
+        } else {
+          fileNameDisplay.classList.add('hidden');
+        }
+      });
+    }
+    
+    
+    function validateDates() {
+      var startDate = document.getElementById('startDate').value;
+      var endDate = document.getElementById('endDate').value;
+      
+      if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+        alert('End date cannot be before start date');
+        document.getElementById('endDate').value = '';
+      }
+      
+      
+      if (startDate && endDate) {
+        var timeSlots = document.querySelectorAll('.timeslot-date');
+        timeSlots.forEach(function(slot) {
+          var fp = slot._flatpickr;
+          if (fp) {
+            fp.set("minDate", startDate);
+            fp.set("maxDate", endDate);
+            
+            
+            if (slot.value && (new Date(slot.value) < new Date(startDate) || new Date(slot.value) > new Date(endDate))) {
+              fp.clear();
+            }
+          }
+        });
+      }
+    }
+    
+    
+    function initGoogleMaps() {
+      
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 3.1569, lng: 101.7123 }, 
+        zoom: 13,
+        styles: [
+          {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [
+              { "color": "#B8B5FF" }
+            ]
+          },
+          {
+            "featureType": "landscape",
+            "elementType": "geometry",
+            "stylers": [
+              { "color": "#B8FFB5" }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "elementType": "geometry",
+            "stylers": [
+              { "color": "#B8FFB5" }
+            ]
+          }
+        ]
+      });
+      
+      
+      var input = document.getElementById('location');
+      autocomplete = new google.maps.places.Autocomplete(input);
+      
+      
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        
+        if (!place.geometry) {
+          document.getElementById('locationStatus').textContent = 'Please select a valid location';
+          document.getElementById('map').classList.add('hidden');
+          return;
+        }
+        
+        
+        var mapElement = document.getElementById('map');
+        mapElement.classList.remove('hidden');
+        mapElement.style.opacity = '0';
+        mapElement.style.transform = 'translateY(20px)';
+        
+        setTimeout(function() {
+          mapElement.style.transition = 'all 0.5s ease';
+          mapElement.style.opacity = '1';
+          mapElement.style.transform = 'translateY(0)';
+          
+          
+          google.maps.event.trigger(map, 'resize');
+          map.setCenter(place.geometry.location);
+        }, 10);
+        
+        
+        new google.maps.Marker({
+          map: map,
+          position: place.geometry.location,
+          animation: google.maps.Animation.DROP,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            fillColor: "#00B894",
+            fillOpacity: 1,
+            strokeWeight: 2,
+            strokeColor: "#004D4D"
+          }
+        });
+        
+        
+        document.getElementById('locationStatus').innerHTML = '<span class="loading"></span> Calculating distance...';
+        
+        google.script.run
+          .withSuccessHandler(handleLocationStatus)
+          .withFailureHandler(handleLocationError)
+          .calculateDistance(place.formatted_address);
+      });
+      
+      checkFormLoaded();
+    }
+    
+    
+    function handleLocationStatus(result) {
+      var statusElement = document.getElementById('locationStatus');
+      
+      if (result.distance !== null) {
+        statusElement.innerHTML = '<i class="fas fa-route"></i> Distance: ' + result.distance.toFixed(2) + ' km - Status: ' + result.status + ' (' + result.country + ')';
+      } else {
+        statusElement.innerHTML = '<i class="fas fa-info-circle"></i> Location Status: ' + result.status + ' (' + result.country + ')';
+      }
+      
+      
+      statusElement.style.opacity = '0';
+      statusElement.style.transform = 'translateY(10px)';
+      
+      setTimeout(function() {
+        statusElement.style.transition = 'all 0.3s ease';
+        statusElement.style.opacity = '1';
+        statusElement.style.transform = 'translateY(0)';
+      }, 10);
+    }
+    
+    
+    function handleLocationError(error) {
+      document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error calculating distance';
+      console.error('Location error:', error);
+    }
+    
+    
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      
+      if (!validateForm()) {
+        return;
+      }
+      
+      
+      var formData = collectFormData();
+      
+      
+      var submitBtn = document.getElementById('submitBtn');
+      var submitStatus = document.getElementById('submitStatus');
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('pulse');
+      submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+      
+      var documentBlob = null;
+      var quotationBlob = null;
+      
+      
+      if (documentFile) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+        documentBlob = {
+          data: e.target.result.split(',')[1],
+          mimeType: documentFile.type,
+          filename: documentFile.name
+        };
+          
+          
+          if (quotationFile) {
+            var quotationReader = new FileReader();
+            quotationReader.onload = function(e) {
+            quotationBlob = {
+              data: e.target.result.split(',')[1], 
+              mimeType: quotationFile.type,
+              filename: quotationFile.name
+            };
+
+              
+              
+              submitFormWithFiles(formData, documentBlob, quotationBlob);
+            };
+            quotationReader.readAsDataURL(quotationFile);
+          } else {
+            
+            submitFormWithFiles(formData, documentBlob, null);
+          }
+        };
+        reader.readAsDataURL(documentFile);
+      } else if (quotationFile) {
+        
+        var quotationReader = new FileReader();
+        quotationReader.onload = function(e) {
+          quotationBlob = {
+            bytes: e.target.result.split(',')[1],
+            mimeType: quotationFile.type,
+            filename: quotationFile.name
+          };
+          
+          
+          submitFormWithFiles(formData, null, quotationBlob);
+        };
+        quotationReader.readAsDataURL(quotationFile);
+      } else {
+        
+        submitFormWithFiles(formData, null, null);
+      }
+    }
+    
+    
+    function submitFormWithFiles(formData, documentBlob, quotationBlob) {
+      google.script.run
+        .withSuccessHandler(handleSubmitSuccess)
+        .withFailureHandler(handleSubmitError)
+        .processForm(formData, documentBlob, quotationBlob);
+    }
+    
+    
+    function validateForm() {
+      
+      var timeSlots = document.getElementById('timeSlots');
+      if (timeSlots.children.length === 0) {
+        alert('Please add at least one time slot');
+        return false;
+      }
+      
+      
+      var timeSlotValues = [];
+      var hasDuplicates = false;
+      
+      for (var i = 0; i < timeSlotCounter; i++) {
+        var dateInput = document.querySelector('[name="timeSlotDate-' + i + '"]');
+        var startTimeInput = document.querySelector('[name="timeSlotStartTime-' + i + '"]');
+        var endTimeInput = document.querySelector('[name="timeSlotEndTime-' + i + '"]');
+        
+        if (dateInput && startTimeInput && endTimeInput) {
+          var value = dateInput.value + ' ' + startTimeInput.value + ' ' + endTimeInput.value;
+          
+          if (timeSlotValues.includes(value)) {
+            hasDuplicates = true;
+            break;
+          }
+          
+          timeSlotValues.push(value);
+        }
+      }
+      
+      if (hasDuplicates) {
+        alert('Duplicate time slots are not allowed');
+        return false;
+      }
+
+      
+      var hasInvalidTimeRange = false;
+
+      for (var i = 0; i < timeSlotCounter; i++) {
+        var startTimeInput = document.querySelector('[name="timeSlotStartTime-' + i + '"]');
+        var endTimeInput = document.querySelector('[name="timeSlotEndTime-' + i + '"]');
+
+        if (startTimeInput && endTimeInput && startTimeInput.value && endTimeInput.value) {
+          
+          if (startTimeInput.value >= endTimeInput.value) {
+            hasInvalidTimeRange = true;
+            break;
+          }
+        }
+      }
+
+      if (hasInvalidTimeRange) {
+        alert('End time must be after start time in time slots');
+        return false;
+      }
+      
+      
+      var budgetItems = document.getElementById('budgetItems');
+      if (budgetItems.children.length > 0 && !quotationFile) {
+        alert('Please upload a quotation file for your budget items');
+        return false;
+      }
+      
+      return true;
+    }
+    
+    
+    function collectFormData() {
+      var form = document.getElementById('eventForm');
+      var formData = new FormData(form);
+      var data = {};
+      
+      
+      data.username = formData.get('username');
+      data.email = userInfo.email; 
+      data.eventName = formData.get('eventName');
+      data.eventType = formData.get('eventType');
+      data.location = formData.get('location');
+      data.locationStatus = document.getElementById('locationStatus').textContent;
+      data.startDate = formData.get('startDate');
+      data.endDate = formData.get('endDate');
+      data.company = formData.get('company');
+      
+      
+      data.timeSlots = [];
+      for (var i = 0; i < timeSlotCounter; i++) {
+        var dateInput = document.querySelector('[name="timeSlotDate-' + i + '"]');
+        var startTimeInput = document.querySelector('[name="timeSlotStartTime-' + i + '"]');
+        var endTimeInput = document.querySelector('[name="timeSlotEndTime-' + i + '"]');
+        
+        if (dateInput && startTimeInput && endTimeInput) {
+          data.timeSlots.push({
+            date: dateInput.value,
+            startTime: startTimeInput.value,
+            endTime: endTimeInput.value
+          });
+        }
+      }
+      
+      
+      data.officeAssets = Array.from(document.getElementById('officeAssets').selectedOptions).map(function(option) {
+        return option.value;
+      });
+      
+      
+      data.devices = Array.from(document.getElementById('devices').selectedOptions).map(function(option) {
+        return option.value;
+      });
+      
+      
+      data.colleagues = Array.from(document.getElementById('colleagues').selectedOptions).map(function(option) {
+        return option.value;
+      });
+      
+      
+      data.budgetItems = [];
+      for (var j = 0; j < budgetCounter; j++) {
+        var typeInput = document.querySelector('[name="budgetType-' + j + '"]');
+        var amountInput = document.querySelector('[name="budgetAmount-' + j + '"]');
+        
+        if (typeInput && amountInput && typeInput.value) {
+          data.budgetItems.push({
+            type: typeInput.value,
+            amount: parseFloat(amountInput.value)
+          });
+        }
+      }
+      
+      
+      if (documentFile) {
+        data.documentName = documentFile.name;
+      }
+      
+      if (quotationFile) {
+        data.quotationName = quotationFile.name;
+      }
+      
+      return data;
+    }
+    
+    
+    function handleSubmitSuccess(result) {
+      var submitBtn = document.getElementById('submitBtn');
+      var submitStatus = document.getElementById('submitStatus');
+      
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Event';
+      submitBtn.classList.add('pulse');
+      
+      if (result.success) {
+        
+        document.getElementById('eventForm').reset();
+        document.getElementById('timeSlots').innerHTML = '';
+        document.getElementById('budgetItems').innerHTML = '';
+        
+        
+        document.getElementById('documentName').innerHTML = '';
+        document.getElementById('documentName').classList.add('hidden');
+        document.getElementById('quotationName').innerHTML = '';
+        document.getElementById('quotationName').classList.add('hidden');
+        document.getElementById('quotationSection').classList.add('hidden');
+        document.getElementById('map').classList.add('hidden');
+        document.getElementById('locationStatus').textContent = '';
+
+        
+        var docFileInput = document.getElementById('documentFile');
+        var docParent = docFileInput.parentNode;
+        var newDocInput = document.createElement('input');
+        newDocInput.type = 'file';
+        newDocInput.id = 'documentFile';
+        newDocInput.name = 'documentFile';
+        newDocInput.style.display = 'none';
+        docParent.replaceChild(newDocInput, docFileInput);
+        
+        var quotFileInput = document.getElementById('quotationFile');
+        var quotParent = quotFileInput.parentNode;
+        var newQuotInput = document.createElement('input');
+        newQuotInput.type = 'file';
+        newQuotInput.id = 'quotationFile';
+        newQuotInput.name = 'quotationFile';
+        newQuotInput.accept = '.xlsx';
+        newQuotInput.style.display = 'none';
+        quotParent.replaceChild(newQuotInput, quotFileInput);
+        
+        
+        documentFile = null;
+        quotationFile = null;
+        
+        
+        $('.multiselect').val(null).trigger('change');
+        
+        
+        timeSlotCounter = 0;
+        budgetCounter = 0;
+        
+        
+        submitStatus.innerHTML = 
+          '<div class="success-message">' +
+          '<i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 15px;"></i>' +
+          '<h3>Event Created Successfully!</h3>' +
+          '<p>Event ID: ' + result.eventId + '</p>' +
+          '</div>';
+        
+        
+        document.getElementById('username').value = userInfo.username;
+        
+        
+        submitStatus.scrollIntoView({ behavior: 'smooth' });
+        
+        
+        setupFileUpload('documentUpload', 'documentFile', 'documentName', 'documentError', function(file) {
+          if (file.size > 5 * 1024 * 1024) {
+            document.getElementById('documentError').textContent = 'File size exceeds 5MB limit';
+            return false;
+          }
+          documentFile = file;
+          return true;
+        });
+        
+        setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
+          if (!file.name.endsWith('.xlsx')) {
+            document.getElementById('quotationError').textContent = 'Only XLSX files are allowed';
+            return false;
+          }
+          quotationFile = file;
+          return true;
+        });
+      } else {
+        submitStatus.innerHTML = 
+          '<div class="error-message">' +
+          '<i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 15px;"></i>' +
+          '<h3>Error Creating Event</h3>' +
+          '<p>' + result.message + '</p>' +
+          '</div>';
+      }
+    }
+    
+    
+    function handleSubmitError(error) {
+      var submitBtn = document.getElementById('submitBtn');
+      var submitStatus = document.getElementById('submitStatus');
+      
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Event';
+      submitBtn.classList.add('pulse');
+      
+      submitStatus.innerHTML = 
+        '<div class="error-message">' +
+        '<i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>' +
+        '<h3>Error Creating Event</h3>' +
+        '<p>' + error + '</p>' +
+        '</div>';
+    }
+    
+    
+    function handleError(error) {
+      console.error('Error:', error);
+      
+      
+      document.getElementById('initialLoader').classList.add('hidden');
+      document.getElementById('formContainer').classList.add('loaded');
+      
+      alert('An error occurred: ' + error);
+    }
+    
+    
+    window.onload = function() {
+      initForm();
+    };
+    
+    
+    window.initGoogleMaps = initGoogleMaps;
+  </script>
+</body>
+</html>

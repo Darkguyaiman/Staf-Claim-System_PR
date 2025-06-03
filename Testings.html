@@ -1,0 +1,165 @@
+/*function getAvailableEvents(username) {
+  
+  const testEvents = [
+    {
+      id: "EVT001",
+      name: "Sales Event - Local (KL)",
+      type: "Sales",
+      location: "Kuala Lumpur",
+      locationStatus: "local",
+      timeSlots: ["Morning (9am-12pm)", "Afternoon (1pm-5pm)"]
+    },
+    {
+      id: "EVT002",
+      name: "Marketing Event - Outstation",
+      type: "Marketing",
+      location: "Penang",
+      locationStatus: "outstation",
+      timeSlots: ["Full Day (9am-5pm)"]
+    },
+    {
+      id: "EVT003",
+      name: "Exhibition - Overseas",
+      type: "Exhibition",
+      location: "Singapore",
+      locationStatus: "overseas",
+      timeSlots: ["Day 1 (9am-5pm)", "Day 2 (9am-5pm)"]
+    },
+    {
+      id: "EVT004",
+      name: "Demo Session - Selangor",
+      type: "Demo Session",
+      location: "Selangor",
+      locationStatus: "local",
+      timeSlots: ["Morning (9am-12pm)", "Afternoon (1pm-5pm)", "Evening (6pm-9pm)"]
+    },
+    {
+      id: "EVT005",
+      name: "PL3D Treatment - Outstation",
+      type: "PL3D",
+      location: "Johor Bahru",
+      locationStatus: "outstation",
+      timeSlots: ["Full Day (9am-5pm)"]
+    },
+    {
+      id: "EVT006",
+      name: "RF Treatment - Local",
+      type: "RF",
+      location: "Kuala Lumpur",
+      locationStatus: "local",
+      timeSlots: ["Morning (9am-12pm)"]
+    },
+    {
+      id: "EVT007",
+      name: "Cryo Session - Outstation",
+      type: "Cryo",
+      location: "Ipoh",
+      locationStatus: "outstation",
+      timeSlots: ["Afternoon (1pm-5pm)"]
+    },
+    {
+      id: "EVT008",
+      name: "Training - Local",
+      type: "Training",
+      location: "Negeri Sembilan",
+      locationStatus: "local",
+      timeSlots: ["Day 1 (9am-5pm)", "Day 2 (9am-5pm)"]
+    },
+    {
+      id: "EVT009",
+      name: "Training - Outstation",
+      type: "Training",
+      location: "Terengganu",
+      locationStatus: "outstation",
+      timeSlots: ["Full Day (9am-5pm)"]
+    },
+    {
+      id: "EVT010",
+      name: "Training - Sabah",
+      type: "Training",
+      location: "Sabah",
+      locationStatus: "outstation",
+      timeSlots: ["Day 1 (9am-5pm)", "Day 2 (9am-5pm)"]
+    },
+    {
+      id: "EVT011",
+      name: "Marketing Event - Sarawak",
+      type: "Marketing",
+      location: "Sarawak",
+      locationStatus: "outstation",
+      timeSlots: ["Full Day (9am-5pm)"]
+    },
+    {
+      id: "EVT012",
+      name: "CUB Treatment - Outstation",
+      type: "CUB",
+      location: "Melaka",
+      locationStatus: "outstation",
+      timeSlots: ["Morning (9am-12pm)", "Afternoon (1pm-5pm)"]
+    },
+    {
+      id: "EVT013",
+      name: "PL3D-RF Combo - Outstation",
+      type: "PL3D-RF",
+      location: "Kedah",
+      locationStatus: "outstation",
+      timeSlots: ["Full Day (9am-5pm)"]
+    },
+    {
+      id: "EVT014",
+      name: "Sales Event - Negeri Sembilan",
+      type: "Sales",
+      location: "Negeri Sembilan",
+      locationStatus: "local",
+      timeSlots: ["Morning (9am-12pm)", "Afternoon (1pm-5pm)"]
+    },
+    {
+      id: "EVT015",
+      name: "Exhibition - Overseas (Tokyo)",
+      type: "Exhibition",
+      location: "Tokyo, Japan",
+      locationStatus: "overseas",
+      timeSlots: ["Day 1 (9am-5pm)", "Day 2 (9am-5pm)", "Day 3 (9am-5pm)"]
+    }
+  ];
+  
+  
+  
+  return testEvents;
+  
+  Original implementation for reference
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const eventSheet = ss.getSheetByName('Event Creation');
+  
+  const eventData = eventSheet.getRange('A4:M').getValues();
+  const availableEvents = [];
+  
+  for (let i = 0; i < eventData.length; i++) {
+    if (!eventData[i][3]) continue; 
+    
+    const eventId = eventData[i][0]; 
+    const eventName = eventData[i][3]; 
+    const eventType = eventData[i][4]; 
+    const eventLocation = eventData[i][5]; 
+    const locationStatus = eventData[i][6]; 
+    const timeSlots = eventData[i][9]; 
+    const assignedUser = eventData[i][2]; 
+    const multipleUsers = eventData[i][12]; 
+    
+    
+    if (assignedUser === username || 
+        (multipleUsers && multipleUsers.toString().split(',').some(u => u.trim() === username))) {
+      availableEvents.push({
+        id: eventId,
+        name: eventName,
+        type: eventType,
+        location: eventLocation,
+        locationStatus: locationStatus,
+        timeSlots: timeSlots ? timeSlots.toString().split(',').map(slot => slot.trim()) : []
+      });
+    }
+  }
+  
+  return availableEvents;
+  
+}*/

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Post-Event Expenses</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root {
+        --color-primary: #2D0C31;
+        --color-secondary: #004D4D;
+        --color-accent: #00B894;
+        --color-light: #B8B5FF;
+        --color-lighter: #B8FFB5;
+        --color-background: #f5f7fa;
+        --color-card: #ffffff;
+        --color-text: #333333;
+        --color-text-secondary: #666666;
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      
+      body {
+        margin: 0;
+        padding: 20px;
+        line-height: 1.6;
+        color: var(--color-text);
+        background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .container {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: var(--color-card);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(45, 12, 49, 0.15);
+        position: relative;
+      }
+      
+      h1 {
+        color: var(--color-primary);
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid var(--color-accent);
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      h2 {
+        color: var(--color-secondary);
+        font-size: 22px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .form-group {
+        margin-bottom: 24px;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--color-secondary);
+        font-size: 15px;
+      }
+      
+      input, select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        color: var(--color-text);
+      }
+      
+      input:focus, select:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+      }
+      
+      input[readonly] {
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+      }
+      
+      input[type="number"] {
+        text-align: right;
+      }
+      
+      .budget-item {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding: 18px;
+        background-color: #f9fffe;
+        border-radius: 10px;
+        border-left: 4px solid var(--color-accent);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+      
+      .budget-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border-left-color: var(--color-primary);
+      }
+      
+      .budget-item label {
+        font-weight: 500;
+        font-size: 13px;
+        color: var(--color-secondary);
+        margin-bottom: 6px;
+      }
+      
+      .form-actions {
+        margin-top: 35px;
+        text-align: right;
+      }
+      
+      button {
+        background-color: var(--color-accent);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+      }
+      
+      button:hover {
+        background-color: var(--color-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 77, 77, 0.3);
+      }
+      
+      button:active {
+        transform: translateY(0);
+      }
+      
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      .placeholder {
+        color: var(--color-text-secondary);
+        font-style: italic;
+        padding: 30px 0;
+        text-align: center;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        border: 1px dashed #ddd;
+      }
+      
+      .searchable-dropdown {
+        position: relative;
+        width: 100%;
+      }
+      
+      .searchable-dropdown-input {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background-color: white;
+        cursor: pointer;
+      }
+      
+      .searchable-dropdown-input:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+      }
+      
+      .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-secondary);
+        pointer-events: none;
+        z-index: 1;
+      }
+      
+      .dropdown-arrow {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-secondary);
+        pointer-events: none;
+        transition: transform 0.3s ease;
+      }
+      
+      .dropdown-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 250px;
+        overflow-y: auto;
+        background-color: white;
+        border: 2px solid var(--color-accent);
+        border-radius: 0 0 8px 8px;
+        z-index: 10;
+        display: none;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      
+      .dropdown-option {
+        padding: 12px 15px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      .dropdown-option:last-child {
+        border-bottom: none;
+      }
+      
+      .dropdown-option:hover {
+        background-color: #f0fff9;
+        color: var(--color-primary);
+      }
+      
+      .dropdown-open .dropdown-options {
+        display: block;
+      }
+      
+      .dropdown-open .dropdown-arrow {
+        transform: translateY(-50%) rotate(180deg);
+      }
+      
+      .no-results {
+        padding: 15px;
+        color: var(--color-text-secondary);
+        font-style: italic;
+        text-align: center;
+      }
+      
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        border-radius: 16px;
+      }
+      
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(184, 181, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--color-accent);
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .loading-text {
+        margin-top: 20px;
+        color: var(--color-secondary);
+        font-weight: 600;
+        font-size: 16px;
+      }
+      
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .modal-content {
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 450px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+      
+      .modal.show {
+        display: flex;
+      }
+      
+      .modal.show .modal-content {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
+      .modal-icon {
+        font-size: 50px;
+        margin-bottom: 20px;
+      }
+      
+      .modal-success .modal-icon {
+        color: var(--color-accent);
+      }
+      
+      .modal-error .modal-icon {
+        color: #FF6B6B;
+      }
+      
+      .modal-title {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: var(--color-primary);
+      }
+      
+      .modal-message {
+        margin-bottom: 25px;
+        color: var(--color-text-secondary);
+        font-size: 16px;
+      }
+      
+      .modal-button {
+        background-color: var(--color-accent);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .modal-error .modal-button {
+        background-color: #FF6B6B;
+      }
+      
+      .modal-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Event ID display */
+      .event-id-container {
+        display: flex;
+        align-items: center;
+        background-color: #f9f9f9;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--color-secondary);
+      }
+      
+      .event-id-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        color: var(--color-secondary);
+        margin-right: 15px;
+        white-space: nowrap;
+      }
+      
+      .event-id-value {
+        font-family: monospace;
+        font-size: 14px;
+        color: var(--color-text);
+        background-color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .budget-item {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        
+        .container {
+          padding: 20px;
+        }
+        
+        h1 {
+          font-size: 24px;
+        }
+        
+        h2 {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading data...</div>
+      </div>
+      
+      <h1>
+        <i class="fas fa-file-invoice-dollar"></i>
+        Post-Event Expenses
+      </h1>
+      
+      <form id="expensesForm">
+        <div class="form-group">
+          <label for="eventSearch">
+            <i class="fas fa-calendar-alt"></i>
+            Event Name
+          </label>
+          <div class="searchable-dropdown" id="eventDropdown">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="eventSearch" class="searchable-dropdown-input" placeholder="Search and select an event..." autocomplete="off">
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+            <div class="dropdown-options" id="eventOptions">
+            </div>
+            <input type="hidden" id="selectedEventId" name="eventId" required>
+          </div>
+        </div>
+        
+        <div id="eventIdContainer" class="event-id-container" style="display: none;">
+          <div class="event-id-label">
+            <i class="fas fa-fingerprint"></i>
+            Event ID:
+          </div>
+          <div id="eventId" class="event-id-value"></div>
+        </div>
+        
+        <div id="budgetItemsContainer">
+          <h2>
+            <i class="fas fa-money-bill-wave"></i>
+            Expenses to Budget
+          </h2>
+          <div id="budgetItems">
+            <div class="placeholder">
+              <i class="fas fa-info-circle"></i>
+              Select an event to view budget items
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" id="submitBtn">
+            <i class="fas fa-paper-plane"></i>
+            Submit Expenses
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal modal-success">
+      <div class="modal-content">
+        <div class="modal-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 class="modal-title">Success!</h3>
+        <p class="modal-message" id="successMessage"></p>
+        <button class="modal-button" onclick="closeModal('successModal')">OK</button>
+      </div>
+    </div>
+    
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal modal-error">
+      <div class="modal-content">
+        <div class="modal-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h3 class="modal-title">Error</h3>
+        <p class="modal-message" id="errorMessage"></p>
+        <button class="modal-button" onclick="closeModal('errorModal')">OK</button>
+      </div>
+    </div>
+    
+    <script>
+      let allEventData = {};
+      let selectedEventId = '';
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        showLoadingSpinner();
+        
+        google.script.run
+          .withSuccessHandler(handleAllEventData)
+          .withFailureHandler(handleDataLoadError)
+          .getAllEventData();
+        
+        const dropdown = document.getElementById('eventDropdown');
+        const searchInput = document.getElementById('eventSearch');
+        const optionsContainer = document.getElementById('eventOptions');
+        
+        searchInput.addEventListener('click', function(e) {
+          e.stopPropagation();
+          dropdown.classList.toggle('dropdown-open');
+          if (dropdown.classList.contains('dropdown-open')) {
+            filterEventOptions();
+          }
+        });
+        
+        searchInput.addEventListener('input', filterEventOptions);
+        
+        document.addEventListener('click', function(e) {
+          if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('dropdown-open');
+          }
+        });
+        
+        document.getElementById('expensesForm').addEventListener('submit', handleFormSubmit);
+      });
+      
+      function showLoadingSpinner() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+      }
+      
+      function hideLoadingSpinner() {
+        document.getElementById('loadingOverlay').style.display = 'none';
+      }
+      
+      function handleAllEventData(data) {
+        allEventData = data;
+        filterEventOptions();
+        
+        hideLoadingSpinner();
+      }
+      
+      function handleDataLoadError(error) {
+        hideLoadingSpinner();
+        handleError(error);
+      }
+      
+      function filterEventOptions() {
+        const searchText = document.getElementById('eventSearch').value.toLowerCase();
+        const optionsContainer = document.getElementById('eventOptions');
+        
+        optionsContainer.innerHTML = '';
+        
+        if (!allEventData.approvedEvents) {
+          optionsContainer.innerHTML = '<div class="no-results"><i class="fas fa-spinner fa-spin"></i> Loading events...</div>';
+          return;
+        }
+        
+        const filteredEvents = allEventData.approvedEvents.filter(event => 
+          event.name.toLowerCase().includes(searchText)
+        );
+        
+        if (filteredEvents.length === 0) {
+          optionsContainer.innerHTML = '<div class="no-results"><i class="fas fa-search"></i> No events found</div>';
+          return;
+        }
+        
+        filteredEvents.forEach(event => {
+          const option = document.createElement('div');
+          option.className = 'dropdown-option';
+          option.innerHTML = `<i class="fas fa-calendar-day"></i> ${event.name}`;
+          option.dataset.id = event.id;
+          option.addEventListener('click', function() {
+            selectEvent(event.id, event.name);
+          });
+          optionsContainer.appendChild(option);
+        });
+        
+        if (filteredEvents.length === 1 && searchText.trim() !== '') {
+          selectEvent(filteredEvents[0].id, filteredEvents[0].name);
+        }
+      }
+      
+      function selectEvent(id, name) {
+        document.getElementById('eventSearch').value = name;
+        document.getElementById('selectedEventId').value = id;
+        document.getElementById('eventId').textContent = id;
+        document.getElementById('eventIdContainer').style.display = 'flex';
+        document.getElementById('eventDropdown').classList.remove('dropdown-open');
+        
+        selectedEventId = id;
+        
+        populateBudgetItems(allEventData.budgetItems[id] || []);
+      }
+      
+      function populateBudgetItems(items) {
+        const container = document.getElementById('budgetItems');
+        
+        container.innerHTML = '';
+        
+        if (items.length === 0) {
+          container.innerHTML = '<div class="placeholder"><i class="fas fa-exclamation-circle"></i> No budget items found for this event</div>';
+          return;
+        }
+        
+        items.forEach((item, index) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'budget-item';
+          itemDiv.innerHTML = `
+            <div>
+              <label><i class="fas fa-tag"></i> Budget Type</label>
+              <input type="text" value="${item.type}" readonly data-type="${item.type}">
+            </div>
+            <div>
+              <label><i class="fas fa-coins"></i> Budget Amount (RM)</label>
+              <input type="text" value="${formatCurrency(item.amount)}" readonly>
+            </div>
+            <div>
+              <label><i class="fas fa-receipt"></i> Actual Expenses (RM)</label>
+              <input type="number" step="0.01" min="0" class="actual-expense" required>
+            </div>
+          `;
+          container.appendChild(itemDiv);
+        });
+      }
+      
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        
+        if (!selectedEventId) {
+          showErrorModal('Please select an event');
+          return;
+        }
+        
+        const budgetItems = document.querySelectorAll('.budget-item');
+        const expenses = [];
+        
+        budgetItems.forEach(item => {
+          const type = item.querySelector('input[readonly][data-type]').dataset.type;
+          const actualAmount = parseFloat(item.querySelector('.actual-expense').value);
+          
+          if (!isNaN(actualAmount)) {
+            expenses.push({
+              type: type,
+              actualAmount: actualAmount
+            });
+          }
+        });
+        
+        if (expenses.length === 0) {
+          showErrorModal('Please enter at least one expense amount');
+          return;
+        }
+        
+        document.getElementById('submitBtn').disabled = true;
+        
+        showLoadingSpinner();
+        document.querySelector('.loading-text').textContent = 'Submitting expenses...';
+        
+        const formData = {
+          eventId: selectedEventId,
+          expenses: expenses
+        };
+        
+        google.script.run
+          .withSuccessHandler(handleSubmitSuccess)
+          .withFailureHandler(handleSubmitError)
+          .submitExpenses(formData);
+      }
+      
+      function handleSubmitSuccess(response) {
+        hideLoadingSpinner();
+        
+        if (response.success) {
+          showSuccessModal(response.message || 'Expenses submitted successfully!');
+          resetForm();
+        } else {
+          showErrorModal(response.message || 'An error occurred');
+          document.getElementById('submitBtn').disabled = false;
+        }
+      }
+      
+      function handleSubmitError(error) {
+        hideLoadingSpinner();
+        showErrorModal('Error: ' + (error.message || 'An unknown error occurred'));
+        document.getElementById('submitBtn').disabled = false;
+      }
+      
+      function handleError(error) {
+        console.error('Error:', error);
+        showErrorModal('An error occurred: ' + (error.message || 'Unknown error'));
+      }
+      
+      function showSuccessModal(message) {
+        document.getElementById('successMessage').textContent = message;
+        document.getElementById('successModal').classList.add('show');
+      }
+      
+      function showErrorModal(message) {
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorModal').classList.add('show');
+      }
+      
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('show');
+      }
+      
+      function resetForm() {
+        document.getElementById('eventSearch').value = '';
+        document.getElementById('selectedEventId').value = '';
+        document.getElementById('eventIdContainer').style.display = 'none';
+        document.getElementById('budgetItems').innerHTML = '<div class="placeholder"><i class="fas fa-info-circle"></i> Select an event to view budget items</div>';
+        document.getElementById('submitBtn').disabled = false;
+        selectedEventId = '';
+        
+        showLoadingSpinner();
+        document.querySelector('.loading-text').textContent = 'Refreshing data...';
+        
+        google.script.run
+          .withSuccessHandler(handleAllEventData)
+          .withFailureHandler(handleDataLoadError)
+          .getAllEventData();
+      }
+      
+      function formatCurrency(value) {
+        return parseFloat(value).toFixed(2);
+      }
+    </script>
+  </body>
+</html>

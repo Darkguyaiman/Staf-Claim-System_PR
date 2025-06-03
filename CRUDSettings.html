@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Tab</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-primary: #2D0C31;
+            --color-secondary: #004D4D;
+            --color-accent: #00B894;
+            --color-light: #B8B5FF;
+            --color-lighter: #B8FFB5;
+            --color-dark: #333;
+            --color-gray: #6c757d;
+            --color-light-gray: #e9ecef;
+            --color-white: #fff;
+            --color-danger: #dc3545;
+            --color-success: #28a745;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--color-dark);
+            background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            border: 4px solid var(--color-light-gray);
+            border-top: 4px solid var(--color-accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+            color: var(--color-danger);
+        }
+
+        .section {
+            background: var(--color-white);
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-header {
+            background: var(--color-white);
+            color: var(--color-primary);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 1.2em;
+        }
+
+        .add-btn {
+            background: var(--color-accent);
+            border: none;
+            color: var(--color-white);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-btn:hover {
+            background: #00a583;
+            transform: translateY(-2px);
+        }
+
+        .subsection {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .subsection:last-child {
+            border-bottom: none;
+        }
+
+        .subsection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .subsection h3 {
+            color: var(--color-secondary);
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn-small {
+            background: var(--color-accent);
+            border: none;
+            color: var(--color-white);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-btn-small:hover {
+            background: #00a583;
+            transform: translateY(-2px);
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--color-white);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            padding-top: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            position: relative;
+            min-height: 120px;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-btn {
+            color: var(--color-accent);
+        }
+
+        .delete-btn {
+            color: var(--color-danger);
+        }
+
+        .save-btn {
+            color: var(--color-success);
+        }
+
+        .cancel-btn {
+            color: var(--color-gray);
+        }
+
+        .action-btn:hover {
+            background: var(--color-white);
+            transform: scale(1.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-btn:hover {
+            background: rgba(0, 184, 148, 0.1);
+            border-color: var(--color-accent);
+        }
+
+        .delete-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: var(--color-danger);
+        }
+
+        .card-content {
+            padding-right: 80px;
+            padding-top: 5px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .card-subtitle {
+            color: var(--color-gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .device-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .device-accessories {
+            margin-top: 10px;
+        }
+
+        .device-accessories h4 {
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .accessories-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .accessory-chip {
+            background: var(--color-accent);
+            color: var(--color-white);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .accessory-chip .remove-chip {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: var(--color-white);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .list-item {
+            background: #f8f9fa;
+            border: 1px solid var(--color-light-gray);
+            border-radius: 6px;
+            padding: 12px;
+            padding-top: 8px;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-wrap: break-word;
+        }
+
+        .list-item:hover {
+            background: var(--color-light-gray);
+            transform: translateY(-2px);
+        }
+
+        .list-item-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        .list-item .action-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            padding: 6px;
+        }
+
+        .list-item-content {
+            padding-right: 70px;
+            padding-top: 5px;
+            font-weight: 500;
+            color: var(--color-dark);
+            line-height: 1.3;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--color-gray);
+            font-style: italic;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            color: var(--color-light);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--color-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .accessories-selector {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            min-height: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            align-items: flex-start;
+        }
+
+        /* Searchable Accessories Dropdown Styles */
+        .accessories-dropdown {
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .accessories-search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .accessories-search {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background-color: var(--color-white);
+        }
+
+        .accessories-search:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+        }
+
+        .accessories-search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gray);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .accessories-dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--color-white);
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .accessories-dropdown-list.show {
+            display: block;
+        }
+
+        .accessories-dropdown-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .accessories-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .accessories-dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .accessories-dropdown-item.highlighted {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+        }
+
+        .accessories-dropdown-item.hidden {
+            display: none;
+        }
+
+        .no-results {
+            padding: 12px;
+            text-align: center;
+            color: var(--color-gray);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--color-white);
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--color-primary);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-gray);
+            transition: var(--transition);
+        }
+
+        .close:hover {
+            color: var(--color-primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-light-gray);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-white);
+        }
+
+        .btn-secondary {
+            background: var(--color-gray);
+            color: var(--color-white);
+        }
+
+        .btn-danger {
+            background: var(--color-danger);
+            color: var(--color-white);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Alert modal */
+        .alert-modal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .alert-content {
+            background-color: var(--color-white);
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+            text-align: center;
+        }
+
+        .alert-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .alert-icon.success {
+            color: var(--color-success);
+        }
+
+        .alert-icon.error {
+            color: var(--color-danger);
+        }
+
+        .alert-icon.warning {
+            color: #ffc107;
+        }
+
+        .alert-icon.info {
+            color: #17a2b8;
+        }
+
+        .alert-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .alert-message {
+            margin-bottom: 20px;
+            color: var(--color-dark);
+        }
+
+        .alert-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Confirmation modal */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .confirm-content {
+            background-color: var(--color-white);
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .confirm-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ffc107;
+            text-align: center;
+        }
+
+        .confirm-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+            text-align: center;
+        }
+
+        .confirm-message {
+            margin-bottom: 20px;
+            color: var(--color-dark);
+            text-align: center;
+        }
+
+        .confirm-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .list-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .subsection-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                padding: 15px;
+                width: 95%;
+            }
+
+            .btn {
+                padding: 8px 16px;
+            }
+
+            .card-content {
+                padding-right: 70px;
+            }
+
+            .list-item-content {
+                padding-right: 60px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: var(--color-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: var(--color-primary);
+          border-radius: 10px;
+          border: 2px solid var(--color-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: var(--color-secondary);
+        }
+
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: var(--color-primary) var(--color-lighter);
+        }
+
+
+        /* Sidebar Styles */
+        .sidebar {
+          width: 250px;
+          height: 100vh;
+          position: fixed;
+          left: 0;
+          top: 0;
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border-right: 1px solid rgba(45, 12, 49, 0.2);
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+          z-index: 100;
+          transition: all 0.3s ease;
+          overflow-y: auto;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .sidebar::-webkit-scrollbar {
+          width: 0;
+          height: 0;
+          display: none;
+        }
+
+        .sidebar.collapsed {
+          width: 60px;
+        }
+
+        .sidebar-header {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          border-bottom: 1px solid rgba(45, 12, 49, 0.2);
+        }
+
+        .sidebar-logo {
+          font-size: 36px;
+          color: var(--color-primary);
+          margin-bottom: 10px;
+          transition: all 0.3s ease;
+        }
+
+        .sidebar-title {
+          font-size: 20px;
+          font-weight: 600;
+          color: var(--color-secondary);
+          transition: all 0.3s ease;
+          white-space: nowrap;
+          overflow: hidden;
+          text-align: center;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+          font-size: 24px;
+          margin-bottom: 0;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+          opacity: 0;
+          width: 0;
+          height: 0;
+          margin: 0;
+        }
+
+        .sidebar-nav {
+          display: flex;
+          flex-direction: column;
+          padding: 15px 0;
+        }
+
+        .sidebar-item {
+          display: flex;
+          align-items: center;
+          padding: 15px 20px;
+          color: var(--color-primary);
+          transition: all 0.2s ease;
+          border-left: 3px solid transparent;
+          white-space: nowrap;
+          overflow: hidden;
+          text-decoration: none;
+        }
+
+        .sidebar.collapsed .sidebar-item {
+          padding: 15px;
+          justify-content: center;
+        }
+
+        .sidebar-item:hover {
+          background-color: rgba(45, 12, 49, 0.1);
+          border-left-color: var(--color-primary);
+        }
+
+        .sidebar-item.active {
+          background-color: rgba(45, 12, 49, 0.15);
+          border-left-color: var(--color-primary);
+          font-weight: 600;
+        }
+
+        .sidebar-item i {
+          min-width: 24px;
+          font-size: 20px;
+          margin-right: 15px;
+        }
+
+        .sidebar-item span {
+          transition: opacity 0.2s ease;
+          font-size: 16px;
+        }
+
+        .sidebar.collapsed .sidebar-item span {
+          opacity: 0;
+          width: 0;
+          margin-left: 0;
+        }
+
+        .sidebar-toggle {
+          position: fixed;
+          top: 10px;
+          left: 260px; /* Positioned outside the sidebar */
+          width: 40px;
+          height: 40px;
+          background-color: var(--color-primary);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          z-index: 101;
+          transition: left 0.3s ease;
+        }
+
+        .sidebar-toggle i {
+          font-size: 24px;
+          transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+          left: 70px;
+        }
+
+        .sidebar.collapsed .sidebar-toggle i {
+          transform: rotate(180deg);
+        }
+
+        .mobile-sidebar-toggle {
+          display: none;
+          position: fixed;
+          top: 10px;
+          left: 10px;
+          width: 40px;
+          height: 40px;
+          background-color: var(--color-primary);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+          font-size: 24px;
+        }
+
+        .main-content {
+          margin-left: 250px;
+          transition: all 0.3s ease;
+          min-height: 100vh;
+          width: calc(100% - 250px);
+        }
+
+        .main-content.expanded {
+          margin-left: 60px;
+          width: calc(100% - 60px);
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+          .sidebar {
+            transform: translateX(-100%);
+            width: 80%;
+            max-width: 300px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+          }
+          
+          .sidebar.open {
+            transform: translateX(0);
+          }
+          
+          .sidebar.collapsed {
+            transform: translateX(-100%);
+            width: 80%;
+          }
+          
+          .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding-top: 60px; /* Space for the mobile toggle button */
+          }
+          
+          .main-content.expanded {
+            margin-left: 0;
+            width: 100%;
+          }
+          
+          .sidebar-toggle {
+            display: none;
+          }
+          
+          .mobile-sidebar-toggle {
+            display: flex;
+          }
+          
+          /* Add overlay when sidebar is open on mobile */
+          .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+          }
+          
+          .sidebar-overlay.active {
+            display: block;
+          }
+          
+          /* Adjust container padding for mobile */
+          .container {
+            padding: 15px;
+          }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+          .sidebar {
+            width: 85%;
+          }
+          
+          .sidebar-item {
+            padding: 12px 15px;
+          }
+          
+          .sidebar-logo {
+            font-size: 28px;
+          }
+          
+          .sidebar-title {
+            font-size: 18px;
+          }
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar HTML -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <i class="fas fa-chart-bar"></i>
+    </div>
+    <h2 class="sidebar-title">Claim System</h2>
+  </div>
+  <div class="sidebar-menu">
+    <a href="YOUR_DASHBOARD_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+      <i class="fas fa-tachometer-alt"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="YOUR_EVENT_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Event Panel</span>
+    </a>
+    <a href="YOUR_CLAIMS_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+      <i class="fas fa-hand-holding-usd"></i>
+      <span>Claims & Allowance Panel</span>
+    </a>
+    <a href="YOUR_BUDGET_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+      <i class="fas fa-dollar-sign"></i>
+      <span>Budget & Expenses Panel</span>
+    </a>
+    <a href="YOUR_ADVANCE_PURCHASE_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item active">
+      <i class="fas fa-shopping-cart"></i>
+      <span>Advance Purchases Panel</span>
+    </a>
+    <a href="YOUR_PETTY_CASH_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+      <i class="fas fa-wallet"></i>
+      <span>Petty Cash Panel</span>
+    </a>
+    <a href="YOUR_SETTINGS_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+  </div>
+</aside>
+
+
+<!-- Sidebar toggle button -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- Mobile sidebar toggle button -->
+<button class="mobile-sidebar-toggle" id="mobileSidebarToggle" aria-label="Toggle mobile sidebar">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- Main content -->
+<main class="main-content" id="mainContent">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-cogs"></i> <strong> Settings Tab </strong></h1>
+        </header>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading settings data...</p>
+        </div>
+        
+        <div id="error" class="error" style="display: none;">
+            <h3>Error Loading Data</h3>
+            <p id="error-message"></p>
+        </div>
+        
+        <div id="content" style="display: none;">
+            <!-- Users Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-users section-icon"></i> Users</h2>
+                    <button class="add-btn" onclick="openAddModal('user')"><i class="fas fa-plus"></i> Add User</button>
+                </div>
+                <div class="subsection">
+                    <div id="users-container" class="cards-container">
+                        <!-- Users will be populated here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Admins Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-shield section-icon"></i> Administrators</h2>
+                    <button class="add-btn" onclick="openAddModal('admin')"><i class="fas fa-plus"></i> Add Admin</button>
+                </div>
+                <div class="subsection">
+                    <div id="admins-container" class="cards-container">
+                        <!-- Admins will be populated here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Events Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-alt section-icon"></i> Events</h2>
+                </div>
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-tags"></i> Event Types</h3>
+                        <button class="add-btn-small" onclick="openAddModal('eventType')"><i class="fas fa-plus"></i> Add Event Type</button>
+                    </div>
+                    <div id="event-types-container" class="list-container">
+                        <!-- Event types will be populated here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Petty Cash Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-money-bill-wave section-icon"></i> Petty Cash</h2>
+                </div>
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-exchange-alt"></i> Transaction Types</h3>
+                        <button class="add-btn-small" onclick="openAddModal('pettyCashType')"><i class="fas fa-plus"></i> Add Transaction Type</button>
+                    </div>
+                    <div id="petty-cash-container" class="list-container">
+                        <!-- Petty cash types will be populated here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Expenses and Budget Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-pie section-icon"></i> Expenses and Budget</h2>
+                </div>
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-file-invoice-dollar"></i> Types</h3>
+                        <button class="add-btn-small" onclick="openAddModal('expensesBudgetType')"><i class="fas fa-plus"></i> Add Expense Type</button>
+                    </div>
+                    <div id="expenses-budget-container" class="list-container">
+                        <!-- Expenses and budget types will be populated here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Company Assets Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-building section-icon"></i> Company Assets</h2>
+                </div>
+                
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-briefcase"></i> Office Assets</h3>
+                        <button class="add-btn-small" onclick="openAddModal('officeAsset')"><i class="fas fa-plus"></i> Add Office Asset</button>
+                    </div>
+                    <div id="office-assets-container" class="list-container">
+                        <!-- Office assets will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-car"></i> Company Cars</h3>
+                        <button class="add-btn-small" onclick="openAddModal('companyCar')"><i class="fas fa-plus"></i> Add Company Car</button>
+                    </div>
+                    <div id="company-cars-container" class="list-container">
+                        <!-- Company cars will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-laptop"></i> Devices</h3>
+                        <button class="add-btn-small" onclick="openAddModal('device')"><i class="fas fa-plus"></i> Add Device</button>
+                    </div>
+                    <div id="devices-container" class="cards-container">
+                        <!-- Devices will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <h3><i class="fas fa-plug"></i> Available Accessories</h3>
+                        <button class="add-btn-small" onclick="openAddModal('accessory')"><i class="fas fa-plus"></i> Add Accessory</button>
+                    </div>
+                    <div id="accessories-container" class="list-container">
+                        <!-- Accessories will be populated here -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"><i class="fas fa-plus-circle"></i> Add Item</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body">
+                <!-- Form content will be populated here -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
+                <button class="btn btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="alert-modal">
+        <div class="alert-content">
+            <div id="alert-icon" class="alert-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 id="alert-title" class="alert-title">Alert</h3>
+            <p id="alert-message" class="alert-message"></p>
+            <div class="alert-actions">
+                <button class="btn btn-primary" onclick="closeAlertModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="confirm-modal">
+        <div class="confirm-content">
+            <div class="confirm-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3 id="confirm-title" class="confirm-title">Confirm</h3>
+            <p id="confirm-message" class="confirm-message"></p>
+            <div class="confirm-actions">
+                <button id="confirm-cancel" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</button>
+                <button id="confirm-ok" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+</main>
+    <script>
+        let currentData = {};
+        let currentEditType = '';
+        let currentEditIndex = -1;
+        let availableAccessories = [];
+        let confirmCallback = null;
+        let currentHighlightedIndex = -1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettingsData();
+        });
+
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+          
+          const sidebar = document.getElementById('sidebar');
+          const mainContent = document.getElementById('mainContent');
+          const sidebarToggle = document.getElementById('sidebarToggle');
+          const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+          
+          
+          const overlay = document.createElement('div');
+          overlay.className = 'sidebar-overlay';
+          document.body.appendChild(overlay);
+          
+          
+          const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+          if (sidebarCollapsed && window.innerWidth > 768) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+          }
+          
+          
+          function toggleSidebar(event) {
+            if (event) event.stopPropagation();
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+          }
+          
+          
+          function toggleMobileSidebar(event) {
+            if (event) event.stopPropagation();
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+          }
+          
+          
+          if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', toggleSidebar);
+          }
+          
+          if (mobileSidebarToggle) {
+            mobileSidebarToggle.addEventListener('click', toggleMobileSidebar);
+          }
+          
+          
+          overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+          });
+          
+          
+          document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                event.target !== mobileSidebarToggle &&
+                !mobileSidebarToggle.contains(event.target)) {
+              sidebar.classList.remove('open');
+              overlay.classList.remove('active');
+            }
+          });
+          
+          
+          window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+              
+              sidebar.classList.remove('open');
+              overlay.classList.remove('active');
+              
+              
+              if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+              } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+              }
+            } else {
+              
+              sidebar.classList.remove('collapsed');
+              mainContent.classList.remove('expanded');
+            }
+          });
+          
+          
+          const currentPath = window.location.pathname;
+          const sidebarItems = document.querySelectorAll('.sidebar-item');
+          
+          sidebarItems.forEach(item => {
+            const itemPath = item.getAttribute('href');
+            if (itemPath && (currentPath.includes(itemPath) || 
+                (currentPath === '/' && itemPath === '#'))) {
+              item.classList.add('active');
+            }
+          });
+        });
+
+        function loadSettingsData() {
+            google.script.run
+                .withSuccessHandler(onDataLoaded)
+                .withFailureHandler(onDataError)
+                .getSettingsData();
+        }
+
+        function onDataLoaded(data) {
+            document.getElementById('loading').style.display = 'none';
+            
+            if (data.error) {
+                showError(data.error);
+                return;
+            }
+            
+            currentData = data;
+            availableAccessories = data.accessories || [];
+            document.getElementById('content').style.display = 'block';
+            
+            
+            populateUsers(data.users);
+            populateAdmins(data.admins);
+            populateEventTypes(data.eventTypes);
+            populatePettyCashTypes(data.pettyCashTypes);
+            populateExpensesBudgetTypes(data.expensesBudgetTypes);
+            populateOfficeAssets(data.officeAssets);
+            populateCompanyCars(data.companyCars);
+            populateDevices(data.devices);
+            populateAccessories(data.accessories);
+        }
+
+        function onDataError(error) {
+            document.getElementById('loading').style.display = 'none';
+            showError('Failed to load data: ' + error.toString());
+        }
+
+        function showError(message) {
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        function populateUsers(users) {
+            const container = document.getElementById('users-container');
+            container.innerHTML = '';
+            
+            if (users.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i>No users found</div>';
+                return;
+            }
+            
+            users.forEach((user, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-actions">
+                        <button class="action-btn edit-btn" onclick="editUser(${index})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteUser(${index})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">${escapeHtml(user.username)}</div>
+                        <div class="card-subtitle"><i class="fas fa-envelope"></i> ${escapeHtml(user.email)}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function populateAdmins(admins) {
+            const container = document.getElementById('admins-container');
+            container.innerHTML = '';
+            
+            if (admins.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-shield"></i>No administrators found</div>';
+                return;
+            }
+            
+            admins.forEach((admin, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-actions">
+                        <button class="action-btn edit-btn" onclick="editAdmin(${index})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteAdmin(${index})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">${escapeHtml(admin.username)}</div>
+                        <div class="card-subtitle"><i class="fas fa-envelope"></i> ${escapeHtml(admin.email)}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function populateDevices(devices) {
+            const container = document.getElementById('devices-container');
+            container.innerHTML = '';
+            
+            if (devices.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-laptop"></i>No devices found</div>';
+                return;
+            }
+            
+            devices.forEach((device, index) => {
+                const card = document.createElement('div');
+                card.className = 'card device-card';
+                
+                let accessoriesHtml = '';
+                if (device.accessories && device.accessories.length > 0) {
+                    accessoriesHtml = `
+                        <div class="device-accessories">
+                            <h4><i class="fas fa-plug"></i> Accessories:</h4>
+                            <div class="accessories-list">
+                                ${device.accessories.map(acc => `<span class="accessory-chip">${escapeHtml(acc)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div class="card-actions">
+                        <button class="action-btn edit-btn" onclick="editDevice(${index})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteDevice(${index})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title"><i class="fas fa-laptop"></i> ${escapeHtml(device.name)}</div>
+                        ${accessoriesHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function populateListItems(items, containerId, editFunction, deleteFunction, icon) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="${icon}"></i>No items found</div>`;
+                return;
+            }
+            
+            items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <div class="list-item-actions">
+                        <button class="action-btn edit-btn" onclick="${editFunction}(${index})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="${deleteFunction}(${index})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="list-item-content">${escapeHtml(item)}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function populateEventTypes(eventTypes) {
+            populateListItems(eventTypes, 'event-types-container', 'editEventType', 'deleteEventType', 'fas fa-calendar-day');
+        }
+
+        function populatePettyCashTypes(types) {
+            populateListItems(types, 'petty-cash-container', 'editPettyCashType', 'deletePettyCashType', 'fas fa-money-bill');
+        }
+
+        function populateExpensesBudgetTypes(types) {
+            populateListItems(types, 'expenses-budget-container', 'editExpensesBudgetType', 'deleteExpensesBudgetType', 'fas fa-file-invoice-dollar');
+        }
+
+        function populateOfficeAssets(assets) {
+            populateListItems(assets, 'office-assets-container', 'editOfficeAsset', 'deleteOfficeAsset', 'fas fa-briefcase');
+        }
+
+        function populateCompanyCars(cars) {
+            populateListItems(cars, 'company-cars-container', 'editCompanyCar', 'deleteCompanyCar', 'fas fa-car');
+        }
+
+        function populateAccessories(accessories) {
+            populateListItems(accessories, 'accessories-container', 'editAccessory', 'deleteAccessory', 'fas fa-plug');
+        }
+
+        
+        function openAddModal(type) {
+            currentEditType = type;
+            currentEditIndex = -1;
+            
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            let icon = getTypeIcon(type);
+            title.innerHTML = `<i class="${icon}"></i> Add ${getTypeDisplayName(type)}`;
+            body.innerHTML = getFormHTML(type);
+            
+            modal.style.display = 'block';
+            
+            
+            if (type === 'device') {
+                initializeAccessoriesSearch();
+            }
+        }
+
+        function openEditModal(type, index, data) {
+            currentEditType = type;
+            currentEditIndex = index;
+            
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            let icon = getTypeIcon(type);
+            title.innerHTML = `<i class="${icon}"></i> Edit ${getTypeDisplayName(type)}`;
+            body.innerHTML = getFormHTML(type, data);
+            
+            modal.style.display = 'block';
+            
+            
+            if (type === 'device') {
+                initializeAccessoriesSearch();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function getTypeDisplayName(type) {
+            const names = {
+                'user': 'User',
+                'admin': 'Administrator',
+                'eventType': 'Event Type',
+                'pettyCashType': 'Petty Cash Transaction Type',
+                'expensesBudgetType': 'Expenses & Budget Type',
+                'officeAsset': 'Office Asset',
+                'companyCar': 'Company Car',
+                'device': 'Device',
+                'accessory': 'Accessory'
+            };
+            return names[type] || type;
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                'user': 'fas fa-user',
+                'admin': 'fas fa-user-shield',
+                'eventType': 'fas fa-calendar-day',
+                'pettyCashType': 'fas fa-money-bill-wave',
+                'expensesBudgetType': 'fas fa-file-invoice-dollar',
+                'officeAsset': 'fas fa-briefcase',
+                'companyCar': 'fas fa-car',
+                'device': 'fas fa-laptop',
+                'accessory': 'fas fa-plug'
+            };
+            return icons[type] || 'fas fa-cog';
+        }
+
+        function getFormHTML(type, data = null) {
+            switch(type) {
+                case 'user':
+                case 'admin':
+                    return `
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Username</label>
+                                <input type="text" id="username" class="form-control" value="${data ? escapeHtml(data.username) : ''}" placeholder="Enter username" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" id="email" class="form-control" value="${data ? escapeHtml(data.email) : ''}" placeholder="Enter email address" required>
+                            </div>
+                        </div>
+                    `;
+                case 'companyCar':
+                    const carParts = data ? data.split(' / ') : ['', ''];
+                    return `
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-car"></i> Car Model</label>
+                                <input type="text" id="carModel" class="form-control" value="${escapeHtml(carParts[0] || '')}" placeholder="Enter car model" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-id-card"></i> Plate Number</label>
+                                <input type="text" id="plateNumber" class="form-control" value="${escapeHtml(carParts[1] || '')}" placeholder="Enter plate number" required>
+                            </div>
+                        </div>
+                    `;
+                case 'device':
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-laptop"></i> Device Name</label>
+                            <input type="text" id="deviceName" class="form-control" value="${data ? escapeHtml(data.name) : ''}" placeholder="Enter device name" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-plug"></i> Accessories</label>
+                            <div class="accessories-selector" id="accessoriesSelector">
+                                ${data && data.accessories ? data.accessories.map(acc => 
+                                    `<span class="accessory-chip">${escapeHtml(acc)}<button type="button" class="remove-chip" onclick="removeAccessoryChip(this)">×</button></span>`
+                                ).join('') : ''}
+                            </div>
+                            <div class="accessories-dropdown">
+                                <div class="accessories-search-container">
+                                    <input type="text" id="accessoriesSearch" class="accessories-search" placeholder="Search accessories..." autocomplete="off">
+                                    <i class="fas fa-search accessories-search-icon"></i>
+                                </div>
+                                <div id="accessoriesDropdownList" class="accessories-dropdown-list">
+                                    <!-- Dropdown items will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                case 'eventType':
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-day"></i> Event Type Name</label>
+                            <input type="text" id="itemValue" class="form-control" value="${data ? escapeHtml(data) : ''}" placeholder="Enter event type name" required>
+                        </div>
+                    `;
+                case 'pettyCashType':
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-money-bill-wave"></i> Transaction Type Name</label>
+                            <input type="text" id="itemValue" class="form-control" value="${data ? escapeHtml(data) : ''}" placeholder="Enter transaction type name" required>
+                        </div>
+                    `;
+                case 'expensesBudgetType':
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-file-invoice-dollar"></i> Expense Type Name</label>
+                            <input type="text" id="itemValue" class="form-control" value="${data ? escapeHtml(data) : ''}" placeholder="Enter expense type name" required>
+                        </div>
+                    `;
+                case 'officeAsset':
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-briefcase"></i> Office Asset Name</label>
+                            <input type="text" id="itemValue" class="form-control" value="${data ? escapeHtml(data) : ''}" placeholder="Enter office asset name" required>
+                        </div>
+                    `;
+                case 'accessory':
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-plug"></i> Accessory Name</label>
+                            <input type="text" id="itemValue" class="form-control" value="${data ? escapeHtml(data) : ''}" placeholder="Enter accessory name" required>
+                        </div>
+                    `;
+                default:
+                    return `
+                        <div class="form-group">
+                            <label><i class="fas fa-cog"></i> ${getTypeDisplayName(type)}</label>
+                            <input type="text" id="itemValue" class="form-control" value="${data ? escapeHtml(data) : ''}" required>
+                        </div>
+                    `;
+            }
+        }
+
+        
+        function initializeAccessoriesSearch() {
+            const searchInput = document.getElementById('accessoriesSearch');
+            const dropdownList = document.getElementById('accessoriesDropdownList');
+            
+            if (!searchInput || !dropdownList) return;
+            
+            
+            populateAccessoriesDropdown('');
+            
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                populateAccessoriesDropdown(searchTerm);
+                showDropdown();
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                showDropdown();
+            });
+            
+            searchInput.addEventListener('keydown', function(e) {
+                handleKeyNavigation(e);
+            });
+            
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.accessories-dropdown')) {
+                    hideDropdown();
+                }
+            });
+        }
+        
+        function populateAccessoriesDropdown(searchTerm) {
+            const dropdownList = document.getElementById('accessoriesDropdownList');
+            if (!dropdownList) return;
+            
+            
+            const selectedAccessories = Array.from(document.querySelectorAll('#accessoriesSelector .accessory-chip'))
+                .map(chip => chip.textContent.replace('×', '').trim());
+            
+            
+            const filteredAccessories = availableAccessories.filter(acc => 
+                acc.toLowerCase().includes(searchTerm) && !selectedAccessories.includes(acc)
+            );
+            
+            dropdownList.innerHTML = '';
+            currentHighlightedIndex = -1;
+            
+            if (filteredAccessories.length === 0) {
+                dropdownList.innerHTML = '<div class="no-results">No accessories found</div>';
+            } else {
+                filteredAccessories.forEach((accessory, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'accessories-dropdown-item';
+                    item.textContent = accessory;
+                    item.addEventListener('click', function() {
+                        addAccessoryFromDropdown(accessory);
+                    });
+                    dropdownList.appendChild(item);
+                });
+            }
+        }
+        
+        function showDropdown() {
+            const dropdownList = document.getElementById('accessoriesDropdownList');
+            if (dropdownList) {
+                dropdownList.classList.add('show');
+            }
+        }
+        
+        function hideDropdown() {
+            const dropdownList = document.getElementById('accessoriesDropdownList');
+            if (dropdownList) {
+                dropdownList.classList.remove('show');
+            }
+            currentHighlightedIndex = -1;
+        }
+        
+        function handleKeyNavigation(e) {
+            const dropdownList = document.getElementById('accessoriesDropdownList');
+            const items = dropdownList.querySelectorAll('.accessories-dropdown-item:not(.no-results)');
+            
+            if (items.length === 0) return;
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    currentHighlightedIndex = Math.min(currentHighlightedIndex + 1, items.length - 1);
+                    updateHighlight(items);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    currentHighlightedIndex = Math.max(currentHighlightedIndex - 1, -1);
+                    updateHighlight(items);
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (currentHighlightedIndex >= 0 && currentHighlightedIndex < items.length) {
+                        const selectedItem = items[currentHighlightedIndex];
+                        addAccessoryFromDropdown(selectedItem.textContent);
+                    }
+                    break;
+                case 'Escape':
+                    hideDropdown();
+                    break;
+            }
+        }
+        
+        function updateHighlight(items) {
+            items.forEach((item, index) => {
+                if (index === currentHighlightedIndex) {
+                    item.classList.add('highlighted');
+                } else {
+                    item.classList.remove('highlighted');
+                }
+            });
+        }
+        
+        function addAccessoryFromDropdown(accessory) {
+            const selector = document.getElementById('accessoriesSelector');
+            const searchInput = document.getElementById('accessoriesSearch');
+            
+            if (selector && accessory) {
+                
+                const existing = Array.from(selector.querySelectorAll('.accessory-chip')).find(chip => 
+                    chip.textContent.replace('×', '').trim() === accessory
+                );
+                
+                if (!existing) {
+                    const chip = document.createElement('span');
+                    chip.className = 'accessory-chip';
+                    chip.innerHTML = `${escapeHtml(accessory)}<button type="button" class="remove-chip" onclick="removeAccessoryChip(this)">×</button>`;
+                    selector.appendChild(chip);
+                }
+                
+                
+                if (searchInput) {
+                    searchInput.value = '';
+                    populateAccessoriesDropdown('');
+                }
+                
+                hideDropdown();
+            }
+        }
+
+        function removeAccessoryChip(button) {
+            button.parentElement.remove();
+            
+            const searchInput = document.getElementById('accessoriesSearch');
+            if (searchInput) {
+                populateAccessoriesDropdown(searchInput.value.toLowerCase());
+            }
+        }
+
+        function saveItem() {
+            const type = currentEditType;
+            const index = currentEditIndex;
+            
+            let newData;
+            
+            switch(type) {
+                case 'user':
+                case 'admin':
+                    const username = document.getElementById('username').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    
+                    if (!username || !email) {
+                        showAlert('error', 'Missing Information', 'Please fill in all fields');
+                        return;
+                    }
+                    
+                    if (!isValidEmail(email)) {
+                        showAlert('error', 'Invalid Email', 'Please enter a valid email address');
+                        return;
+                    }
+                    
+                    newData = { username, email };
+                    break;
+                    
+                case 'companyCar':
+                    const carModel = document.getElementById('carModel').value.trim();
+                    const plateNumber = document.getElementById('plateNumber').value.trim();
+                    
+                    if (!carModel || !plateNumber) {
+                        showAlert('error', 'Missing Information', 'Please fill in all fields');
+                        return;
+                    }
+                    
+                    newData = `${carModel} / ${plateNumber}`;
+                    break;
+                    
+                case 'device':
+                    const deviceName = document.getElementById('deviceName').value.trim();
+                    const accessoryChips = Array.from(document.querySelectorAll('#accessoriesSelector .accessory-chip'));
+                    const accessories = accessoryChips.map(chip => chip.textContent.replace('×', '').trim());
+                    
+                    if (!deviceName) {
+                        showAlert('error', 'Missing Information', 'Please enter a device name');
+                        return;
+                    }
+                    
+                    newData = { name: deviceName, accessories };
+                    break;
+                    
+                default:
+                    const itemValue = document.getElementById('itemValue').value.trim();
+                    
+                    if (!itemValue) {
+                        showAlert('error', 'Missing Information', 'Please enter a value');
+                        return;
+                    }
+                    
+                    newData = itemValue;
+                    break;
+            }
+            
+            
+            if (index === -1) {
+                
+                addItemToData(type, newData);
+                showAlert('success', 'Success', `${getTypeDisplayName(type)} added successfully`);
+            } else {
+                
+                updateItemInData(type, index, newData);
+                showAlert('success', 'Success', `${getTypeDisplayName(type)} updated successfully`);
+            }
+            
+            closeModal();
+            saveToSheet(type, index === -1 ? 'add' : 'edit', newData, index);
+        }
+
+        function addItemToData(type, data) {
+            switch(type) {
+                case 'user':
+                    currentData.users.push(data);
+                    populateUsers(currentData.users);
+                    break;
+                case 'admin':
+                    currentData.admins.push(data);
+                    populateAdmins(currentData.admins);
+                    break;
+                case 'eventType':
+                    currentData.eventTypes.push(data);
+                    populateEventTypes(currentData.eventTypes);
+                    break;
+                case 'pettyCashType':
+                    currentData.pettyCashTypes.push(data);
+                    populatePettyCashTypes(currentData.pettyCashTypes);
+                    break;
+                case 'expensesBudgetType':
+                    currentData.expensesBudgetTypes.push(data);
+                    populateExpensesBudgetTypes(currentData.expensesBudgetTypes);
+                    break;
+                case 'officeAsset':
+                    currentData.officeAssets.push(data);
+                    populateOfficeAssets(currentData.officeAssets);
+                    break;
+                case 'companyCar':
+                    currentData.companyCars.push(data);
+                    populateCompanyCars(currentData.companyCars);
+                    break;
+                case 'device':
+                    currentData.devices.push(data);
+                    populateDevices(currentData.devices);
+                    break;
+                case 'accessory':
+                    availableAccessories.push(data);
+                    populateAccessories(currentData.accessories);
+                    break;
+            }
+        }
+
+        function updateItemInData(type, index, data) {
+            switch(type) {
+                case 'user':
+                    currentData.users[index] = data;
+                    populateUsers(currentData.users);
+                    break;
+                case 'admin':
+                    currentData.admins[index] = data;
+                    populateAdmins(currentData.admins);
+                    break;
+                case 'eventType':
+                    currentData.eventTypes[index] = data;
+                    populateEventTypes(currentData.eventTypes);
+                    break;
+                case 'pettyCashType':
+                    currentData.pettyCashTypes[index] = data;
+                    populatePettyCashTypes(currentData.pettyCashTypes);
+                    break;
+                case 'expensesBudgetType':
+                    currentData.expensesBudgetTypes[index] = data;
+                    populateExpensesBudgetTypes(currentData.expensesBudgetTypes);
+                    break;
+                case 'officeAsset':
+                    currentData.officeAssets[index] = data;
+                    populateOfficeAssets(currentData.officeAssets);
+                    break;
+                case 'companyCar':
+                    currentData.companyCars[index] = data;
+                    populateCompanyCars(currentData.companyCars);
+                    break;
+                case 'device':
+                    currentData.devices[index] = data;
+                    populateDevices(currentData.devices);
+                    break;
+                case 'accessory':
+                    const oldValue = currentData.accessories[index];
+                    currentData.accessories[index] = data;
+                    
+                    const accIndex = availableAccessories.indexOf(oldValue);
+                    if (accIndex !== -1) {
+                        availableAccessories[accIndex] = data;
+                    }
+                    populateAccessories(currentData.accessories);
+                    break;
+            }
+        }
+
+        
+        function editUser(index) {
+            openEditModal('user', index, currentData.users[index]);
+        }
+
+        function editAdmin(index) {
+            openEditModal('admin', index, currentData.admins[index]);
+        }
+
+        function editEventType(index) {
+            openEditModal('eventType', index, currentData.eventTypes[index]);
+        }
+
+        function editPettyCashType(index) {
+            openEditModal('pettyCashType', index, currentData.pettyCashTypes[index]);
+        }
+
+        function editExpensesBudgetType(index) {
+            openEditModal('expensesBudgetType', index, currentData.expensesBudgetTypes[index]);
+        }
+
+        function editOfficeAsset(index) {
+            openEditModal('officeAsset', index, currentData.officeAssets[index]);
+        }
+
+        function editCompanyCar(index) {
+            openEditModal('companyCar', index, currentData.companyCars[index]);
+        }
+
+        function editDevice(index) {
+            openEditModal('device', index, currentData.devices[index]);
+        }
+
+        function editAccessory(index) {
+            openEditModal('accessory', index, currentData.accessories[index]);
+        }
+
+        
+        function deleteUser(index) {
+            showConfirm('Delete User', 'Are you sure you want to delete this user?', function() {
+                currentData.users.splice(index, 1);
+                populateUsers(currentData.users);
+                saveToSheet('user', 'delete', null, index);
+                showAlert('success', 'Success', 'User deleted successfully');
+            });
+        }
+
+        function deleteAdmin(index) {
+            showConfirm('Delete Administrator', 'Are you sure you want to delete this administrator?', function() {
+                currentData.admins.splice(index, 1);
+                populateAdmins(currentData.admins);
+                saveToSheet('admin', 'delete', null, index);
+                showAlert('success', 'Success', 'Administrator deleted successfully');
+            });
+        }
+
+        function deleteEventType(index) {
+            showConfirm('Delete Event Type', 'Are you sure you want to delete this event type?', function() {
+                currentData.eventTypes.splice(index, 1);
+                populateEventTypes(currentData.eventTypes);
+                saveToSheet('eventType', 'delete', null, index);
+                showAlert('success', 'Success', 'Event type deleted successfully');
+            });
+        }
+
+        function deletePettyCashType(index) {
+            showConfirm('Delete Transaction Type', 'Are you sure you want to delete this petty cash transaction type?', function() {
+                currentData.pettyCashTypes.splice(index, 1);
+                populatePettyCashTypes(currentData.pettyCashTypes);
+                saveToSheet('pettyCashType', 'delete', null, index);
+                showAlert('success', 'Success', 'Transaction type deleted successfully');
+            });
+        }
+
+        function deleteExpensesBudgetType(index) {
+            showConfirm('Delete Expense Type', 'Are you sure you want to delete this expenses & budget type?', function() {
+                currentData.expensesBudgetTypes.splice(index, 1);
+                populateExpensesBudgetTypes(currentData.expensesBudgetTypes);
+                saveToSheet('expensesBudgetType', 'delete', null, index);
+                showAlert('success', 'Success', 'Expense type deleted successfully');
+            });
+        }
+
+        function deleteOfficeAsset(index) {
+            showConfirm('Delete Office Asset', 'Are you sure you want to delete this office asset?', function() {
+                currentData.officeAssets.splice(index, 1);
+                populateOfficeAssets(currentData.officeAssets);
+                saveToSheet('officeAsset', 'delete', null, index);
+                showAlert('success', 'Success', 'Office asset deleted successfully');
+            });
+        }
+
+        function deleteCompanyCar(index) {
+            showConfirm('Delete Company Car', 'Are you sure you want to delete this company car?', function() {
+                currentData.companyCars.splice(index, 1);
+                populateCompanyCars(currentData.companyCars);
+                saveToSheet('companyCar', 'delete', null, index);
+                showAlert('success', 'Success', 'Company car deleted successfully');
+            });
+        }
+
+        function deleteDevice(index) {
+            showConfirm('Delete Device', 'Are you sure you want to delete this device?', function() {
+                currentData.devices.splice(index, 1);
+                populateDevices(currentData.devices);
+                saveToSheet('device', 'delete', null, index);
+                showAlert('success', 'Success', 'Device deleted successfully');
+            });
+        }
+
+        function deleteAccessory(index) {
+            showConfirm('Delete Accessory', 'Are you sure you want to delete this accessory?', function() {
+                const deletedAccessory = currentData.accessories[index];
+                currentData.accessories.splice(index, 1);
+                
+                const accIndex = availableAccessories.indexOf(deletedAccessory);
+                if (accIndex !== -1) {
+                    availableAccessories.splice(accIndex, 1);
+                }
+                populateAccessories(currentData.accessories);
+                saveToSheet('accessory', 'delete', null, index);
+                showAlert('success', 'Success', 'Accessory deleted successfully');
+            });
+        }
+
+        function saveToSheet(type, action, data, index) {
+            google.script.run
+                .withSuccessHandler(() => {
+                    console.log('Data saved successfully');
+                })
+                .withFailureHandler((error) => {
+                    console.error('Error saving data:', error);
+                    showAlert('error', 'Error', 'Error saving data: ' + error.toString());
+                    
+                    loadSettingsData();
+                })
+                .updateSettingsData(type, action, data, index);
+        }
+
+        
+        function showAlert(type, title, message) {
+            const alertModal = document.getElementById('alert-modal');
+            const alertIcon = document.getElementById('alert-icon');
+            const alertTitle = document.getElementById('alert-title');
+            const alertMessage = document.getElementById('alert-message');
+            
+            
+            let iconClass = '';
+            switch(type) {
+                case 'success':
+                    iconClass = 'fas fa-check-circle';
+                    alertIcon.className = 'alert-icon success';
+                    break;
+                case 'error':
+                    iconClass = 'fas fa-exclamation-circle';
+                    alertIcon.className = 'alert-icon error';
+                    break;
+                case 'warning':
+                    iconClass = 'fas fa-exclamation-triangle';
+                    alertIcon.className = 'alert-icon warning';
+                    break;
+                case 'info':
+                    iconClass = 'fas fa-info-circle';
+                    alertIcon.className = 'alert-icon info';
+                    break;
+            }
+            
+            alertIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+            
+            alertModal.style.display = 'block';
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alert-modal').style.display = 'none';
+        }
+
+        function showConfirm(title, message, callback) {
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmTitle = document.getElementById('confirm-title');
+            const confirmMessage = document.getElementById('confirm-message');
+            const confirmOk = document.getElementById('confirm-ok');
+            const confirmCancel = document.getElementById('confirm-cancel');
+            
+            confirmTitle.textContent = title;
+            confirmMessage.textContent = message;
+            
+            
+            confirmCallback = callback;
+            
+            
+            confirmOk.onclick = function() {
+                closeConfirmModal();
+                if (confirmCallback) confirmCallback();
+            };
+            
+            confirmCancel.onclick = closeConfirmModal;
+            
+            confirmModal.style.display = 'block';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').style.display = 'none';
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = text.toString();
+            return div.innerHTML;
+        }
+
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            const alertModal = document.getElementById('alert-modal');
+            const confirmModal = document.getElementById('confirm-modal');
+            
+            if (event.target === modal) {
+                closeModal();
+            } else if (event.target === alertModal) {
+                closeAlertModal();
+            } else if (event.target === confirmModal) {
+                closeConfirmModal();
+            }
+        }
+    </script>
+</body>
+</html>

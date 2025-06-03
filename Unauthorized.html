@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root {
+        --color-primary: #2D0C31;
+        --color-secondary: #004D4D;
+        --color-accent: #00B894;
+        --color-light: #B8B5FF;
+        --color-lighter: #B8FFB5;
+      }
+      
+      body {
+        font-family: 'Arial', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        color: white;
+      }
+      
+      .card {
+        width: 100%;
+        max-width: 500px;
+        padding: 40px 30px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      
+      .icon {
+        font-size: 3.5rem;
+        color: var(--color-accent);
+        margin-bottom: 20px;
+      }
+      
+      h1 {
+        margin: 0 0 15px;
+        font-size: 2rem;
+        color: white;
+      }
+      
+      p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        opacity: 0.9;
+      }
+      
+      .contact {
+        font-size: 0.9rem;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="icon">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h1>Unauthorized Access</h1>
+      <p>We're sorry, but your email address doesn't have permission to access this resource.</p>
+      <p>If you believe this is an error, please contact your system administrator.</p>
+      <div class="contact">
+        <i class="fas fa-envelope"></i> mohamedaiman103@gmail.com
+      </div>
+    </div>
+  </body>
+</html>

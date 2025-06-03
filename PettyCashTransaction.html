@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Petty Cash Usage Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              lavender: '#B4B4FF',
+              purple: '#2A0044',
+              teal: '#006666',
+              emerald: '#00CC88',
+              lime: '#BBFF99',
+              darkPurple: '#1A0033',
+              lightTeal: '#00999A'
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              slideDown: {
+                '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              },
+              pulse: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.5' }
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              },
+              scaleOut: {
+                '0%': { transform: 'scale(1)', opacity: '1' },
+                '100%': { transform: 'scale(0.9)', opacity: '0' }
+              }
+            },
+            animation: {
+              fadeIn: 'fadeIn 0.5s ease-out',
+              slideUp: 'slideUp 0.5s ease-out',
+              slideDown: 'slideDown 0.5s ease-out',
+              pulse: 'pulse 1.5s ease-in-out infinite',
+              scaleIn: 'scaleIn 0.3s ease-out',
+              scaleOut: 'scaleOut 0.3s ease-out'
+            },
+            boxShadow: {
+              'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+              'glow': '0 0 15px rgba(0, 204, 136, 0.5)'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .drag-active {
+        border-color: #00CC88 !important;
+        background-color: rgba(187, 255, 153, 0.1) !important;
+      }
+      
+      /* Advanced Loading Spinner */
+      .spinner-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+      
+      .spinner-ring {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+      }
+      
+      .spinner-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 6px solid #006666;
+        border-radius: 50%;
+        animation: spinner-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #006666 transparent transparent transparent;
+      }
+      
+      .spinner-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+      }
+      
+      .spinner-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+      }
+      
+      .spinner-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+      }
+      
+      @keyframes spinner-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      /* Loading dots animation */
+      .loading-dots:after {
+        content: '.';
+        animation: loading-dots 1.5s infinite;
+      }
+      
+      @keyframes loading-dots {
+        0%, 20% { content: '.'; }
+        40% { content: '..'; }
+        60%, 100% { content: '...'; }
+      }
+      
+      /* Modal backdrop */
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .modal-content {
+        background-color: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        width: 90%;
+        max-width: 500px;
+        transform: scale(0.9);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+      
+      .modal-backdrop.active {
+        opacity: 1;
+      }
+      
+      .modal-backdrop.active .modal-content {
+        transform: scale(1);
+        opacity: 1;
+      }
+      
+      /* Form field animations */
+      .form-field {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      
+      /* Custom input styles */
+      .custom-input {
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+      
+      .custom-input:focus {
+        border-color: #006666;
+        box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.2);
+      }
+      
+      .custom-input:hover:not(:focus) {
+        border-color: #00999A;
+      }
+      
+      /* Button styles */
+      .btn-primary {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: all 0.5s ease;
+      }
+      
+      .btn-primary:hover:before {
+        left: 100%;
+      }
+      
+      .btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      /* Loading overlay */
+      #loadingScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+      
+      /* Success checkmark animation */
+      .checkmark {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #00CC88;
+        stroke-miterlimit: 10;
+        box-shadow: inset 0px 0px 0px #00CC88;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        position: relative;
+        margin: 0 auto;
+      }
+      
+      .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #00CC88;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+      }
+      
+      .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+      }
+      
+      @keyframes stroke {
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      
+      @keyframes scale {
+        0%, 100% {
+          transform: none;
+        }
+        50% {
+          transform: scale3d(1.1, 1.1, 1);
+        }
+      }
+      
+      @keyframes fill {
+        100% {
+          box-shadow: inset 0px 0px 0px 30px #00CC88;
+        }
+      }
+      
+      /* Error X animation */
+      .error-x {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #FF5252;
+        stroke-miterlimit: 10;
+        box-shadow: inset 0px 0px 0px #FF5252;
+        animation: error-fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        position: relative;
+        margin: 0 auto;
+      }
+      
+      .error-x__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #FF5252;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+      }
+      
+      .error-x__line {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+      }
+      
+      @keyframes error-fill {
+        100% {
+          box-shadow: inset 0px 0px 0px 30px #FF5252;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-lavender to-lime min-h-screen">
+    <!-- Loading Screen with Advanced Spinner -->
+    <div id="loadingScreen">
+      <div class="spinner-container">
+        <div class="spinner-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <p class="text-purple font-medium text-lg mt-4">Loading form<span class="loading-dots"></span></p>
+      </div>
+    </div>
+    
+    <!-- Success Modal Template -->
+    <div id="successModal" class="modal-backdrop hidden">
+      <div class="modal-content p-6">
+        <div class="text-center">
+          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+          <h3 class="text-2xl font-bold text-emerald mt-4">Success!</h3>
+          <p class="text-gray-600 mt-2" id="successMessage">Your form has been submitted successfully.</p>
+          <button class="mt-6 px-6 py-2 bg-emerald text-white rounded-lg shadow-md hover:bg-teal transition-colors duration-300 close-modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Error Modal Template -->
+    <div id="errorModal" class="modal-backdrop hidden">
+      <div class="modal-content p-6">
+        <div class="text-center">
+          <svg class="error-x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="error-x__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="error-x__line" fill="none" d="M16 16 36 36 M36 16 16 36"/>
+          </svg>
+          <h3 class="text-2xl font-bold text-red-500 mt-4">Error</h3>
+          <p class="text-gray-600 mt-2" id="errorMessage">Something went wrong. Please try again.</p>
+          <button class="mt-6 px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300 close-modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden animate-fadeIn">
+        <div class="bg-gradient-to-r from-purple to-darkPurple text-white p-6">
+          <h2 class="text-2xl font-bold flex items-center">
+            <i class="fas fa-money-bill-wave mr-2"></i> Petty Cash Usage Form
+          </h2>
+          <p class="text-lavender/80">Please fill in the details below</p>
+        </div>
+        
+        <form id="pettyCashForm" class="p-6 space-y-6">
+          <!-- User Field -->
+          <div class="form-field">
+            <label for="user" class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-user mr-1"></i> User
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-id-badge text-gray-400"></i>
+              </div>
+              <input type="text" id="user" name="user" readonly
+                class="custom-input pl-10 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none">
+            </div>
+          </div>
+          
+          <!-- Purpose Field -->
+          <div class="form-field">
+            <label for="purpose" class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-clipboard-list mr-1"></i> Purpose
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-tasks text-gray-400"></i>
+              </div>
+              <input type="text" id="purpose" name="purpose" required
+                class="custom-input pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none">
+            </div>
+          </div>
+          
+          <!-- Transaction Type Field -->
+          <div class="form-field">
+            <label for="transactionType" class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-tags mr-1"></i> Transaction Type
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-tag text-gray-400"></i>
+              </div>
+              <select id="transactionType" name="transactionType" required
+                class="custom-input pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none appearance-none">
+                <option value="">Please select a transaction type</option>
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <i class="fas fa-chevron-down text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Amount Field -->
+          <div class="form-field">
+            <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-coins mr-1"></i> Amount (RM)
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-500 sm:text-sm">RM</span>
+              </div>
+              <input type="number" name="amount" id="amount" required step="0.01" min="0"
+                class="custom-input pl-12 pr-3 py-2 block w-full sm:text-sm border-gray-300 rounded-md focus:outline-none"
+                placeholder="0.00">
+            </div>
+          </div>
+          
+          <!-- File Upload Field -->
+          <div class="form-field">
+            <label for="additionalDocs" class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-file-upload mr-1"></i> Additional Documents
+            </label>
+            <div id="dropZone" 
+              class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md transition-all duration-300 ease-in-out hover:border-teal hover:bg-teal/5">
+              <div class="space-y-1 text-center">
+                <i class="fas fa-cloud-upload-alt text-gray-400 text-4xl mb-2"></i>
+                <div class="flex flex-col sm:flex-row text-sm text-gray-600 justify-center">
+                  <label for="additionalDocs" class="relative cursor-pointer bg-white rounded-md font-medium text-emerald hover:text-teal transition-colors duration-200">
+                    <span>Upload a file</span>
+                    <input id="additionalDocs" name="additionalDocs" type="file" class="sr-only" required>
+                  </label>
+                  <p class="pl-1">or drag and drop</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-2" id="fileInfo">
+                  <i class="fas fa-times-circle mr-1"></i> No file selected
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Remarks Field -->
+          <div class="form-field">
+            <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-comment-alt mr-1"></i> Remarks (Optional)
+            </label>
+            <div class="relative">
+              <div class="absolute top-3 left-3 pointer-events-none">
+                <i class="fas fa-pencil-alt text-gray-400"></i>
+              </div>
+              <textarea id="remarks" name="remarks" rows="3"
+                class="custom-input pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none"></textarea>
+            </div>
+          </div>
+          
+          <!-- Submit Button -->
+          <div class="pt-4 form-field">
+            <button type="submit" id="submitButton"
+              class="btn-primary w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-md text-sm font-medium text-white bg-gradient-to-r from-teal to-emerald hover:from-teal hover:to-lightTeal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal transition-all duration-300 transform hover:scale-[1.02] hover:shadow-glow">
+              <i class="fas fa-paper-plane mr-2"></i> Submit Form
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      
+      function animateFormFields() {
+        const formFields = document.querySelectorAll('.form-field');
+        formFields.forEach((field, index) => {
+          setTimeout(() => {
+            field.style.animation = 'fadeIn 0.5s ease-out forwards';
+            field.style.opacity = '1';
+            field.style.transform = 'translateY(0)';
+          }, 100 * index);
+        });
+      }
+
+      
+      function showModal(modalId, message) {
+        const modal = document.getElementById(modalId);
+        if (modalId === 'successModal') {
+          document.getElementById('successMessage').textContent = message;
+        } else {
+          document.getElementById('errorMessage').textContent = message;
+        }
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modal.classList.add('active');
+        }, 10);
+        
+        
+        modal.querySelectorAll('.close-modal').forEach(button => {
+          button.addEventListener('click', () => closeModal(modal));
+        });
+        
+        
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModal(modal);
+          }
+        });
+      }
+      
+      function closeModal(modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+      }
+
+      
+      window.onload = function() {
+        Promise.all([
+          new Promise(resolve => {
+            google.script.run.withSuccessHandler(function(user) {
+              document.getElementById('user').value = user;
+              resolve();
+            }).getUserInfo();
+          }),
+          new Promise(resolve => {
+            google.script.run.withSuccessHandler(function(types) {
+              var select = document.getElementById('transactionType');
+              types.forEach(function(type) {
+                var option = document.createElement('option');
+                option.text = type;
+                option.value = type;
+                select.add(option);
+              });
+              resolve();
+            }).getTransactionTypes();
+          })
+        ]).then(() => {
+          setTimeout(() => {
+            hideLoadingScreen();
+            animateFormFields();
+          }, 800); 
+        });
+      };
+
+      function hideLoadingScreen() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+
+      
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('additionalDocs');
+      const fileInfo = document.getElementById('fileInfo');
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+
+      function highlight(e) {
+        dropZone.classList.add('drag-active');
+      }
+
+      function unhighlight(e) {
+        dropZone.classList.remove('drag-active');
+      }
+
+      dropZone.addEventListener('drop', handleDrop, false);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        updateFileInfo();
+      }
+
+      fileInput.addEventListener('change', updateFileInfo);
+
+      function updateFileInfo() {
+        const file = fileInput.files[0];
+        if (file) {
+          const fileSize = (file.size / 1024).toFixed(2);
+          const fileSizeUnit = fileSize > 1024 ? 'MB' : 'KB';
+          const formattedSize = fileSize > 1024 ? (fileSize / 1024).toFixed(2) : fileSize;
+          
+          fileInfo.innerHTML = `
+            <i class="fas fa-file-alt mr-1 text-emerald"></i> 
+            <span class="font-medium text-emerald">${file.name}</span>
+            <span class="text-gray-500"> (${formattedSize} ${fileSizeUnit})</span>
+          `;
+          
+          
+          fileInfo.classList.add('animate-pulse');
+          setTimeout(() => {
+            fileInfo.classList.remove('animate-pulse');
+          }, 1000);
+        } else {
+          fileInfo.innerHTML = '<i class="fas fa-times-circle mr-1"></i> No file selected';
+        }
+      }
+
+      
+      document.getElementById('pettyCashForm').onsubmit = function(e) {
+        e.preventDefault();
+        const form = this;
+        const submitButton = document.getElementById('submitButton');
+        const file = fileInput.files[0];
+
+        if (file && file.size > 5 * 1024 * 1024) {
+          showModal('errorModal', 'File size exceeds 5MB limit. Please choose a smaller file.');
+          return;
+        }
+
+        
+        submitButton.disabled = true;
+        submitButton.classList.add('opacity-70', 'cursor-not-allowed');
+        submitButton.innerHTML = `
+          <div class="inline-block mr-2">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          Processing submission<span class="loading-dots"></span>
+        `;
+        
+        
+        const overlay = document.createElement('div');
+        overlay.id = 'formOverlay';
+        overlay.className = 'absolute inset-0 bg-white bg-opacity-50 z-10 flex items-center justify-center';
+        form.style.position = 'relative';
+        form.appendChild(overlay);
+        
+        google.script.run
+          .withSuccessHandler(function(result) {
+            
+            submitButton.disabled = false;
+            submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+            submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Submit Form';
+            
+            
+            if (document.getElementById('formOverlay')) {
+              document.getElementById('formOverlay').remove();
+            }
+            
+            
+            showModal('successModal', 'Form submitted successfully!');
+            
+            
+            form.reset();
+            fileInfo.innerHTML = '<i class="fas fa-times-circle mr-1"></i> No file selected';
+            document.getElementById('remarks').value = ''; 
+            
+            
+            google.script.run.withSuccessHandler(function(user) {
+              document.getElementById('user').value = user;
+            }).getUserInfo();
+          })
+          .withFailureHandler(function(error) {
+            
+            submitButton.disabled = false;
+            submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+            submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Submit Form';
+            
+            
+            if (document.getElementById('formOverlay')) {
+              document.getElementById('formOverlay').remove();
+            }
+            
+            
+            showModal('errorModal', error.message || 'An error occurred while submitting the form.');
+          })
+          .submitForm(form);
+      };
+
+      
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        
+        input.addEventListener('focus', () => {
+          input.parentElement.classList.add('scale-[1.01]');
+          input.parentElement.style.transition = 'all 0.2s ease-in-out';
+        });
+        
+        
+        input.addEventListener('blur', () => {
+          input.parentElement.classList.remove('scale-[1.01]');
+          
+          
+          if (!input.readOnly && input.required && input.value.trim() === '') {
+            input.classList.add('border-red-300');
+            input.classList.add('bg-red-50');
+            
+            
+            input.parentElement.classList.add('animate-shake');
+            setTimeout(() => {
+              input.parentElement.classList.remove('animate-shake');
+            }, 500);
+          } else {
+            input.classList.remove('border-red-300');
+            input.classList.remove('bg-red-50');
+          }
+        });
+        
+        
+        input.addEventListener('input', () => {
+          if (input.required && input.value.trim() !== '') {
+            input.classList.remove('border-red-300');
+            input.classList.remove('bg-red-50');
+          }
+        });
+      });
+      
+      
+      document.querySelectorAll('.modal-backdrop').forEach(modal => {
+        
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal(modal);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

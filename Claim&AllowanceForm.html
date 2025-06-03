@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claims & Allowances Form</title>
+  <!-- Add Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --color-primary: #2D0C31;
+      --color-secondary: #004D4D;
+      --color-accent: #00B894;
+      --color-light: #B8B5FF;
+      --color-lighter: #B8FFB5;
+      --transition-speed: 0.3s;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--color-primary);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+      min-height: 100vh;
+    }
+    
+    h1 {
+      text-align: center;
+      color: var(--color-primary);
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      animation: fadeInDown 0.8s ease-out;
+    }
+    
+    .form-section {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all var(--transition-speed) ease;
+      border-left: 5px solid var(--color-accent);
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .form-section:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+    
+    .form-section h2 {
+      margin-top: 0;
+      border-bottom: 2px solid var(--color-accent);
+      padding-bottom: 10px;
+      color: var(--color-secondary);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .form-section h2 i {
+      margin-right: 10px;
+      color: var(--color-accent);
+      transition: transform 0.3s ease;
+    }
+    
+    .form-section:hover h2 i {
+      transform: scale(1.2);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+      transition: all var(--transition-speed) ease;
+    }
+    
+    .form-group:hover {
+      transform: translateX(5px);
+    }
+    
+    .form-group i.input-icon {
+      position: absolute;
+      left: 12px;
+      top: 40px;
+      color: var(--color-secondary);
+      opacity: 0.7;
+    }
+    
+    .icon-input {
+      padding-left: 35px !important;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--color-secondary);
+      transition: color 0.2s ease;
+    }
+    
+    .form-group:hover label {
+      color: var(--color-accent);
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+      outline: none;
+      transform: scale(1.01);
+    }
+    
+    input[readonly] {
+      background-color: rgba(184, 181, 255, 0.2);
+      cursor: not-allowed;
+    }
+    
+    .input-disabled {
+      background-color: rgba(184, 181, 255, 0.2);
+      cursor: not-allowed;
+    }
+    
+    button {
+      background-color: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all var(--transition-speed) ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button i {
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    
+    button:hover i {
+      transform: scale(1.2);
+    }
+    
+    button:hover {
+      background-color: #00a080;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    button:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 0;
+        transform: scale(40, 40);
+      }
+    }
+    
+    .add-button {
+      background-color: var(--color-secondary);
+      margin-top: 15px;
+    }
+    
+    .add-button:hover {
+      background-color: #003939;
+    }
+    
+    .remove-button {
+      background-color: #e74c3c;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .remove-button i {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    
+    .remove-button:hover {
+      background-color: #c0392b;
+      transform: rotate(90deg);
+    }
+    
+    .nested-section {
+      margin-left: 20px;
+      padding: 15px;
+      border-left: 3px solid var(--color-accent);
+      margin-bottom: 20px;
+      background-color: rgba(184, 255, 181, 0.1);
+      border-radius: 0 6px 6px 0;
+      transition: all 0.3s ease;
+    }
+    
+    .nested-section:hover {
+      background-color: rgba(184, 255, 181, 0.2);
+      border-left-width: 5px;
+    }
+    
+    .checkbox-group {
+      margin-bottom: 12px;
+      transition: transform 0.2s ease;
+    }
+    
+    .checkbox-group:hover {
+      transform: translateX(5px);
+    }
+    
+    .checkbox-label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    
+    .checkbox-label:hover {
+      color: var(--color-accent);
+    }
+    
+    .checkbox-label input {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-accent);
+      transition: transform 0.2s ease;
+    }
+    
+    .checkbox-label:hover input {
+      transform: scale(1.2);
+    }
+    
+    .total-section {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #3d1142 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin: 40px 0;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      animation: slideInUp 0.8s ease-out;
+    }
+    
+    .total-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    
+    .total-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      transform: rotate(30deg);
+      pointer-events: none;
+    }
+    
+    .total-amount {
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .total-amount i {
+      margin-right: 15px;
+      font-size: 2.8rem;
+      color: var(--color-accent);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    .currency {
+      font-size: 1.8rem;
+      margin-right: 5px;
+      color: var(--color-accent);
+    }
+    
+    .notice {
+      font-size: 0.9rem;
+      font-style: italic;
+      text-align: center;
+      margin-top: 15px;
+      color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+    }
+    
+    .notice i {
+      margin-right: 8px;
+      font-size: 0.9rem;
+      color: var(--color-accent);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 30px;
+      font-style: italic;
+      color: var(--color-secondary);
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 1s ease;
+    }
+    
+    .loading i {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: var(--color-accent);
+      animation: spin 1s infinite linear;
+    }
+    
+    .error {
+      color: #e74c3c;
+      font-weight: bold;
+      margin-top: 8px;
+      padding: 5px 10px;
+      background-color: rgba(231, 76, 60, 0.1);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      animation: shake 0.5s ease;
+    }
+    
+    .error i {
+      margin-right: 8px;
+      color: #e74c3c;
+    }
+    
+    .success {
+      color: var(--color-secondary);
+      font-weight: bold;
+      text-align: center;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      border: 2px solid var(--color-accent);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin: 20px 0;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    .success h2 {
+      color: var(--color-accent);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .success h2 i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+      animation: bounceIn 0.8s ease;
+    }
+    
+    .success button {
+      margin-top: 20px;
+    }
+    
+    .file-upload {
+      margin-top: 12px;
+      position: relative;
+    }
+    
+    .file-drop-area {
+      border: 2px dashed var(--color-secondary);
+      border-radius: 8px;
+      padding: 25px 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background-color: rgba(0, 77, 77, 0.05);
+      position: relative;
+    }
+    
+    .file-drop-area.highlight {
+      border-color: var(--color-accent);
+      background-color: rgba(0, 184, 148, 0.1);
+      transform: scale(1.02);
+    }
+    
+    .file-drop-area.has-file {
+      border-color: var(--color-accent);
+      background-color: rgba(0, 184, 148, 0.1);
+    }
+    
+    .file-message {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .file-message i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    
+    .file-upload-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-secondary);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .file-upload-label i {
+      margin-right: 8px;
+    }
+    
+    .file-upload-label:hover {
+      background-color: #003939;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .file-upload input[type="file"] {
+      display: none;
+    }
+    
+    .file-info {
+      margin-top: 15px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .file-info.visible {
+      display: block;
+    }
+
+    .file-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      background-color: var(--color-accent);
+      color: white;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-right: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .file-pill i {
+      margin-right: 6px;
+    }
+
+    .file-pill .remove-button.small {
+      background: transparent;
+      border: none;
+      color: white;
+      margin-left: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+
+    .file-pill:hover {
+      background-color: rgba(0, 184, 148, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      transform: scale(0.9);
+      transition: all 0.3s ease;
+    }
+
+    .overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal h2 {
+      color: var(--color-accent);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal h2 i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+      animation: bounceIn 0.8s ease;
+    }
+
+    .submit-spinner {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .submit-spinner.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 70px;
+      height: 70px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--color-accent);
+      animation: spin 1s infinite linear;
+      margin-bottom: 15px;
+    }
+
+    .submit-spinner p {
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .remove-button {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    
+    .file-name {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-weight: 500;
+      color: var(--color-secondary);
+    }
+
+    
+    .file-name i {
+      margin-right: 8px;
+      color: var(--color-secondary);
+    }
+    
+    .file-error {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .file-error i {
+      margin-right: 8px;
+    }
+    
+    .transportation-item, .stay-item, .extra-claim-item {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      animation: fadeInLeft 0.5s ease;
+    }
+    
+    .transportation-item:hover, .stay-item:hover, .extra-claim-item:hover {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transform: translateX(5px);
+    }
+    
+    .item-icon {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      background-color: var(--color-accent);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+    
+    .transportation-item:hover .item-icon,
+    .stay-item:hover .item-icon,
+    .extra-claim-item:hover .item-icon {
+      transform: rotate(360deg);
+    }
+    
+    #submitButton {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto;
+      padding: 15px;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #3d1142 100%);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    #submitButton:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    #submitButton::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    #submitButton:hover::before {
+      left: 100%;
+    }
+    
+    /* Hide email field */
+    .email-field {
+      display: none;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slideInUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      70% {
+        transform: scale(0.9);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+      
+      .form-section {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .nested-section {
+        margin-left: 10px;
+        padding: 10px;
+      }
+      
+      .total-amount {
+        font-size: 2rem;
+      }
+      
+      .total-amount i {
+        font-size: 2.2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .form-section {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .total-amount {
+        font-size: 1.8rem;
+      }
+      
+      .total-amount i {
+        font-size: 2rem;
+      }
+    }
+
+    .alert-modal {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    .alert-modal h2 {
+      color: #e74c3c;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .alert-modal h2 i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+
+    .alert-modal button {
+      margin-top: 20px;
+      background-color: #e74c3c;
+    }
+
+    .alert-modal button:hover {
+      background-color: #c0392b;
+    }
+
+    .remove-button.small {
+      width: 24px;
+      height: 24px;
+      font-size: 0.8rem;
+      margin-left: 10px;
+      border-radius: 50%;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* For WebKit Browsers (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--color-lighter); /* light green */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--color-primary); /* deep purple */
+      border-radius: 10px;
+      border: 2px solid var(--color-lighter);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-secondary); /* dark teal */
+    }
+
+    /* For Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-primary) var(--color-lighter);
+    }
+
+    /* CSS Variables */
+    :root {
+      --color-primary: #2D0C31;
+      --color-secondary: #004D4D;
+      --color-accent: #00B894;
+      --color-light: #B8B5FF;
+      --color-lighter: #B8FFB5;
+    }
+
+  </style>
+</head>
+<body>
+  <h1><i class="fas fa-file-invoice-dollar"></i> Claims & Allowances Form</h1>
+  
+  <div id="loading" class="loading">
+    <i class="fas fa-spinner"></i>
+    Loading form data...
+  </div>
+  <div id="successMessage" class="success" style="display: none;"></div>
+  
+  <form id="claimForm" style="display: none;">
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-user"></i> Basic Information</h2>
+      
+      <div class="form-group">
+        <label for="username"><i class="fas fa-id-badge"></i> Username:</label>
+        <input type="text" id="username" name="username" class="icon-input" readonly>
+      </div>
+      
+      <!-- Email field hidden as requested -->
+      <div class="form-group email-field">
+        <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+        <input type="text" id="email" name="email" class="icon-input" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="applicationNumber"><i class="fas fa-hashtag"></i> Application Number:</label>
+        <input type="text" id="applicationNumber" name="applicationNumber" class="icon-input" readonly>
+      </div>
+    </div>
+    
+    <!-- Event Details Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-calendar-alt"></i> Event Details</h2>
+      
+      <div class="form-group">
+        <label for="eventName"><i class="fas fa-bookmark"></i> Event Name:</label>
+        <select id="eventName" name="eventName" required>
+          <option value="">Select Event</option>
+        </select>
+        <input type="hidden" id="eventId" name="eventId">
+      </div>
+      
+      <div class="form-group">
+        <label for="eventLocation"><i class="fas fa-map-marker-alt"></i> Event Location:</label>
+        <input type="text" id="eventLocation" name="eventLocation" class="icon-input" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-clock"></i> Time Slots:</label>
+        <div id="timeSlotsContainer">
+          <p><i class="fas fa-info-circle"></i> Please select an event first</p>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="eventType"><i class="fas fa-tag"></i> Event Type:</label>
+        <input type="text" id="eventType" name="eventType" class="icon-input" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="locationStatus"><i class="fas fa-globe"></i> Location Status:</label>
+        <input type="text" id="locationStatus" name="locationStatus" class="icon-input" readonly>
+      </div>
+    </div>
+    
+    <!-- Transportation Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-car"></i> Transportation</h2>
+      <div id="transportationContainer"></div>
+      <button type="button" id="addTransportation" class="add-button"><i class="fas fa-plus"></i> Add Transportation</button>
+    </div>
+    
+    <!-- Stay Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-hotel"></i> Stay</h2>
+      <div id="stayContainer"></div>
+      <button type="button" id="addStay" class="add-button"><i class="fas fa-plus"></i> Add Stay</button>
+    </div>
+    
+    <!-- Meal Allowance Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-utensils"></i> Meal Allowance</h2>
+      <div class="form-group">
+        <label for="mealAllowance"><i class="fas fa-hamburger"></i> Meal Allowance Type:</label>
+        <select id="mealAllowance" name="mealAllowance">
+          <option value="">Select Meal Allowance</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Other Allowances Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-coins"></i> Other Allowances</h2>
+      <div class="form-group">
+        <label for="otherAllowances"><i class="fas fa-money-bill-wave"></i> Other Allowances Type:</label>
+        <select id="otherAllowances" name="otherAllowances">
+          <option value="">Select Other Allowances</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="otherAllowancesAmount"><i class="fas fa-dollar-sign"></i> Amount (RM):</label>
+        <input type="number" id="otherAllowancesAmount" name="otherAllowancesAmount" step="0.01" class="icon-input" readonly>
+      </div>
+    </div>
+    
+    <!-- Extra Claims Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-file-invoice"></i> Extra Claims</h2>
+      <div id="extraClaimsContainer"></div>
+      <button type="button" id="addExtraClaim" class="add-button"><i class="fas fa-plus"></i> Add Extra Claim</button>
+    </div>
+    
+    <!-- Remarks Section -->
+    <div class="form-section">
+      <h2><i class="fas fa-comment-alt"></i> Remarks</h2>
+      <div class="form-group">
+        <textarea id="remarks" name="remarks" rows="4" placeholder="Enter any additional remarks here..."></textarea>
+      </div>
+    </div>
+    
+    <!-- Total Section -->
+    <div class="total-section">
+      <div class="total-amount">
+        <i class="fas fa-calculator"></i>
+        <span>Total Claim: <span class="currency">RM</span><span id="totalClaimValue">0.00</span></span>
+      </div>
+      <div class="notice">
+        <i class="fas fa-info-circle"></i> 
+        The total claim amount provided is subject to change upon review by the administration.
+      </div>
+    </div>
+    
+    <button type="submit" id="submitButton"><i class="fas fa-paper-plane"></i> Submit Claim</button>
+  </form>
+  
+  <div id="submitSpinner" class="submit-spinner">
+    <div class="spinner"></div>
+    <p>Submitting your form...</p>
+  </div>
+
+  <div id="successModal" class="overlay">
+    <div class="modal">
+      <h2><i class="fas fa-check-circle"></i> Success!</h2>
+      <p>Your claim has been submitted successfully.</p>
+      <p id="applicationNumberDisplay"></p>
+      <button type="button" id="closeModalBtn"><i class="fas fa-redo"></i> Submit Another Claim</button>
+    </div>
+  </div>
+
+  <div id="alertModal" class="overlay">
+    <div class="modal alert-modal">
+      <h2><i class="fas fa-exclamation-circle"></i> Alert</h2>
+      <p id="alertMessage"></p>
+      <button type="button" id="closeAlertBtn"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </div>
+  
+  <script>
+    
+    let availableEvents = [];
+    let totalClaimAmount = 0;
+    let transportationCount = 0;
+    let stayCount = 0;
+    let extraClaimCount = 0;
+    let fileUploads = {};
+    
+    
+    const TRANSPORTATION_FOLDER_ID = 'YOUR_TRANSPORTATION_FOLDER_ID';
+    const STAY_FOLDER_ID = 'YOUR_STAY_FOLDER_ID';
+    const EXTRA_CLAIMS_FOLDER_ID = 'YOUR_EXTRA_CLAIMS_FOLDER_ID';
+    
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      google.script.run
+        .withSuccessHandler(handleUserInfo)
+        .withFailureHandler(handleError)
+        .getUserInfo();
+      
+      
+      google.script.run
+        .withSuccessHandler(handleApplicationNumber)
+        .withFailureHandler(handleError)
+        .generateApplicationNumber();
+      
+      
+      document.getElementById('eventName').addEventListener('change', handleEventChange);
+      document.getElementById('addTransportation').addEventListener('click', addTransportation);
+      document.getElementById('addStay').addEventListener('click', addStay);
+      document.getElementById('addExtraClaim').addEventListener('click', addExtraClaim);
+      document.getElementById('mealAllowance').addEventListener('change', updateTotalClaim);
+      document.getElementById('otherAllowances').addEventListener('change', handleOtherAllowancesChange);
+      
+      
+      document.getElementById('claimForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitForm();
+      });
+
+      
+      document.getElementById('closeModalBtn').addEventListener('click', resetForm);
+
+      
+      document.getElementById('closeAlertBtn').addEventListener('click', function() {
+        document.getElementById('alertModal').classList.remove('active');
+      });
+    });
+    
+    
+    function handleUserInfo(userInfo) {
+      document.getElementById('username').value = userInfo.username;
+      document.getElementById('email').value = userInfo.email;
+      
+      
+      google.script.run
+        .withSuccessHandler(handleAvailableEvents)
+        .withFailureHandler(handleError)
+        .getAvailableEvents(userInfo.username);
+    }
+    
+    
+    function handleApplicationNumber(appNumber) {
+      document.getElementById('applicationNumber').value = appNumber;
+    }
+    
+    
+    function handleAvailableEvents(events) {
+      availableEvents = events;
+      const eventSelect = document.getElementById('eventName');
+      
+      
+      while (eventSelect.options.length > 1) {
+        eventSelect.remove(1);
+      }
+      
+      
+      events.forEach(function(event) {
+        const option = document.createElement('option');
+        option.value = event.name;
+        option.textContent = event.name;
+        option.dataset.id = event.id; 
+        eventSelect.appendChild(option);
+      });
+      
+      
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('claimForm').style.display = 'block';
+    }
+    
+    
+    function handleEventChange() {
+      const eventSelect = document.getElementById('eventName');
+      const eventName = eventSelect.value;
+      const selectedOption = eventSelect.options[eventSelect.selectedIndex];
+      const eventId = selectedOption ? selectedOption.dataset.id : '';
+      
+      
+      document.getElementById('eventId').value = eventId;
+      
+      const selectedEvent = availableEvents.find(event => event.name === eventName);
+      
+      if (selectedEvent) {
+        
+        document.getElementById('eventType').value = selectedEvent.type;
+        document.getElementById('eventLocation').value = selectedEvent.location || 'Not specified';
+        document.getElementById('locationStatus').value = selectedEvent.locationStatus;
+        
+        
+        updateTimeSlots(selectedEvent.timeSlots);
+        
+        
+        updateMealAllowanceOptions(selectedEvent.type, selectedEvent.locationStatus, selectedEvent.location);
+        
+        
+        updateOtherAllowancesOptions(selectedEvent.type, selectedEvent.locationStatus, selectedEvent.location);
+      } else {
+        
+        document.getElementById('eventId').value = '';
+        document.getElementById('eventType').value = '';
+        document.getElementById('eventLocation').value = '';
+        document.getElementById('locationStatus').value = '';
+        document.getElementById('timeSlotsContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first</p>';
+        
+        
+        const mealAllowanceSelect = document.getElementById('mealAllowance');
+        while (mealAllowanceSelect.options.length > 1) {
+          mealAllowanceSelect.remove(1);
+        }
+        
+        const otherAllowancesSelect = document.getElementById('otherAllowances');
+        while (otherAllowancesSelect.options.length > 1) {
+          otherAllowancesSelect.remove(1);
+        }
+        
+        document.getElementById('otherAllowancesAmount').value = '';
+      }
+      
+      
+      updateTotalClaim();
+    }
+    
+    
+    function updateTimeSlots(timeSlots) {
+      const container = document.getElementById('timeSlotsContainer');
+      container.innerHTML = '';
+      
+      if (timeSlots && timeSlots.length > 0) {
+        timeSlots.forEach(function(slot, index) {
+          const checkboxId = `timeSlot_${index}`;
+          
+          const checkboxDiv = document.createElement('div');
+          checkboxDiv.className = 'checkbox-group';
+          
+          const label = document.createElement('label');
+          label.className = 'checkbox-label';
+          label.htmlFor = checkboxId;
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = checkboxId;
+          checkbox.name = 'timeSlots';
+          checkbox.value = slot;
+          
+          label.appendChild(checkbox);
+          
+          
+          const icon = document.createElement('i');
+          icon.className = 'fas fa-clock';
+          icon.style.marginRight = '8px';
+          icon.style.color = 'var(--color-secondary)';
+          
+          label.appendChild(icon);
+          label.appendChild(document.createTextNode(slot));
+          
+          checkboxDiv.appendChild(label);
+          container.appendChild(checkboxDiv);
+        });
+      } else {
+        container.innerHTML = '<p><i class="fas fa-exclamation-circle"></i> No time slots available for this event</p>';
+      }
+    }
+    
+    
+    function updateMealAllowanceOptions(eventType, locationStatus, location) {
+      const mealAllowanceSelect = document.getElementById('mealAllowance');
+      
+      
+      while (mealAllowanceSelect.options.length > 1) {
+        mealAllowanceSelect.remove(1);
+      }
+      
+      
+      const normalizedEventType = eventType.toLowerCase();
+      const normalizedLocation = location ? location.toLowerCase() : '';
+      const normalizedLocationStatus = locationStatus.toLowerCase();
+
+      
+      const isSabahSarawak = normalizedLocation.includes('sabah') || normalizedLocation.includes('sarawak');
+
+      
+      if (['sales', 'marketing', 'demo session', 'exhibition'].includes(normalizedEventType)) {
+        if (normalizedLocationStatus === 'local') {
+          addOption(mealAllowanceSelect, '40.00', 'Full Day (No Food Provided) - RM 40.00');
+          addOption(mealAllowanceSelect, '25.00', 'Half Day (Morning - Afternoon) - RM 25.00');
+          addOption(mealAllowanceSelect, '30.00', 'Half Day (Afternoon - Evening) - RM 30.00');
+          addOption(mealAllowanceSelect, '15.00', 'Food Provided - RM 15.00');
+        } else if (normalizedLocationStatus === 'outstation') {
+          addOption(mealAllowanceSelect, '35.00', 'Outstation - RM 35.00');
+        }
+        
+      } 
+      
+      else if (['pl3d', 'rf', 'cryo', 'pl3d-rf'].includes(normalizedEventType) && 
+              normalizedLocationStatus === 'outstation') {
+        addOption(mealAllowanceSelect, '35.00', 'Outstation - RM 35.00');
+      } 
+      
+      else if (normalizedEventType === 'training') {
+        if (normalizedLocationStatus === 'outstation') {
+          if (isSabahSarawak) {
+            addOption(mealAllowanceSelect, '45.00', 'Sabah & Sarawak - RM 45.00');
+          } else {
+            addOption(mealAllowanceSelect, '35.00', 'Outstation - RM 35.00');
+          }
+        }
+        
+      }
+    }
+    
+    
+    function updateOtherAllowancesOptions(eventType, locationStatus, location) {
+      const otherAllowancesSelect = document.getElementById('otherAllowances');
+      const otherAllowancesInput = document.getElementById('otherAllowancesAmount');
+      
+      
+      while (otherAllowancesSelect.options.length > 1) {
+        otherAllowancesSelect.remove(1);
+      }
+      
+      
+      const normalizedEventType = eventType.toLowerCase();
+      const normalizedLocation = location ? location.toLowerCase() : '';
+      const normalizedLocationStatus = locationStatus.toLowerCase();
+      
+      
+      const isSabahSarawak = normalizedLocation.includes('sabah') || normalizedLocation.includes('sarawak');
+      
+      let allowanceValue = '';
+      let allowanceText = '';
+      
+      if (['sales', 'marketing', 'demo session', 'exhibition'].includes(normalizedEventType)) {
+        if (normalizedLocationStatus.includes('outstation')) {
+          allowanceValue = '50.00';
+          allowanceText = 'Outstation - RM 50.00';
+        } else if (normalizedLocationStatus.includes('overseas')) {
+          allowanceValue = '200.00';
+          allowanceText = 'Overseas - RM 200.00';
+        }
+      } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf'].includes(normalizedEventType) && 
+                 normalizedLocationStatus.includes('outstation')) {
+        allowanceValue = '50.00';
+        allowanceText = 'Outstation - RM 50.00';
+      } else if (normalizedEventType === 'training') {
+        if (isSabahSarawak) {
+          allowanceValue = '55.00';
+          allowanceText = 'Training Sabah & Sarawak - RM 55.00';
+        } else if (normalizedLocationStatus.includes('outstation')) {
+          allowanceValue = '50.00';
+          allowanceText = 'Training Outstation - RM 50.00';
+        } else {
+          allowanceValue = '50.00';
+          allowanceText = 'Training Local - RM 50.00';
+        }
+      }
+      
+      if (allowanceValue === '' && allowanceText === '') {
+        addOption(otherAllowancesSelect, '', 'No additional claims applicable');
+        otherAllowancesInput.value = '';
+        otherAllowancesInput.readOnly = true;
+      } else {
+        addOption(otherAllowancesSelect, allowanceValue, allowanceText);
+        otherAllowancesInput.value = allowanceValue;
+        otherAllowancesInput.readOnly = true;
+      }
+    }
+    
+    
+    function handleOtherAllowancesChange() {
+      const otherAllowancesSelect = document.getElementById('otherAllowances');
+      const otherAllowancesInput = document.getElementById('otherAllowancesAmount');
+      
+      if (otherAllowancesSelect.value) {
+        otherAllowancesInput.value = otherAllowancesSelect.value;
+      } else {
+        otherAllowancesInput.value = '';
+      }
+      
+      updateTotalClaim();
+    }
+    
+    
+    function addTransportation() {
+      const container = document.getElementById('transportationContainer');
+      const transportationId = transportationCount++;
+      
+      const transportationDiv = document.createElement('div');
+      transportationDiv.className = 'transportation-item';
+      transportationDiv.id = `transportation_${transportationId}`;
+      
+      transportationDiv.innerHTML = `
+        <div class="item-icon"><i class="fas fa-car"></i></div>
+        <button type="button" class="remove-button" onclick="removeTransportation(${transportationId})" title="Remove Transportation">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <div class="form-group">
+          <label for="transportationType_${transportationId}"><i class="fas fa-shuttle-van"></i> Transportation Type:</label>
+          <select id="transportationType_${transportationId}" name="transportationType_${transportationId}" class="transportation-type" data-id="${transportationId}" required>
+            <option value="">Select Type</option>
+            <option value="air">Air</option>
+            <option value="car">Car</option>
+            <option value="train">Train</option>
+          </select>
+        </div>
+        
+        <div id="transportationDetails_${transportationId}" class="nested-section" style="display: none;"></div>
+      `;
+      
+      container.appendChild(transportationDiv);
+      
+      
+      document.getElementById(`transportationType_${transportationId}`).addEventListener('change', function() {
+        updateTransportationDetails(transportationId);
+      });
+      
+      updateTotalClaim();
+    }
+    
+    
+    function updateTransportationDetails(id) {
+      const transportationType = document.getElementById(`transportationType_${id}`).value;
+      const detailsContainer = document.getElementById(`transportationDetails_${id}`);
+      
+      
+      detailsContainer.innerHTML = '';
+      detailsContainer.style.display = 'block';
+      
+      if (transportationType === 'car') {
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="carType_${id}"><i class="fas fa-car-side"></i> Car Type:</label>
+            <select id="carType_${id}" name="carType_${id}" class="car-type" data-id="${id}" required>
+              <option value="">Select Car Type</option>
+              <option value="company">Company Car</option>
+              <option value="personal">Personal Car</option>
+              <option value="rental">Rental Car</option>
+            </select>
+          </div>
+          
+          <div id="carDetails_${id}" class="nested-section" style="display: none;"></div>
+        `;
+        
+        
+        document.getElementById(`carType_${id}`).addEventListener('change', function() {
+          updateCarDetails(id);
+        });
+      } else if (transportationType === 'air') {
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="airTicketCost_${id}"><i class="fas fa-ticket-alt"></i> Ticket Cost (RM):</label>
+            <input type="number" id="airTicketCost_${id}" name="airTicketCost_${id}" step="0.01" min="0" class="cost-input icon-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-file-invoice"></i> Upload Receipt:</label>
+            <div class="file-upload">
+              <div class="file-drop-area" id="airFileDropArea_${id}">
+                <div class="file-message">
+                  <i class="fas fa-cloud-upload-alt"></i> Drag & drop files here or
+                </div>
+                <label for="airReceipt_${id}" class="file-upload-label">
+                  <i class="fas fa-upload"></i> Choose File
+                </label>
+                <input type="file" id="airReceipt_${id}" name="airReceipt_${id}" class="file-input" 
+                       onchange="handleFileSelect(this, 'air_${id}', '${TRANSPORTATION_FOLDER_ID}')">
+              </div>
+              <div class="file-info" id="airFileInfo_${id}">
+                <div id="airReceiptName_${id}" class="file-name"></div>
+                <div id="airReceiptError_${id}" class="file-error"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        
+        document.getElementById(`airTicketCost_${id}`).addEventListener('input', updateTotalClaim);
+        
+        
+        setupDragAndDrop(`airFileDropArea_${id}`, `airReceipt_${id}`, `air_${id}`, TRANSPORTATION_FOLDER_ID);
+      } else if (transportationType === 'train') {
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="trainTicketCost_${id}"><i class="fas fa-ticket-alt"></i> Ticket Cost (RM):</label>
+            <input type="number" id="trainTicketCost_${id}" name="trainTicketCost_${id}" step="0.01" min="0" class="cost-input icon-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-file-invoice"></i> Upload Receipt:</label>
+            <div class="file-upload">
+              <div class="file-drop-area" id="trainFileDropArea_${id}">
+                <div class="file-message">
+                  <i class="fas fa-cloud-upload-alt"></i> Drag & drop files here or
+                </div>
+                <label for="trainReceipt_${id}" class="file-upload-label">
+                  <i class="fas fa-upload"></i> Choose File
+                </label>
+                <input type="file" id="trainReceipt_${id}" name="trainReceipt_${id}" class="file-input" 
+                       onchange="handleFileSelect(this, 'train_${id}', '${TRANSPORTATION_FOLDER_ID}')">
+              </div>
+              <div class="file-info" id="trainFileInfo_${id}">
+                <div id="trainReceiptName_${id}" class="file-name"></div>
+                <div id="trainReceiptError_${id}" class="file-error"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        
+        document.getElementById(`trainTicketCost_${id}`).addEventListener('input', updateTotalClaim);
+        
+        
+        setupDragAndDrop(`trainFileDropArea_${id}`, `trainReceipt_${id}`, `train_${id}`, TRANSPORTATION_FOLDER_ID);
+      }
+      
+      updateTotalClaim();
+    }
+    
+    
+    function updateCarDetails(id) {
+      const carType = document.getElementById(`carType_${id}`).value;
+      const detailsContainer = document.getElementById(`carDetails_${id}`);
+      
+      
+      detailsContainer.innerHTML = '';
+      detailsContainer.style.display = 'block';
+      
+      if (carType === 'company') {
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="companyCar_${id}"><i class="fas fa-building"></i> Company Car:</label>
+            <select id="companyCar_${id}" name="companyCar_${id}" required>
+              <option value="">Select Company Car</option>
+            </select>
+          </div>
+        `;
+        
+        
+        google.script.run
+          .withSuccessHandler(function(cars) {
+            const carSelect = document.getElementById(`companyCar_${id}`);
+            cars.forEach(function(car) {
+              if (car) {
+                addOption(carSelect, car, car);
+              }
+            });
+          })
+          .withFailureHandler(handleError)
+          .getCompanyCars();
+      } else if (carType === 'personal') {
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="kilometers_${id}"><i class="fas fa-road"></i> Kilometers Travelled:</label>
+            <input type="number" id="kilometers_${id}" name="kilometers_${id}" min="0" class="km-input icon-input" data-id="${id}" required>
+            <p><i class="fas fa-info-circle"></i> Allowance: RM 0.50 per kilometer</p>
+          </div>
+          
+          <div class="form-group">
+            <label for="tngAmount_${id}"><i class="fas fa-toll-booth"></i> Total Touch N Go Amount (RM):</label>
+            <input type="number" id="tngAmount_${id}" name="tngAmount_${id}" step="0.01" min="0" class="cost-input icon-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-file-invoice"></i> Upload Receipt:</label>
+            <div class="file-upload">
+              <div class="file-drop-area" id="tngFileDropArea_${id}">
+                <div class="file-message">
+                  <i class="fas fa-cloud-upload-alt"></i> Drag & drop files here or
+                </div>
+                <label for="tngReceipt_${id}" class="file-upload-label">
+                  <i class="fas fa-upload"></i> Choose File
+                </label>
+                <input type="file" id="tngReceipt_${id}" name="tngReceipt_${id}" class="file-input" 
+                       onchange="handleFileSelect(this, 'tng_${id}', '${TRANSPORTATION_FOLDER_ID}')">
+              </div>
+              <div class="file-info" id="tngFileInfo_${id}">
+                <div id="tngReceiptName_${id}" class="file-name"></div>
+                <div id="tngReceiptError_${id}" class="file-error"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        
+        document.getElementById(`kilometers_${id}`).addEventListener('input', function() {
+          updateTotalClaim();
+        });
+        
+        document.getElementById(`tngAmount_${id}`).addEventListener('input', updateTotalClaim);
+        
+        
+        setupDragAndDrop(`tngFileDropArea_${id}`, `tngReceipt_${id}`, `tng_${id}`, TRANSPORTATION_FOLDER_ID);
+      } else if (carType === 'rental') {
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="rentalAmount_${id}"><i class="fas fa-dollar-sign"></i> Rental Amount (RM):</label>
+            <input type="number" id="rentalAmount_${id}" name="rentalAmount_${id}" step="0.01" min="0" class="cost-input icon-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-file-invoice"></i> Upload Receipt:</label>
+            <div class="file-upload">
+              <div class="file-drop-area" id="rentalFileDropArea_${id}">
+                <div class="file-message">
+                  <i class="fas fa-cloud-upload-alt"></i> Drag & drop files here or
+                </div>
+                <label for="rentalReceipt_${id}" class="file-upload-label">
+                  <i class="fas fa-upload"></i> Choose File
+                </label>
+                <input type="file" id="rentalReceipt_${id}" name="rentalReceipt_${id}" class="file-input" 
+                       onchange="handleFileSelect(this, 'rental_${id}', '${TRANSPORTATION_FOLDER_ID}')">
+              </div>
+              <div class="file-info" id="rentalFileInfo_${id}">
+                <div id="rentalReceiptName_${id}" class="file-name"></div>
+                <div id="rentalReceiptError_${id}" class="file-error"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        
+        document.getElementById(`rentalAmount_${id}`).addEventListener('input', updateTotalClaim);
+        
+        
+        setupDragAndDrop(`rentalFileDropArea_${id}`, `rentalReceipt_${id}`, `rental_${id}`, TRANSPORTATION_FOLDER_ID);
+      }
+      
+      updateTotalClaim();
+    }
+    
+    
+    function removeTransportation(id) {
+      const transportationDiv = document.getElementById(`transportation_${id}`);
+      if (transportationDiv) {
+        transportationDiv.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+          transportationDiv.remove();
+          
+          
+          Object.keys(fileUploads).forEach(key => {
+            if (key.includes(`_${id}`)) {
+              delete fileUploads[key];
+            }
+          });
+          
+          updateTotalClaim();
+        }, 300);
+      }
+    }
+    
+    
+    function addStay() {
+      const container = document.getElementById('stayContainer');
+      const stayId = stayCount++;
+      
+      const stayDiv = document.createElement('div');
+      stayDiv.className = 'stay-item';
+      stayDiv.id = `stay_${stayId}`;
+      
+      stayDiv.innerHTML = `
+        <div class="item-icon"><i class="fas fa-bed"></i></div>
+        <button type="button" class="remove-button" onclick="removeStay(${stayId})" title="Remove Stay">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <div class="form-group">
+          <label for="stayType_${stayId}"><i class="fas fa-home"></i> Stay Type:</label>
+          <select id="stayType_${stayId}" name="stayType_${stayId}" class="stay-type" data-id="${stayId}" required>
+            <option value="">Select Type</option>
+            <option value="hotel">Hotel</option>
+            <option value="homestay">Homestay</option>
+            <option value="airport">Airport</option>
+            <option value="none">Stay not needed</option>
+          </select>
+        </div>
+        
+        <div id="stayDetails_${stayId}" class="nested-section" style="display: none;"></div>
+      `;
+      
+      container.appendChild(stayDiv);
+      
+      
+      document.getElementById(`stayType_${stayId}`).addEventListener('change', function() {
+        updateStayDetails(stayId);
+      });
+      
+      updateTotalClaim();
+    }
+    
+    
+    function updateStayDetails(id) {
+      const stayType = document.getElementById(`stayType_${id}`).value;
+      const detailsContainer = document.getElementById(`stayDetails_${id}`);
+      
+      
+      detailsContainer.innerHTML = '';
+      
+      if (stayType === 'hotel' || stayType === 'homestay') {
+        detailsContainer.style.display = 'block';
+        detailsContainer.innerHTML = `
+          <div class="form-group">
+            <label for="stayAmount_${id}"><i class="fas fa-dollar-sign"></i> Amount Paid (RM):</label>
+            <input type="number" id="stayAmount_${id}" name="stayAmount_${id}" step="0.01" min="0" max="200" class="cost-input icon-input" required>
+            <p><i class="fas fa-info-circle"></i> Maximum allowable amount: RM 200.00</p>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-file-invoice"></i> Upload Receipt:</label>
+            <div class="file-upload">
+              <div class="file-drop-area" id="stayFileDropArea_${id}">
+                <div class="file-message">
+                  <i class="fas fa-cloud-upload-alt"></i> Drag & drop files here or
+                </div>
+                <label for="stayReceipt_${id}" class="file-upload-label">
+                  <i class="fas fa-upload"></i> Choose File
+                </label>
+                <input type="file" id="stayReceipt_${id}" name="stayReceipt_${id}" class="file-input" 
+                       onchange="handleFileSelect(this, 'stay_${id}', '${STAY_FOLDER_ID}')">
+              </div>
+              <div class="file-info" id="stayFileInfo_${id}">
+                <div id="stayReceiptName_${id}" class="file-name"></div>
+                <div id="stayReceiptError_${id}" class="file-error"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        
+        document.getElementById(`stayAmount_${id}`).addEventListener('input', function() {
+          const amount = parseFloat(this.value) || 0;
+          if (amount > 200) {
+            this.value = 200;
+          }
+          updateTotalClaim();
+        });
+        
+        
+        setupDragAndDrop(`stayFileDropArea_${id}`, `stayReceipt_${id}`, `stay_${id}`, STAY_FOLDER_ID);
+      } else if (stayType === 'airport' || stayType === 'none') {
+        detailsContainer.style.display = 'block';
+        detailsContainer.innerHTML = `
+          <p><i class="fas fa-info-circle"></i> No additional information needed for this stay type.</p>
+        `;
+      } else {
+        detailsContainer.style.display = 'none';
+      }
+      
+      updateTotalClaim();
+    }
+    
+    
+    function removeStay(id) {
+      const stayDiv = document.getElementById(`stay_${id}`);
+      if (stayDiv) {
+        stayDiv.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+          stayDiv.remove();
+          
+          
+          Object.keys(fileUploads).forEach(key => {
+            if (key.includes(`stay_${id}`)) {
+              delete fileUploads[key];
+            }
+          });
+          
+          updateTotalClaim();
+        }, 300);
+      }
+    }
+    
+    
+    function addExtraClaim() {
+      const container = document.getElementById('extraClaimsContainer');
+      const claimId = extraClaimCount++;
+      
+      const claimDiv = document.createElement('div');
+      claimDiv.className = 'extra-claim-item';
+      claimDiv.id = `extraClaim_${claimId}`;
+      
+      claimDiv.innerHTML = `
+        <div class="item-icon"><i class="fas fa-plus-circle"></i></div>
+        <button type="button" class="remove-button" onclick="removeExtraClaim(${claimId})" title="Remove Claim">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <div class="form-group">
+          <label for="claimDescription_${claimId}"><i class="fas fa-align-left"></i> Claim Description:</label>
+          <input type="text" id="claimDescription_${claimId}" name="claimDescription_${claimId}" class="icon-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="claimAmount_${claimId}"><i class="fas fa-dollar-sign"></i> Claim Amount (RM):</label>
+          <input type="number" id="claimAmount_${claimId}" name="claimAmount_${claimId}" step="0.01" min="0" class="cost-input icon-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-file-invoice"></i> Upload Document:</label>
+          <div class="file-upload">
+            <div class="file-drop-area" id="claimFileDropArea_${claimId}">
+              <div class="file-message">
+                <i class="fas fa-cloud-upload-alt"></i> Drag & drop files here or
+              </div>
+              <label for="claimDocument_${claimId}" class="file-upload-label">
+                <i class="fas fa-upload"></i> Choose File
+              </label>
+              <input type="file" id="claimDocument_${claimId}" name="claimDocument_${claimId}" class="file-input" 
+                     onchange="handleFileSelect(this, 'claim_${claimId}', '${EXTRA_CLAIMS_FOLDER_ID}')">
+            </div>
+            <div class="file-info" id="claimFileInfo_${claimId}">
+              <div id="claimDocumentName_${claimId}" class="file-name"></div>
+              <div id="claimDocumentError_${claimId}" class="file-error"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(claimDiv);
+      
+      
+      document.getElementById(`claimAmount_${claimId}`).addEventListener('input', updateTotalClaim);
+      
+      
+      setupDragAndDrop(`claimFileDropArea_${claimId}`, `claimDocument_${claimId}`, `claim_${claimId}`, EXTRA_CLAIMS_FOLDER_ID);
+      
+      updateTotalClaim();
+    }
+    
+    
+    function removeExtraClaim(id) {
+      const claimDiv = document.getElementById(`extraClaim_${id}`);
+      if (claimDiv) {
+        claimDiv.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => {
+          claimDiv.remove();
+          
+          
+          Object.keys(fileUploads).forEach(key => {
+            if (key.includes(`claim_${id}`)) {
+              delete fileUploads[key];
+            }
+          });
+          
+          updateTotalClaim();
+        }, 300);
+      }
+    }
+    
+    
+    function setupDragAndDrop(dropAreaId, fileInputId, fileId, folderId) {
+      const dropArea = document.getElementById(dropAreaId);
+      const fileInput = document.getElementById(fileInputId);
+      const fileInfo = document.getElementById(dropAreaId.replace('DropArea', 'Info'));
+      
+      if (!dropArea || !fileInput) return;
+      
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropArea.classList.add('highlight');
+      }
+      
+      function unhighlight() {
+        dropArea.classList.remove('highlight');
+      }
+      
+      dropArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length) {
+          fileInput.files = files;
+          handleFileSelect(fileInput, fileId, folderId);
+        }
+      }
+    }
+    
+    function handleFileSelect(fileInput, fileId, folderId) {
+      if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const fileNameElement = document.getElementById(`${fileId.split('_')[0]}ReceiptName_${fileId.split('_')[1]}`);
+        const fileErrorElement = document.getElementById(`${fileInput.id}Error_${fileId.split('_')[1]}`);
+        const fileInfoElement = document.getElementById(`${fileId.split('_')[0]}FileInfo_${fileId.split('_')[1]}`);
+        const dropAreaElement = document.getElementById(`${fileId.split('_')[0]}FileDropArea_${fileId.split('_')[1]}`);
+        
+        
+        if (file.size > 5 * 1024 * 1024) {
+          if (fileErrorElement) {
+            fileErrorElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> File size exceeds 5MB limit';
+          }
+          fileInput.value = ''; 
+          if (fileNameElement) {
+            fileNameElement.textContent = '';
+          }
+          if (fileInfoElement) {
+            fileInfoElement.classList.add('visible');
+          }
+          return;
+        }
+        
+        if (fileErrorElement) {
+          fileErrorElement.textContent = '';
+        }
+        
+        
+        if (fileNameElement) {
+          fileNameElement.innerHTML = '';
+          const filePill = document.createElement('div');
+          filePill.className = 'file-pill';
+          filePill.innerHTML = `
+            <i class="fas fa-file"></i> ${file.name}
+            <button type="button" class="remove-button small" onclick="removeFile('${fileId}')">
+              <i class="fas fa-times"></i>
+            </button>`;
+          fileNameElement.appendChild(filePill);
+        }
+
+        
+        if (fileInfoElement) {
+          fileInfoElement.classList.add('visible');
+        }
+        
+        if (dropAreaElement) {
+          dropAreaElement.classList.add('has-file');
+        }
+
+        
+        
+        fileUploads[fileId] = {
+          file: file,
+          element: fileInput,
+          folderId: folderId
+        };
+      }
+    }
+    
+    function removeFile(fileId) {
+      const idParts = fileId.split('_');
+      const index = idParts[1];
+      const prefix = idParts[0];
+
+      delete fileUploads[fileId];
+
+      
+      const input = document.getElementById(`${prefix}Receipt_${index}`);
+      if (input) input.value = '';
+
+      
+      const dropArea = document.getElementById(`${prefix}FileDropArea_${index}`);
+      const fileInfo = document.getElementById(`${prefix}FileInfo_${index}`);
+      const fileName = document.getElementById(`${prefix}ReceiptName_${index}`);
+      const fileError = document.getElementById(`${prefix}ReceiptError_${index}`);
+
+      if (dropArea) dropArea.classList.remove('has-file');
+      if (fileName) fileName.innerHTML = '';
+      if (fileError) fileError.innerHTML = '';
+      if (fileInfo) fileInfo.classList.remove('visible');
+    }
+
+    
+    function updateTotalClaim() {
+      let total = 0;
+      
+      
+      for (let i = 0; i < transportationCount; i++) {
+        const transportationDiv = document.getElementById(`transportation_${i}`);
+        if (!transportationDiv) continue;
+        
+        const transportationType = document.getElementById(`transportationType_${i}`)?.value;
+        
+        if (transportationType === 'air') {
+          const ticketCost = parseFloat(document.getElementById(`airTicketCost_${i}`)?.value) || 0;
+          total += ticketCost;
+        } else if (transportationType === 'train') {
+          const ticketCost = parseFloat(document.getElementById(`trainTicketCost_${i}`)?.value) || 0;
+          total += ticketCost;
+        } else if (transportationType === 'car') {
+          const carType = document.getElementById(`carType_${i}`)?.value;
+          
+          if (carType === 'personal') {
+            const kilometers = parseFloat(document.getElementById(`kilometers_${i}`)?.value) || 0;
+            const tngAmount = parseFloat(document.getElementById(`tngAmount_${i}`)?.value) || 0;
+            
+            
+            total += (kilometers * 0.5) + tngAmount;
+          } else if (carType === 'rental') {
+            const rentalAmount = parseFloat(document.getElementById(`rentalAmount_${i}`)?.value) || 0;
+            total += rentalAmount;
+          }
+        }
+      }
+      
+      
+      for (let i = 0; i < stayCount; i++) {
+        const stayDiv = document.getElementById(`stay_${i}`);
+        if (!stayDiv) continue;
+        
+        const stayType = document.getElementById(`stayType_${i}`)?.value;
+        
+        if (stayType === 'hotel' || stayType === 'homestay') {
+          const stayAmount = parseFloat(document.getElementById(`stayAmount_${i}`)?.value) || 0;
+          total += stayAmount;
+        }
+      }
+      
+      
+      const mealAllowance = parseFloat(document.getElementById('mealAllowance')?.value) || 0;
+      total += mealAllowance;
+      
+      
+      const otherAllowancesAmount = parseFloat(document.getElementById('otherAllowancesAmount')?.value) || 0;
+      total += otherAllowancesAmount;
+      
+      
+      for (let i = 0; i < extraClaimCount; i++) {
+        const claimDiv = document.getElementById(`extraClaim_${i}`);
+        if (!claimDiv) continue;
+        
+        const claimAmount = parseFloat(document.getElementById(`claimAmount_${i}`)?.value) || 0;
+        total += claimAmount;
+      }
+      
+      
+      const totalElement = document.getElementById('totalClaimValue');
+      const currentTotal = parseFloat(totalElement.textContent) || 0;
+      
+      
+      animateValue(totalElement, currentTotal, total, 500);
+      
+      
+      totalClaimAmount = total;
+    }
+    
+    
+    function animateValue(element, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = progress * (end - start) + start;
+        element.textContent = value.toFixed(2);
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+    
+    
+    function addOption(selectElement, value, text) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      selectElement.appendChild(option);
+    }
+    
+    
+    function submitForm() {
+      
+      if (!validateForm()) {
+        return;
+      }
+      
+      
+      document.getElementById('submitSpinner').classList.add('active');
+      
+      
+      document.getElementById('submitButton').disabled = true;
+      
+      
+      processAllFileUploads()
+        .then(function(fileResults) {
+          
+          const formData = {
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            applicationNumber: document.getElementById('applicationNumber').value,
+            eventName: document.getElementById('eventName').value,
+            eventId: document.getElementById('eventId').value,
+            eventType: document.getElementById('eventType').value,
+            eventLocation: document.getElementById('eventLocation').value,
+            locationStatus: document.getElementById('locationStatus').value,
+            timeSlots: getSelectedTimeSlots(),
+            transportation: getTransportationData(fileResults),
+            stay: getStayData(fileResults),
+            mealAllowance: {
+              type: document.getElementById('mealAllowance').options[document.getElementById('mealAllowance').selectedIndex]?.text || '',
+              amount: parseFloat(document.getElementById('mealAllowance').value) || 0
+            },
+            otherAllowances: {
+              type: document.getElementById('otherAllowances').options[document.getElementById('otherAllowances').selectedIndex]?.text || '',
+              amount: parseFloat(document.getElementById('otherAllowancesAmount').value) || 0
+            },
+            extraClaims: getExtraClaimsData(fileResults),
+            remarks: document.getElementById('remarks').value,
+            totalClaim: totalClaimAmount
+          };
+          
+          
+          google.script.run
+            .withSuccessHandler(function(response) {
+              
+              document.getElementById('submitSpinner').classList.remove('active');
+              
+              if (response.success) {
+                
+                document.getElementById('applicationNumberDisplay').textContent = 
+                  `Your application number is: ${response.applicationNumber}`;
+                document.getElementById('successModal').classList.add('active');
+                
+                
+                resetFormState();
+              } else {
+                showAlert('Error submitting form: ' + response.error);
+                console.error('Error:', response.error);
+                
+                
+                document.getElementById('submitButton').disabled = false;
+              }
+            })
+            .withFailureHandler(function(error) {
+              
+              document.getElementById('submitSpinner').classList.remove('active');
+              
+              showAlert('Error submitting form: ' + error);
+              console.error('Error:', error);
+              
+              
+              document.getElementById('submitButton').disabled = false;
+            })
+            .submitFormData(formData);
+        })
+        .catch(function(error) {
+          
+          document.getElementById('submitSpinner').classList.remove('active');
+          
+          showAlert('Error processing file uploads: ' + error);
+          console.error('Error:', error);
+          
+          
+          document.getElementById('submitButton').disabled = false;
+        });
+    }
+    
+    
+    function resetForm() {
+      document.getElementById('successModal').classList.remove('active');
+      document.getElementById('claimForm').reset();
+      resetFormState();
+      
+      
+      document.getElementById('submitButton').disabled = false;
+      
+      
+      google.script.run
+        .withSuccessHandler(handleUserInfo)
+        .withFailureHandler(handleError)
+        .getUserInfo();
+      
+      google.script.run
+        .withSuccessHandler(handleApplicationNumber)
+        .withFailureHandler(handleError)
+        .generateApplicationNumber();
+    }
+    
+    
+    function resetFormState() {
+      
+      document.getElementById('transportationContainer').innerHTML = '';
+      transportationCount = 0;
+      
+      
+      document.getElementById('stayContainer').innerHTML = '';
+      stayCount = 0;
+      
+      
+      document.getElementById('extraClaimsContainer').innerHTML = '';
+      extraClaimCount = 0;
+      
+      
+      fileUploads = {};
+      
+      
+      totalClaimAmount = 0;
+      document.getElementById('totalClaimValue').textContent = '0.00';
+      
+      
+      document.getElementById('timeSlotsContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first</p>';
+      
+      
+      const mealAllowanceSelect = document.getElementById('mealAllowance');
+      while (mealAllowanceSelect.options.length > 1) {
+        mealAllowanceSelect.remove(1);
+      }
+      
+      const otherAllowancesSelect = document.getElementById('otherAllowances');
+      while (otherAllowancesSelect.options.length > 1) {
+        otherAllowancesSelect.remove(1);
+      }
+      
+      document.getElementById('otherAllowancesAmount').value = '';
+    }
+    
+    
+    function validateForm() {
+      
+      if (!document.getElementById('eventName').value) {
+        showAlert('Please select an event');
+        document.getElementById('eventName').focus();
+        return false;
+      }
+      
+      
+      const timeSlots = getSelectedTimeSlots();
+      if (timeSlots.length === 0) {
+        showAlert('Please select at least one time slot');
+        return false;
+      }
+      
+      
+      for (let i = 0; i < transportationCount; i++) {
+        const transportationDiv = document.getElementById(`transportation_${i}`);
+        if (!transportationDiv) continue;
+        
+        const transportationType = document.getElementById(`transportationType_${i}`)?.value;
+        if (!transportationType) {
+          showAlert('Please select a transportation type for all transportation sections');
+          document.getElementById(`transportationType_${i}`).focus();
+          return false;
+        }
+        
+      if (transportationType === 'air') {
+        const ticketCost = document.getElementById(`airTicketCost_${i}`)?.value;
+        if (!ticketCost) {
+          showAlert('Please enter ticket cost for air transportation');
+          document.getElementById(`airTicketCost_${i}`).focus();
+          return false;
+        }
+        
+        
+        if (!fileUploads[`air_${i}`]) {
+          showAlert('Please upload a receipt for air transportation');
+          return false;
+        }
+      } else if (transportationType === 'train') {
+          const ticketCost = document.getElementById(`trainTicketCost_${i}`)?.value;
+          if (!ticketCost) {
+            showAlert('Please enter ticket cost for train transportation');
+            document.getElementById(`trainTicketCost_${i}`).focus();
+            return false;
+          }
+          
+          
+          if (!fileUploads[`train_${i}`]) {
+            showAlert('Please upload a receipt for train transportation');
+            return false;
+          }
+        } else if (transportationType === 'car') {
+          const carType = document.getElementById(`carType_${i}`)?.value;
+          if (!carType) {
+            showAlert('Please select a car type');
+            document.getElementById(`carType_${i}`).focus();
+            return false;
+          }
+          
+          if (carType === 'company') {
+            const companyCar = document.getElementById(`companyCar_${i}`)?.value;
+            if (!companyCar) {
+              showAlert('Please select a company car');
+              document.getElementById(`companyCar_${i}`).focus();
+              return false;
+            }
+          } else if (carType === 'personal') {
+            const kilometers = document.getElementById(`kilometers_${i}`)?.value;
+            const tngAmount = document.getElementById(`tngAmount_${i}`)?.value;
+            if (!kilometers) {
+              showAlert('Please enter kilometers travelled');
+              document.getElementById(`kilometers_${i}`).focus();
+              return false;
+            }
+            if (!tngAmount) {
+              showAlert('Please enter Touch N Go amount');
+              document.getElementById(`tngAmount_${i}`).focus();
+              return false;
+            }
+            
+            
+            if (!fileUploads[`tng_${i}`]) {
+              showAlert('Please upload a receipt for Touch N Go');
+              return false;
+            }
+          } else if (carType === 'rental') {
+            const rentalAmount = document.getElementById(`rentalAmount_${i}`)?.value;
+            if (!rentalAmount) {
+              showAlert('Please enter rental amount');
+              document.getElementById(`rentalAmount_${i}`).focus();
+              return false;
+            }
+            
+            
+            if (!fileUploads[`rental_${i}`]) {
+              showAlert('Please upload a receipt for car rental');
+              return false;
+            }
+          }
+        }
+      }
+      
+      
+      for (let i = 0; i < stayCount; i++) {
+        const stayDiv = document.getElementById(`stay_${i}`);
+        if (!stayDiv) continue;
+        
+        const stayType = document.getElementById(`stayType_${i}`)?.value;
+        if (!stayType) {
+          showAlert('Please select a stay type for all stay sections');
+          document.getElementById(`stayType_${i}`).focus();
+          return false;
+        }
+        
+        if (stayType === 'hotel' || stayType === 'homestay') {
+          const stayAmount = document.getElementById(`stayAmount_${i}`)?.value;
+          if (!stayAmount) {
+            showAlert('Please enter stay amount');
+            document.getElementById(`stayAmount_${i}`).focus();
+            return false;
+          }
+          
+          
+          if (!fileUploads[`stay_${i}`]) {
+            showAlert('Please upload a receipt for your stay');
+            return false;
+          }
+        }
+      }
+      
+      
+      for (let i = 0; i < extraClaimCount; i++) {
+        const claimDiv = document.getElementById(`extraClaim_${i}`);
+        if (!claimDiv) continue;
+        
+        const description = document.getElementById(`claimDescription_${i}`)?.value;
+        const amount = document.getElementById(`claimAmount_${i}`)?.value;
+        
+        if (!description) {
+          showAlert('Please enter a description for all extra claims');
+          document.getElementById(`claimDescription_${i}`).focus();
+          return false;
+        }
+        
+        if (!amount) {
+          showAlert('Please enter an amount for all extra claims');
+          document.getElementById(`claimAmount_${i}`).focus();
+          return false;
+        }
+        
+        
+        if (!fileUploads[`claim_${i}`]) {
+          showAlert('Please upload a document for your extra claim');
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    
+    function processAllFileUploads() {
+      return new Promise(function(resolve, reject) {
+        const fileIds = Object.keys(fileUploads);
+        const fileResults = {};
+        
+        if (fileIds.length === 0) {
+          resolve(fileResults);
+          return;
+        }
+        
+        let completedUploads = 0;
+        let hasError = false;
+        
+        fileIds.forEach(function(fileId) {
+          const fileInfo = fileUploads[fileId];
+          const file = fileInfo.file;
+          const folderId = fileInfo.folderId;
+          
+          
+          const timestamp = new Date().getTime();
+          const uniqueFileName = `${document.getElementById('applicationNumber').value}_${fileId}_${timestamp}_${file.name}`;
+          
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const content = e.target.result.split(',')[1]; 
+            
+            
+            google.script.run
+              .withSuccessHandler(function(result) {
+                completedUploads++;
+                
+                if (result.success) {
+                  fileResults[fileId] = result.fileUrl;
+                } else {
+                  console.error('Error uploading file:', result.error);
+                  hasError = true;
+                }
+                
+                
+                if (completedUploads === fileIds.length) {
+                  if (hasError) {
+                    reject('One or more file uploads failed');
+                  } else {
+                    resolve(fileResults);
+                  }
+                }
+              })
+              .withFailureHandler(function(error) {
+                completedUploads++;
+                console.error('Error uploading file:', error);
+                hasError = true;
+                
+                
+                if (completedUploads === fileIds.length) {
+                  reject('One or more file uploads failed');
+                }
+              })
+              .processFileUpload({
+                fileName: uniqueFileName,
+                mimeType: file.type,
+                bytes: content
+              }, uniqueFileName, folderId);
+          };
+          
+          reader.onerror = function() {
+            completedUploads++;
+            console.error('Error reading file');
+            hasError = true;
+            
+            
+            if (completedUploads === fileIds.length) {
+              reject('Error reading one or more files');
+            }
+          };
+          
+          reader.readAsDataURL(file);
+        });
+      });
+    }
+    
+    
+    function getSelectedTimeSlots() {
+      const timeSlots = [];
+      const checkboxes = document.querySelectorAll('input[name="timeSlots"]:checked');
+      
+      checkboxes.forEach(function(checkbox) {
+        timeSlots.push(checkbox.value);
+      });
+      
+      return timeSlots;
+    }
+    
+    
+    function getTransportationData(fileResults) {
+      const transportation = [];
+      
+      for (let i = 0; i < transportationCount; i++) {
+        const transportationDiv = document.getElementById(`transportation_${i}`);
+        if (!transportationDiv) continue;
+        
+        const transportationType = document.getElementById(`transportationType_${i}`)?.value;
+        if (!transportationType) continue;
+        
+        const transportationItem = {
+          type: transportationType
+        };
+        
+        if (transportationType === 'air') {
+          transportationItem.ticketCost = parseFloat(document.getElementById(`airTicketCost_${i}`)?.value) || 0;
+          transportationItem.receiptUrl = fileResults[`air_${i}`] || '';
+        } else if (transportationType === 'train') {
+          transportationItem.ticketCost = parseFloat(document.getElementById(`trainTicketCost_${i}`)?.value) || 0;
+          transportationItem.receiptUrl = fileResults[`train_${i}`] || '';
+        } else if (transportationType === 'car') {
+          const carType = document.getElementById(`carType_${i}`)?.value;
+          transportationItem.carType = carType;
+          
+          if (carType === 'company') {
+            transportationItem.companyCar = document.getElementById(`companyCar_${i}`)?.value || '';
+          } else if (carType === 'personal') {
+            transportationItem.kilometers = parseFloat(document.getElementById(`kilometers_${i}`)?.value) || 0;
+            transportationItem.tngAmount = parseFloat(document.getElementById(`tngAmount_${i}`)?.value) || 0;
+            transportationItem.receiptUrl = fileResults[`tng_${i}`] || '';
+          } else if (carType === 'rental') {
+            transportationItem.rentalAmount = parseFloat(document.getElementById(`rentalAmount_${i}`)?.value) || 0;
+            transportationItem.receiptUrl = fileResults[`rental_${i}`] || '';
+          }
+        }
+        
+        transportation.push(transportationItem);
+      }
+      
+      return transportation;
+    }
+    
+    
+    function getStayData(fileResults) {
+      const stays = [];
+      
+      for (let i = 0; i < stayCount; i++) {
+        const stayDiv = document.getElementById(`stay_${i}`);
+        if (!stayDiv) continue;
+        
+        const stayType = document.getElementById(`stayType_${i}`)?.value;
+        if (!stayType) continue;
+        
+        const stayItem = {
+          type: stayType
+        };
+        
+        if (stayType === 'hotel' || stayType === 'homestay') {
+          stayItem.amount = parseFloat(document.getElementById(`stayAmount_${i}`)?.value) || 0;
+          stayItem.receiptUrl = fileResults[`stay_${i}`] || '';
+        }
+        
+        stays.push(stayItem);
+      }
+      
+      return stays;
+    }
+    
+    
+    function getExtraClaimsData(fileResults) {
+      const claims = [];
+      
+      for (let i = 0; i < extraClaimCount; i++) {
+        const claimDiv = document.getElementById(`extraClaim_${i}`);
+        if (!claimDiv) continue;
+        
+        const description = document.getElementById(`claimDescription_${i}`)?.value;
+        const amount = parseFloat(document.getElementById(`claimAmount_${i}`)?.value) || 0;
+        
+        if (description && amount > 0) {
+          claims.push({
+            description: description,
+            amount: amount,
+            documentUrl: fileResults[`claim_${i}`] || ''
+          });
+        }
+      }
+      
+      return claims;
+    }
+    
+    
+    function handleError(error) {
+      console.error('Error:', error);
+      showAlert('An error occurred: ' + error);
+    }
+
+    
+    function showAlert(message) {
+      document.getElementById('alertMessage').textContent = message;
+      document.getElementById('alertModal').classList.add('active');
+      
+      
+      setTimeout(() => {
+        document.getElementById('closeAlertBtn').focus();
+      }, 100);
+    }
+    
+    
+    (function() {
+      const style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = `
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+      `;
+      document.getElementsByTagName('head')[0].appendChild(style);
+    })();
+  </script>
+</body>
+</html>

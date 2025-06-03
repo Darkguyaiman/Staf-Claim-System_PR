@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Portal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100%;
+            background: #f0f4f8;
+        }
+
+        :root {
+            --color-primary: #2D0C31;
+            --color-secondary: #004D4D;
+            --color-accent: #00B894;
+            --color-light: #B8B5FF;
+            --color-lighter: #B8FFB5;
+            --color-dark: #333;
+            --color-gray: #6c757d;
+            --color-light-gray: #e9ecef;
+            --color-white: #fff;
+            --color-danger: #dc3545;
+            --color-success: #28a745;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .content {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #2A004F, #006666, #00FF80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        p {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #B4B4FF, #2A004F);
+            transition: all 0.3s ease;
+        }
+        .card:nth-child(2)::before {
+            background: linear-gradient(90deg, #006666, #00A3A3);
+        }
+        .card:nth-child(3)::before {
+            background: linear-gradient(90deg, #00FF80, #00CC66);
+        }
+        .card:nth-child(4)::before {
+            background: linear-gradient(90deg, #FF8000, #FF4000);
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover::before {
+            height: 100%;
+            opacity: 0.1;
+        }
+        .icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 20px;
+            transition: all 0.3s ease;
+        }
+        .card:hover .icon {
+            transform: scale(1.1);
+        }
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+        #unauthorized-message {
+            display: none;
+            text-align: center;
+            color: #FF0000;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #2A004F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: #2A004F;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .content {
+                padding: 30px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+        
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: var(--color-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: var(--color-primary);
+          border-radius: 10px;
+          border: 2px solid var(--color-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: var(--color-secondary);
+        }
+
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: var(--color-primary) var(--color-lighter);
+        }
+
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Portal...</div>
+    </div>
+    <div class="container">
+        <div class="content">
+            <h1 id="welcome-message">Welcome</h1>
+            <p>What would you like to do today?</p>
+            <div class="grid">
+                <a href="YOUR_CREATE_EVENT_LINK" class="card" target="_blank" rel="noopener noreferrer">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#2A004F">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="card-title">Create an Event</span>
+                </a>
+                <a href="YOUR_SUBMIT_CLAIM_LINK" class="card" target="_blank" rel="noopener noreferrer">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#006666">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="card-title">Submit a Claim</span>
+                </a>
+                <a href="YOUR_USE_PETTY_CASH_LINK" class="card" target="_blank" rel="noopener noreferrer">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#00FF80">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="card-title">Use Petty Cash</span>
+                </a>
+                <a href="YOUR_ADVANCE_PURCHASE_LINK" class="card" target="_blank" rel="noopener noreferrer">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#FF8000">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span class="card-title">Submit Advance Purchase/Upload an invoice</span>
+                </a>
+            </div>
+            <p id="unauthorized-message">Please use your authorized email to access this portal.</p>
+        </div>
+    </div>
+    <script>
+        
+        const username = '<?= username ?>';
+        const isAuthorized = <?= isAuthorized ?>;
+
+        
+        function updateContent() {
+            const welcomeMessage = document.getElementById('welcome-message');
+            const unauthorizedMessage = document.getElementById('unauthorized-message');
+            const grid = document.querySelector('.grid');
+
+            if (isAuthorized) {
+                welcomeMessage.textContent = `Welcome, ${username}`;
+                grid.style.display = 'grid';
+                unauthorizedMessage.style.display = 'none';
+            } else {
+                welcomeMessage.textContent = 'Welcome, Unknown User';
+                grid.style.display = 'none';
+                unauthorizedMessage.style.display = 'block';
+            }
+        }
+
+        
+        function showContent() {
+            document.getElementById('loader').style.display = 'none';
+            document.querySelector('.container').style.display = 'flex';
+        }
+
+        
+        document.querySelector('.container').style.display = 'none';
+
+        
+        setTimeout(() => {
+            updateContent();
+            showContent();
+        }, 3000);
+    </script>
+</body>
+</html>

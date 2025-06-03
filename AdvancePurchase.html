@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --color-primary: #2D0C31;
+      --color-secondary: #004D4D;
+      --color-accent: #00B894;
+      --color-light: #B8B5FF;
+      --color-lighter: #B8FFB5;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--color-light) 0%, var(--color-lighter) 100%);
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    h1, h2 {
+      color: var(--color-primary);
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    h1::after, h2::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+      border-radius: 3px;
+    }
+    
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--color-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+    }
+    
+    button {
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(45, 12, 49, 0.2);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .item-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    
+    .item-row .form-group {
+      flex: 1;
+      min-width: 200px;
+      margin-bottom: 10px;
+    }
+    
+    #totalAmount {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 25px 0;
+      text-align: right;
+      color: var(--color-secondary);
+      padding: 15px;
+      background-color: rgba(184, 255, 181, 0.2);
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .toggle-form {
+      background: transparent;
+      border: 2px solid var(--color-primary);
+      color: var(--color-primary);
+      transition: all 0.3s;
+    }
+    
+    .toggle-form:hover {
+      background-color: rgba(45, 12, 49, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    #invoiceUpload {
+      display: none;
+    }
+    
+    .invoice-item {
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .invoice-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-container {
+      position: relative;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--color-secondary);
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+    }
+    
+    .search-icon:hover {
+      color: var(--color-accent);
+    }
+    
+    .fa-icon {
+      font-size: 18px;
+    }
+    
+    .remove-item {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      height: 42px;
+      margin-bottom: 10px;
+    }
+    
+    .remove-item:hover {
+      background-color: #ff3333;
+      transform: translateY(-2px);
+    }
+    
+    .submit-button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .file-drop-area {
+      border: 2px dashed var(--color-primary);
+      border-radius: 8px;
+      padding: 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    .file-drop-area:hover {
+      background-color: rgba(45, 12, 49, 0.05);
+      transform: translateY(-2px);
+    }
+    
+    .file-drop-area.dragover {
+      background-color: rgba(45, 12, 49, 0.1);
+      border-color: var(--color-accent);
+    }
+    
+    .file-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: var(--color-primary);
+    }
+    
+    .file-error {
+      color: #ff4d4d;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border-left-color: #ffffff;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .loading-spinner {
+      border: 6px solid rgba(0, 0, 0, 0.1);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border-left-color: var(--color-primary);
+      animation: spin 1s linear infinite;
+    }
+    
+    .file-name {
+      font-weight: 500;
+      margin-top: 5px;
+      color: var(--color-secondary);
+    }
+    
+    .file-uploaded {
+      border-color: var(--color-accent);
+      background-color: rgba(0, 184, 148, 0.05);
+    }
+    
+    .file-uploaded .file-icon {
+      color: var(--color-accent);
+    }
+    
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .item-info i {
+      color: var(--color-secondary);
+    }
+    
+    .notification {
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .notification.error {
+      background-color: #ffebee;
+      color: #d32f2f;
+      border-left: 4px solid #d32f2f;
+    }
+    
+    .notification.success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #2e7d32;
+    }
+    
+    .notification.info {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-left: 4px solid #1976d2;
+    }
+    
+    /* Custom Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 500px;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: transform 0.4s, opacity 0.4s;
+      overflow: hidden;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .modal-header {
+      padding: 20px;
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .modal-header i {
+      font-size: 24px;
+    }
+    
+    .modal-header h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+    
+    .modal-body {
+      padding: 25px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    .modal-footer {
+      padding: 15px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid #eee;
+    }
+    
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+    
+    .modal-btn.primary {
+      background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      color: white;
+    }
+    
+    .modal-btn.secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+      text-align: center;
+    }
+    
+    .modal-icon.success {
+      color: var(--color-accent);
+    }
+    
+    .modal-icon.error {
+      color: #d32f2f;
+    }
+    
+    .modal-icon.info {
+      color: var(--color-secondary);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .item-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .item-row .form-group {
+        width: 100%;
+      }
+      
+      button {
+        width: 100%;
+      }
+      
+      .modal {
+        width: 95%;
+      }
+    }
+
+        /* For WebKit Browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-lighter); /* light green */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary); /* deep purple */
+  border-radius: 10px;
+  border: 2px solid var(--color-lighter);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-secondary); /* dark teal */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) var(--color-lighter);
+}
+
+/* CSS Variables */
+:root {
+  --color-primary: #2D0C31;
+  --color-secondary: #004D4D;
+  --color-accent: #00B894;
+  --color-light: #B8B5FF;
+  --color-lighter: #B8FFB5;
+}
+  </style>
+</head>
+<body>
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <!-- Custom Modal -->
+  <div id="customModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <i id="modalHeaderIcon" class="fas fa-info-circle"></i>
+        <h3 id="modalTitle">Notification</h3>
+      </div>
+      <div class="modal-body">
+        <i id="modalIcon" class="fas fa-info-circle modal-icon info"></i>
+        <p id="modalMessage">This is a notification message.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="modalCloseBtn" class="modal-btn primary">OK</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="form-header">
+      <h1 id="formTitle">Advance Purchase Form</h1>
+      <button id="toggleFormBtn" class="toggle-form" onclick="toggleForms()">
+        <i class="fas fa-exchange-alt fa-icon"></i>
+        Switch to Invoice Upload
+      </button>
+    </div>
+    
+    <div id="advancePaymentFormContainer">
+      <form id="advancePaymentForm">
+        <div class="form-group">
+          <label for="username"><i class="fas fa-user"></i> Username</label>
+          <input type="text" id="username" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="eventName"><i class="fas fa-calendar-event"></i> Event Name</label>
+          <select id="eventName" required>
+            <option value="" disabled selected>Select an event</option>
+          </select>
+          <input type="hidden" id="eventId">
+        </div>
+        
+        <div id="itemsContainer">
+          <div class="item-row" data-item-id="1">
+            <div class="form-group">
+              <label for="item1"><i class="fas fa-shopping-cart"></i> Item</label>
+              <input type="text" id="item1" required>
+            </div>
+            <div class="form-group">
+              <label for="price1"><i class="fas fa-tag"></i> Price (RM)</label>
+              <input type="number" id="price1" required>
+            </div>
+          </div>
+        </div>
+        
+        <button type="button" onclick="addItem()">
+          <i class="fas fa-plus fa-icon"></i>
+          Add Item
+        </button>
+        
+        <div class="form-group">
+          <label for="remarks"><i class="fas fa-comment"></i> Remarks (Optional)</label>
+          <textarea id="remarks" rows="3"></textarea>
+        </div>
+        
+        <div id="totalAmount"><i class="fas fa-money-bill-wave"></i> Total Amount: RM 0.00</div>
+        
+        <div class="submit-button-container">
+          <button type="submit" id="submitPaymentBtn">
+            <div id="submitPaymentSpinner" class="spinner" style="display: none;"></div>
+            <i class="fas fa-paper-plane"></i> Submit Advance Purchase
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <div id="invoiceUpload">
+      <h2><i class="fas fa-file-invoice"></i> Upload Invoice</h2>
+      <form id="invoiceForm">
+        <div class="form-group">
+          <label for="transactionId"><i class="fas fa-hashtag"></i> Advance Purchase ID</label>
+          <div class="search-container">
+            <input type="text" id="transactionId" required>
+            <span class="search-icon" onclick="fetchInvoiceItems()">
+              <i class="fas fa-search fa-icon"></i>
+            </span>
+          </div>
+        </div>
+        <div id="invoiceItemsContainer"></div>
+        <div id="invoiceNotification"></div>
+        <div class="submit-button-container">
+          <button type="submit" id="submitInvoicesBtn" style="display: none;">
+            <div id="submitInvoicesSpinner" class="spinner" style="display: none;"></div>
+            <i class="fas fa-upload"></i> Submit Invoices
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let itemCount = 1;
+    let uploadedFilesCount = 0;
+    let totalFilesNeeded = 0;
+    let eventIdMap = {}; 
+
+    function showSpinner() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+
+    function hideSpinner() {
+      document.getElementById('loadingOverlay').style.display = 'none';
+    }
+    
+    
+    function showModal(type, title, message, callback) {
+      const modal = document.getElementById('customModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
+      const modalHeaderIcon = document.getElementById('modalHeaderIcon');
+      const modalIcon = document.getElementById('modalIcon');
+      const closeBtn = document.getElementById('modalCloseBtn');
+      
+      
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      
+      
+      if (type === 'success') {
+        modalHeaderIcon.className = 'fas fa-check-circle';
+        modalIcon.className = 'fas fa-check-circle modal-icon success';
+      } else if (type === 'error') {
+        modalHeaderIcon.className = 'fas fa-exclamation-circle';
+        modalIcon.className = 'fas fa-exclamation-circle modal-icon error';
+      } else {
+        modalHeaderIcon.className = 'fas fa-info-circle';
+        modalIcon.className = 'fas fa-info-circle modal-icon info';
+      }
+      
+      
+      closeBtn.onclick = function() {
+        hideModal();
+        if (callback && typeof callback === 'function') {
+          callback();
+        }
+      };
+      
+      
+      modal.classList.add('active');
+      
+      
+      modal.onclick = function(e) {
+        if (e.target === modal) {
+          hideModal();
+          if (callback && typeof callback === 'function') {
+            callback();
+          }
+        }
+      };
+    }
+    
+    function hideModal() {
+      const modal = document.getElementById('customModal');
+      modal.classList.remove('active');
+    }
+
+    function addItem() {
+      itemCount++;
+      const newRow = document.createElement('div');
+      newRow.className = 'item-row';
+      newRow.dataset.itemId = itemCount;
+      newRow.innerHTML = `
+        <div class="form-group">
+          <label for="item${itemCount}"><i class="fas fa-shopping-cart"></i> Item</label>
+          <input type="text" id="item${itemCount}" required>
+        </div>
+        <div class="form-group">
+          <label for="price${itemCount}"><i class="fas fa-tag"></i> Price (RM)</label>
+          <input type="number" id="price${itemCount}" required>
+        </div>
+        <button type="button" class="remove-item" onclick="removeItem(${itemCount})">
+          <i class="fas fa-trash-alt"></i>
+          Remove
+        </button>
+      `;
+      document.getElementById('itemsContainer').appendChild(newRow);
+    }
+
+    function removeItem(id) {
+      const itemToRemove = document.querySelector(`.item-row[data-item-id="${id}"]`);
+      if (itemToRemove) {
+        itemToRemove.remove();
+        updateTotalAmount();
+      }
+    }
+
+    function updateTotalAmount() {
+      let total = 0;
+      const priceInputs = document.querySelectorAll('#itemsContainer input[type="number"]');
+      priceInputs.forEach(input => {
+        total += parseFloat(input.value) || 0;
+      });
+      document.getElementById('totalAmount').innerHTML = `<i class="fas fa-money-bill-wave"></i> Total Amount: RM ${total.toFixed(2)}`;
+    }
+
+    function toggleForms() {
+      const advancePaymentForm = document.getElementById('advancePaymentFormContainer');
+      const invoiceUpload = document.getElementById('invoiceUpload');
+      const toggleBtn = document.getElementById('toggleFormBtn');
+      const formTitle = document.getElementById('formTitle');
+
+      if (advancePaymentForm.style.display === 'none') {
+        advancePaymentForm.style.display = 'block';
+        invoiceUpload.style.display = 'none';
+        toggleBtn.innerHTML = `
+          <i class="fas fa-exchange-alt fa-icon"></i>
+          Switch to Invoice Upload
+        `;
+        formTitle.innerHTML = 'Advance Purchase Form';
+      } else {
+        advancePaymentForm.style.display = 'none';
+        invoiceUpload.style.display = 'block';
+        toggleBtn.innerHTML = `
+          <i class="fas fa-exchange-alt fa-icon"></i>
+          Switch to Advance Purchase
+        `;
+        formTitle.innerHTML = '<i class="fas fa-file-invoice"></i> Invoice Upload';
+      }
+    }
+
+    function resetForm() {
+      
+      document.getElementById('advancePaymentForm').reset();
+      
+      
+      const itemsContainer = document.getElementById('itemsContainer');
+      itemsContainer.innerHTML = `
+        <div class="item-row" data-item-id="1">
+          <div class="form-group">
+            <label for="item1"><i class="fas fa-shopping-cart"></i> Item</label>
+            <input type="text" id="item1" required>
+          </div>
+          <div class="form-group">
+            <label for="price1"><i class="fas fa-tag"></i> Price (RM)</label>
+            <input type="number" id="price1" required>
+          </div>
+        </div>
+      `;
+      
+      
+      itemCount = 1;
+      
+      
+      document.getElementById('totalAmount').innerHTML = '<i class="fas fa-money-bill-wave"></i> Total Amount: RM 0.00';
+      
+      
+      document.getElementById('invoiceForm').reset();
+      document.getElementById('invoiceItemsContainer').innerHTML = '';
+      document.getElementById('invoiceNotification').innerHTML = '';
+      document.getElementById('submitInvoicesBtn').style.display = 'none';
+      
+      
+      uploadedFilesCount = 0;
+      totalFilesNeeded = 0;
+      
+      
+      document.getElementById('eventId').value = '';
+      
+      
+      initializePage();
+    }
+
+    
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        
+        
+        if (document.activeElement === document.getElementById('transactionId')) {
+          fetchInvoiceItems();
+        }
+        
+        return false;
+      }
+    });
+
+    
+    document.getElementById('eventName').addEventListener('change', function() {
+      const selectedEvent = this.value;
+      const eventId = eventIdMap[selectedEvent] || '';
+      document.getElementById('eventId').value = eventId;
+    });
+
+    document.getElementById('advancePaymentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitPaymentBtn');
+      const spinner = document.getElementById('submitPaymentSpinner');
+      submitBtn.disabled = true;
+      spinner.style.display = 'inline-block';
+
+      const formData = {
+        username: document.getElementById('username').value,
+        eventName: document.getElementById('eventName').value,
+        eventId: document.getElementById('eventId').value, 
+        items: [],
+        remarks: document.getElementById('remarks').value,
+        totalAmount: parseFloat(document.getElementById('totalAmount').textContent.split('RM ')[1])
+      };
+
+      const itemRows = document.querySelectorAll('.item-row');
+      itemRows.forEach(row => {
+        const itemId = row.dataset.itemId;
+        formData.items.push({
+          name: document.getElementById(`item${itemId}`).value,
+          price: parseFloat(document.getElementById(`price${itemId}`).value)
+        });
+      });
+
+      google.script.run
+        .withSuccessHandler(function(transactionId) {
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          
+          
+          showModal(
+            'success', 
+            'Success!', 
+            'Form submitted successfully. Advance Purchase ID: ' + transactionId,
+            resetForm 
+          );
+        })
+        .withFailureHandler(function(error) {
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          
+          
+          showModal('error', 'Error', 'Error submitting form: ' + error);
+        })
+        .submitForm(formData);
+    });
+
+    function fetchInvoiceItems() {
+      const transactionId = document.getElementById('transactionId').value;
+      if (!transactionId.trim()) {
+        showModal('error', 'Error', 'Please enter an Advance Purchase ID');
+        return;
+      }
+      
+      const searchIcon = document.querySelector('.search-icon');
+      const originalContent = searchIcon.innerHTML;
+      searchIcon.innerHTML = '<div class="spinner"></div>';
+      searchIcon.style.pointerEvents = 'none';
+
+      google.script.run
+        .withSuccessHandler(function(rows) {
+          displayInvoiceItems(rows);
+          searchIcon.innerHTML = originalContent;
+          searchIcon.style.pointerEvents = 'auto';
+        })
+        .withFailureHandler(function(error) {
+          searchIcon.innerHTML = originalContent;
+          searchIcon.style.pointerEvents = 'auto';
+          showModal('error', 'Error', 'Error fetching invoice items: ' + error);
+        })
+        .getInvoiceRows(transactionId);
+    }
+
+    function showNotification(type, message) {
+      const notificationContainer = document.getElementById('invoiceNotification');
+      notificationContainer.innerHTML = `
+        <div class="notification ${type}">
+          <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
+          ${message}
+        </div>
+      `;
+      
+      
+      setTimeout(() => {
+        notificationContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    function checkAllFilesUploaded() {
+      if (uploadedFilesCount > 0 && uploadedFilesCount >= totalFilesNeeded) {
+        document.getElementById('submitInvoicesBtn').style.display = 'flex';
+      } else {
+        document.getElementById('submitInvoicesBtn').style.display = 'none';
+      }
+    }
+
+    function displayInvoiceItems(rows) {
+      const container = document.getElementById('invoiceItemsContainer');
+      container.innerHTML = '';
+      uploadedFilesCount = 0;
+      totalFilesNeeded = rows.length;
+      
+      if (rows.length === 0) {
+        container.innerHTML = `
+          <div class="notification info">
+            <i class="fas fa-info-circle"></i>
+            No items found for this advance purchase ID or invoices already uploaded.
+          </div>
+        `;
+        document.getElementById('submitInvoicesBtn').style.display = 'none';
+      } else {
+        rows.forEach(function(row) {
+          const div = document.createElement('div');
+          div.className = 'invoice-item';
+          div.innerHTML = `
+            <div class="item-info">
+              <i class="fas fa-shopping-cart"></i>
+              <strong>${row.item}</strong>
+            </div>
+            <div class="item-info">
+              <i class="fas fa-tag"></i>
+              <strong>RM ${row.price.toFixed(2)}</strong>
+            </div>
+            <div class="file-drop-area" id="dropArea${row.rowIndex}">
+              <i class="fas fa-file-upload file-icon"></i>
+              <p>Drag & drop file here or click to select</p>
+              <p class="file-name"></p>
+              <p><i class="fas fa-info-circle"></i> Max file size: 5MB</p>
+              <input type="file" id="file${row.rowIndex}" accept="image/*,.pdf" required style="display: none;">
+            </div>
+            <div class="file-error" id="fileError${row.rowIndex}"></div>
+          `;
+          container.appendChild(div);
+          
+          const dropArea = div.querySelector('.file-drop-area');
+          const fileInput = div.querySelector('input[type="file"]');
+          const fileError = div.querySelector('.file-error');
+          const fileName = div.querySelector('.file-name');
+          
+          dropArea.addEventListener('click', () => fileInput.click());
+          
+          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+          });
+          
+          function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          
+          ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'));
+          });
+          
+          ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'));
+          });
+          
+          dropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+          });
+          
+          fileInput.addEventListener('change', () => {
+            handleFiles(fileInput.files);
+          });
+          
+          function handleFiles(files) {
+            if (files.length > 0) {
+              const file = files[0];
+              if (file.size > 5 * 1024 * 1024) {
+                fileError.textContent = 'File size exceeds 5MB limit.';
+                fileInput.value = '';
+                dropArea.classList.remove('file-uploaded');
+                fileName.textContent = '';
+                if (dropArea.classList.contains('counted')) {
+                  uploadedFilesCount--;
+                  dropArea.classList.remove('counted');
+                  checkAllFilesUploaded();
+                }
+              } else {
+                fileError.textContent = '';
+                fileInput.files = files;
+                fileName.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name}`;
+                dropArea.classList.add('file-uploaded');
+                dropArea.querySelector('.file-icon').className = 'fas fa-file-check file-icon';
+                if (!dropArea.classList.contains('counted')) {
+                  uploadedFilesCount++;
+                  dropArea.classList.add('counted');
+                  checkAllFilesUploaded();
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      
+      if (uploadedFilesCount === 0) {
+        showModal('error', 'Error', 'Please upload at least one invoice file before submitting');
+        return;
+      }
+      
+      const submitBtn = document.getElementById('submitInvoicesBtn');
+      const spinner = document.getElementById('submitInvoicesSpinner');
+      submitBtn.disabled = true;
+      spinner.style.display = 'inline-block';
+
+      const transactionId = document.getElementById('transactionId').value;
+      const fileInputs = document.querySelectorAll('#invoiceItemsContainer input[type="file"]');
+      const invoices = [];
+
+      let filesProcessed = 0;
+      let hasFiles = false;
+      
+      fileInputs.forEach(function(input) {
+        const file = input.files[0];
+        if (file) {
+          hasFiles = true;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            invoices.push({
+              rowIndex: parseInt(input.id.replace('file', '')),
+              file: {
+                data: e.target.result.split(',')[1],
+                mimeType: file.type,
+                filename: file.name
+              }
+            });
+
+            filesProcessed++;
+            if (filesProcessed === fileInputs.length) {
+              submitInvoices(invoices);
+            }
+          };
+          reader.readAsDataURL(file);
+        } else {
+          filesProcessed++;
+          if (filesProcessed === fileInputs.length) {
+            if (hasFiles) {
+              submitInvoices(invoices);
+            } else {
+              showModal('error', 'Error', 'Please upload at least one invoice file before submitting');
+              submitBtn.disabled = false;
+              spinner.style.display = 'none';
+            }
+          }
+        }
+      });
+
+      if (fileInputs.length === 0) {
+        showModal('error', 'Error', 'No invoice items found. Please search for a valid Advance Purchase ID');
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+      }
+
+      function submitInvoices(invoices) {
+        if (invoices.length === 0) {
+          showModal('error', 'Error', 'Please upload at least one invoice file before submitting');
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          return;
+        }
+        
+        google.script.run
+          .withSuccessHandler(function(results) {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            
+            
+            showModal(
+              'success', 
+              'Success!', 
+              'Invoices submitted successfully!',
+              resetForm 
+            );
+          })
+          .withFailureHandler(function(error) {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            
+            
+            showModal('error', 'Error', 'Error submitting invoices: ' + error);
+          })
+          .submitInvoices(invoices);
+      }
+    });
+
+    function initializePage() {
+      showSpinner();
+      
+      
+      document.getElementById('transactionId').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          fetchInvoiceItems();
+        }
+      });
+      
+      Promise.all([
+        new Promise(resolve => {
+          google.script.run
+            .withSuccessHandler(function(username) {
+              document.getElementById('username').value = username;
+              resolve();
+            })
+            .getUserName();
+        }),
+        new Promise(resolve => {
+          google.script.run
+            .withSuccessHandler(function(eventData) {
+              const select = document.getElementById('eventName');
+              select.innerHTML = '<option value="" disabled selected>Select an event</option>';
+              
+              
+              eventIdMap = {};
+              
+              
+              eventData.forEach(function(event) {
+                const opt = document.createElement('option');
+                opt.value = event.name;
+                opt.textContent = event.name;
+                select.appendChild(opt);
+                
+                
+                eventIdMap[event.name] = event.id;
+              });
+              resolve();
+            })
+            .getEventOptions();
+        })
+      ]).then(() => {
+        hideSpinner();
+      });
+
+      document.getElementById('itemsContainer').addEventListener('input', updateTotalAmount);
+      
+      
+      document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            return false;
+          }
+        });
+      });
+      
+      
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          hideModal();
+        }
+      });
+    }
+
+    window.onload = initializePage;
+  </script>
+</body>
+</html>
