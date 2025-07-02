@@ -17,6 +17,26 @@ function parseAllowance(value) {
   return match ? parseFloat(match[1].replace(/,/g, '')) : 0;
 }
 
+function formatTimeOnDuty(hours) {
+  if (!hours || hours === 0) return 'N/A';
+  
+  const totalHours = parseFloat(hours);
+  if (isNaN(totalHours)) return 'N/A';
+  
+  const wholeHours = Math.floor(totalHours);
+  const minutes = Math.round((totalHours - wholeHours) * 60);
+  
+  if (minutes === 0) {
+    return wholeHours === 1 ? '1 hour' : `${wholeHours} hours`;
+  } else if (wholeHours === 0) {
+    return minutes === 1 ? '1 minute' : `${minutes} minutes`;
+  } else {
+    const hourText = wholeHours === 1 ? '1 hour' : `${wholeHours} hours`;
+    const minuteText = minutes === 1 ? '1 minute' : `${minutes} minutes`;
+    return `${hourText} ${minuteText}`;
+  }
+}
+
 function getAllClaims() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -32,7 +52,8 @@ function getAllClaims() {
       return JSON.stringify([]); 
     }
     
-    const mainData = mainSheet.getRange(4, 1, lastRow - 3, 12).getValues();
+    
+    const mainData = mainSheet.getRange(4, 1, lastRow - 3, 13).getValues();
     
     
     const staySheet = ss.getSheetByName('Claim&Allowance Stay');
@@ -63,22 +84,25 @@ function getAllClaims() {
         createdDate: row[0],          
         eventStatus: row[1],          
         applicationNumber: row[2],    
-        personOfSubmission: row[3],
-        eventName: row[4],
-        timeSlot: row[5],
+        personOfSubmission: row[3],   
+        eventName: row[4],           
+        timeSlot: row[5],            
         mealAllowance: {
           label: row[6],
           amount: parseAllowance(row[6])
-        },
+        },                           
         otherAllowances: {
           label: row[7],
           amount: parseAllowance(row[7])
+        },                           
+        totalClaim: row[8],          
+        remarks: row[9],             
+        eventId: row[10],            
+        notesOperations: row[11],    
+        totalTimeOnDuty: {
+          hours: row[12] || 0,       
+          formatted: formatTimeOnDuty(row[12]) 
         },
-
-        totalClaim: row[8],
-        remarks: row[9],
-        eventId: row[10],
-        notesOperations: row[11],
         stays: null,
         extraClaims: [],
         transportation: []
