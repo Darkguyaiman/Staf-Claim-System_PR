@@ -120,102 +120,100 @@ function processFileUpload(fileObject, fileName, folderId) {
   }
 }
 
-
-
 function submitFormData(formData) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const timestamp = new Date();
     
-    
     const mainSheet = ss.getSheetByName('Claim&Allowance');
-    const mainLastRow = mainSheet.getLastRow();
-    
-    mainSheet.getRange(mainLastRow + 1, 1).setValue(timestamp); 
-    mainSheet.getRange(mainLastRow + 1, 2).setValue('Submitted'); 
-    mainSheet.getRange(mainLastRow + 1, 3).setValue(formData.applicationNumber); 
-    mainSheet.getRange(mainLastRow + 1, 4).setValue(formData.username); 
-    mainSheet.getRange(mainLastRow + 1, 5).setValue(formData.eventName); 
-    mainSheet.getRange(mainLastRow + 1, 6).setValue(formData.timeSlots.join(', ')); 
-    mainSheet.getRange(mainLastRow + 1, 7).setValue(formData.mealAllowance.type); 
-    mainSheet.getRange(mainLastRow + 1, 8).setValue(formData.otherAllowances.type); 
-    mainSheet.getRange(mainLastRow + 1, 9).setValue(formData.totalClaim); 
-    mainSheet.getRange(mainLastRow + 1, 10).setValue(formData.remarks); 
-    mainSheet.getRange(mainLastRow + 1, 11).setValue(formData.eventId); 
-    
-    
-    if (formData.transportation && formData.transportation.length > 0) {
+    const mainLastRow = mainSheet.getLastRow() + 1;
+
+    const totalHours = calculateTotalHours(formData.timeSlots);
+
+    const mainRow = [
+      timestamp,
+      'Submitted',
+      formData.applicationNumber,
+      formData.username,
+      formData.eventName,
+      formData.timeSlots.join(', '),
+      formData.mealAllowance.type,
+      formData.otherAllowances.type,
+      formData.totalClaim,
+      formData.remarks,
+      formData.eventId,
+      '',
+      totalHours
+    ];
+
+    mainSheet.getRange(mainLastRow, 1, 1, mainRow.length).setValues([mainRow]);
+
+    if (formData.transportation?.length > 0) {
       const transportSheet = ss.getSheetByName('Claim&Allowance Transportation');
-      
-      formData.transportation.forEach(function(item) {
-        const transportLastRow = transportSheet.getLastRow();
-        
-        transportSheet.getRange(transportLastRow + 1, 1).setValue(formData.applicationNumber); 
-        transportSheet.getRange(transportLastRow + 1, 2).setValue(item.type); 
-        
+      const transportRows = formData.transportation.map(item => {
+        const row = [
+          formData.applicationNumber,
+          item.type,
+          '', '', '', '', '', '', ''
+        ];
+
         if (item.type === 'car') {
-          transportSheet.getRange(transportLastRow + 1, 3).setValue(item.carType); 
-          
+          row[2] = item.carType;
           if (item.carType === 'company') {
-            transportSheet.getRange(transportLastRow + 1, 4).setValue(item.companyCar); 
+            row[3] = item.companyCar || '';
           } else if (item.carType === 'personal') {
-            transportSheet.getRange(transportLastRow + 1, 5).setValue(item.kilometers); 
-            transportSheet.getRange(transportLastRow + 1, 6).setValue(item.tngAmount); 
-            if (item.receiptUrl) {
-              transportSheet.getRange(transportLastRow + 1, 8).setValue(item.receiptUrl); 
-            }
+            row[4] = item.kilometers || '';
+            row[5] = item.tngAmount || '';
+            row[7] = item.receiptUrl || '';
           } else if (item.carType === 'rental') {
-            transportSheet.getRange(transportLastRow + 1, 7).setValue(item.rentalAmount); 
-            if (item.receiptUrl) {
-              transportSheet.getRange(transportLastRow + 1, 8).setValue(item.receiptUrl); 
-            }
+            row[6] = item.rentalAmount || '';
+            row[7] = item.receiptUrl || '';
           }
         } else if (item.type === 'air' || item.type === 'train') {
-          transportSheet.getRange(transportLastRow + 1, 7).setValue(item.ticketCost); 
-          if (item.receiptUrl) {
-            transportSheet.getRange(transportLastRow + 1, 8).setValue(item.receiptUrl); 
-          }
+          row[6] = item.ticketCost || '';
+          row[7] = item.receiptUrl || '';
         }
+
+        return row;
       });
+
+      if (transportRows.length > 0) {
+        transportSheet.getRange(transportSheet.getLastRow() + 1, 1, transportRows.length, 9).setValues(transportRows);
+      }
     }
-    
-    
-    if (formData.stay && formData.stay.length > 0) {
+
+    if (formData.stay?.length > 0) {
       const staySheet = ss.getSheetByName('Claim&Allowance Stay');
-      
-      formData.stay.forEach(function(item) {
-        if (item.type === 'hotel' || item.type === 'homestay' || item.type === 'airport' || item.type === 'none') {
-          const stayLastRow = staySheet.getLastRow();
-          
-          staySheet.getRange(stayLastRow + 1, 1).setValue(formData.applicationNumber); 
-          staySheet.getRange(stayLastRow + 1, 2).setValue(item.type); 
-          
-          if (item.type === 'hotel' || item.type === 'homestay') {
-            staySheet.getRange(stayLastRow + 1, 3).setValue(item.amount); 
-            if (item.receiptUrl) {
-              staySheet.getRange(stayLastRow + 1, 4).setValue(item.receiptUrl); 
-            }
-          }
+      const stayRows = formData.stay.map(item => {
+        if (['hotel', 'homestay', 'airport', 'none'].includes(item.type)) {
+          return [
+            formData.applicationNumber,
+            item.type,
+            (item.type === 'hotel' || item.type === 'homestay') ? item.amount || '' : '',
+            (item.type === 'hotel' || item.type === 'homestay') ? item.receiptUrl || '' : ''
+          ];
         }
-      });
+      }).filter(row => row);
+
+      if (stayRows.length > 0) {
+        staySheet.getRange(staySheet.getLastRow() + 1, 1, stayRows.length, 4).setValues(stayRows);
+      }
     }
-    
-    
-    if (formData.extraClaims && formData.extraClaims.length > 0) {
+
+    if (formData.extraClaims?.length > 0) {
       const claimsSheet = ss.getSheetByName('Claim&Allowance Extra Claims');
-      
-      formData.extraClaims.forEach(function(item) {
-        const claimsLastRow = claimsSheet.getLastRow();
-        
-        claimsSheet.getRange(claimsLastRow + 1, 1).setValue(formData.applicationNumber); 
-        claimsSheet.getRange(claimsLastRow + 1, 2).setValue(item.description); 
-        claimsSheet.getRange(claimsLastRow + 1, 3).setValue(item.amount); 
-        if (item.documentUrl) {
-          claimsSheet.getRange(claimsLastRow + 1, 4).setValue(item.documentUrl); 
-        }
-      });
+      const claimRows = formData.extraClaims.map(item => [
+        formData.applicationNumber,
+        item.description,
+        item.amount,
+        item.documentUrl || ''
+      ]);
+
+      if (claimRows.length > 0) {
+        claimsSheet.getRange(claimsSheet.getLastRow() + 1, 1, claimRows.length, 4).setValues(claimRows);
+      }
     }
-    
+
     return {
       success: true,
       message: 'Form submitted successfully',
@@ -227,4 +225,24 @@ function submitFormData(formData) {
       error: error.toString()
     };
   }
+}
+
+function calculateTotalHours(timeSlots) {
+  let total = 0;
+  timeSlots.forEach(slot => {
+    const parts = slot.trim().split(' ');
+    if (parts.length !== 2) return;
+    const [startTime, endTime] = parts[1].split('-');
+    const date = parts[0];
+
+    const start = new Date(`${date}T${startTime}:00`);
+    const end = new Date(`${date}T${endTime}:00`);
+    const diffMs = end - start;
+
+    if (!isNaN(diffMs)) {
+      total += diffMs / (1000 * 60 * 60);
+    }
+  });
+
+  return Math.round(total * 100) / 100;
 }
