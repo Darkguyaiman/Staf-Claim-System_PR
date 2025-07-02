@@ -1141,9 +1141,9 @@
     let fileUploads = {};
     
     
-    const TRANSPORTATION_FOLDER_ID = 'YOUR_TRANSPORTATION_FOLDER_ID';
-    const STAY_FOLDER_ID = 'YOUR_STAY_FOLDER_ID';
-    const EXTRA_CLAIMS_FOLDER_ID = 'YOUR_EXTRA_CLAIMS_FOLDER_ID';
+    const TRANSPORTATION_FOLDER_ID = '1qdhuvtUEL5CN83fWXLrKST9IBs6NKYYO';
+    const STAY_FOLDER_ID = '13EyxVxkqFYT9dzk7SW8xKddB34AmVPEe';
+    const EXTRA_CLAIMS_FOLDER_ID = '13dcgisDDfFbkuTqX2JAlDy6rCkSZA4j7';
     
     
     document.addEventListener('DOMContentLoaded', function() {
@@ -1361,6 +1361,10 @@
         }
         
       }
+      if (mealAllowanceSelect.options.length === 2) {
+        mealAllowanceSelect.selectedIndex = 1;
+        updateTotalClaim(); 
+      }
     }
     
     
@@ -1417,6 +1421,12 @@
         addOption(otherAllowancesSelect, allowanceValue, allowanceText);
         otherAllowancesInput.value = allowanceValue;
         otherAllowancesInput.readOnly = true;
+      }
+
+      if (otherAllowancesSelect.options.length === 2) {
+        otherAllowancesSelect.selectedIndex = 1;
+        otherAllowancesInput.value = otherAllowancesSelect.value;
+        updateTotalClaim(); 
       }
     }
     
