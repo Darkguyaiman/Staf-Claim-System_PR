@@ -25,6 +25,11 @@
             --color-danger: #dc3545;
         }
 
+        html {
+          overflow-y: scroll;
+        }
+
+
         * {
             margin: 0;
             padding: 0;
@@ -791,37 +796,36 @@
     <h2 class="sidebar-title">Claim System</h2>
   </div>
   <div class="sidebar-menu">
-    <a href="YOUR_DASHBOARD_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbzYNp35xJjccAsya0HTjrdZ2rXx_-GgiJT1PpztHYYWje3_LPiab4hV9fNypiXy4lo/exec" target="_top" class="sidebar-item">
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
-    <a href="YOUR_EVENT_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbz0c6Fzw97MVqT1fEgD-5r1qsy3oDkQMqjbUAA13G-rQ7DgboPl-Uwbb7a_DZ33QcXM/exec" target="_top" class="sidebar-item">
       <i class="fas fa-calendar-alt"></i>
       <span>Event Panel</span>
     </a>
-    <a href="YOUR_CLAIMS_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a class="sidebar-item active">
       <i class="fas fa-hand-holding-usd"></i>
       <span>Claims & Allowance Panel</span>
     </a>
-    <a href="YOUR_BUDGET_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbwQ9m3uoLf1oQVtat-wmhRanjO93a5k5ef0XJY6BaJBnGJz7lSh_0OJc2YRv5hQwco/exec" target="_top" class="sidebar-item">
       <i class="fas fa-dollar-sign"></i>
       <span>Budget & Expenses Panel</span>
     </a>
-    <a href="YOUR_ADVANCE_PURCHASE_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item active">
+    <a href="https://script.google.com/macros/s/AKfycbxysT_mH8BoDqczulSbcDiILyqBMUv7HW9qsXuVMSsHER1z2m_kmGF7-_IjrmrfqehF/exec" target="_top" class="sidebar-item">
       <i class="fas fa-shopping-cart"></i>
       <span>Advance Purchases Panel</span>
     </a>
-    <a href="YOUR_PETTY_CASH_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbwkh4_T2ygXjLRn4-bt0p5VThfEMvX2jBW3nJD9BZwYpXurxUs6M5ilGz2OfGCCuRR8/exec" target="_top" class="sidebar-item">
       <i class="fas fa-wallet"></i>
       <span>Petty Cash Panel</span>
     </a>
-    <a href="YOUR_SETTINGS_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbx4ult7m64buaRAzKks6HsfsHdxkp-WErvrRosKW8UBRiWU1KoKr3KeWIVOfOmcuwtC/exec" target="_top" class="sidebar-item">
       <i class="fas fa-cog"></i>
       <span>Settings</span>
     </a>
   </div>
 </aside>
-
 
 <!-- Sidebar toggle button -->
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
@@ -1058,6 +1062,10 @@
                     <i class="fas fa-clock"></i>
                     <strong>Time Slot:</strong> ${claim.timeSlot || 'N/A'}
                 </div>
+                <div class="claim-info">
+                    <i class="fas fa-business-time"></i>
+                    <strong>Time on Duty:</strong> ${claim.totalTimeOnDuty ? claim.totalTimeOnDuty.formatted : 'N/A'}
+                </div>
                 <div class="total-amount">
                     <i class="fas fa-money-bill-wave"></i>
                     Total: RM ${formatCurrency(claim.totalClaim)}
@@ -1192,6 +1200,10 @@
                         <div class="detail-item">
                             <i class="fas fa-clock"></i>
                             <strong>Time Slot:</strong> ${claim.timeSlot || 'N/A'}
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-business-time"></i>
+                            <strong>Time on Duty:</strong> ${claim.totalTimeOnDuty ? claim.totalTimeOnDuty.formatted : 'N/A'}
                         </div>
                         <div class="detail-item">
                             <i class="fas fa-id-card"></i>
