@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_MAPS_API_KEYlibraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCe45NYmqYQFWG-tEo3uSy1Gotpb5a8c3g&libraries=places"></script>
     <style>
         :root {
             --color-primary: #2D0C31;
@@ -1305,6 +1305,10 @@
             font-size: 18px;
           }
         }
+
+        a.btn {
+          text-decoration: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1317,31 +1321,31 @@
     <h2 class="sidebar-title">Claim System</h2>
   </div>
   <div class="sidebar-menu">
-    <a href="YOUR_DASHBOARD_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbzYNp35xJjccAsya0HTjrdZ2rXx_-GgiJT1PpztHYYWje3_LPiab4hV9fNypiXy4lo/exec" target="_top" class="sidebar-item">
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
-    <a href="YOUR_EVENT_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a class="sidebar-item active">
       <i class="fas fa-calendar-alt"></i>
       <span>Event Panel</span>
     </a>
-    <a href="YOUR_CLAIMS_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbyzt-CBKwSPCfVMDSaWy2EKGVO8-TAfMTbf7nub0KafQmFr-jKw2XVKzKImOM3hEF00/exec" target="_top" class="sidebar-item">
       <i class="fas fa-hand-holding-usd"></i>
       <span>Claims & Allowance Panel</span>
     </a>
-    <a href="YOUR_BUDGET_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbwQ9m3uoLf1oQVtat-wmhRanjO93a5k5ef0XJY6BaJBnGJz7lSh_0OJc2YRv5hQwco/exec" target="_top" class="sidebar-item">
       <i class="fas fa-dollar-sign"></i>
       <span>Budget & Expenses Panel</span>
     </a>
-    <a href="YOUR_ADVANCE_PURCHASE_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item active">
+    <a href="https://script.google.com/macros/s/AKfycbxysT_mH8BoDqczulSbcDiILyqBMUv7HW9qsXuVMSsHER1z2m_kmGF7-_IjrmrfqehF/exec" target="_top" class="sidebar-item">
       <i class="fas fa-shopping-cart"></i>
       <span>Advance Purchases Panel</span>
     </a>
-    <a href="YOUR_PETTY_CASH_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbwkh4_T2ygXjLRn4-bt0p5VThfEMvX2jBW3nJD9BZwYpXurxUs6M5ilGz2OfGCCuRR8/exec" target="_top" class="sidebar-item">
       <i class="fas fa-wallet"></i>
       <span>Petty Cash Panel</span>
     </a>
-    <a href="YOUR_SETTINGS_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+    <a href="https://script.google.com/macros/s/AKfycbx4ult7m64buaRAzKks6HsfsHdxkp-WErvrRosKW8UBRiWU1KoKr3KeWIVOfOmcuwtC/exec" target="_top" class="sidebar-item">
       <i class="fas fa-cog"></i>
       <span>Settings</span>
     </a>
@@ -1462,6 +1466,10 @@
                 <button id="generateFormBtn" class="btn btn-edit">
                     <i class="fas fa-file-pdf"></i> Generate Form
                 </button>
+
+                <a id="getReportBtn" class="btn btn-save" target="_blank" href="#">
+                  <i class="fas fa-file-alt"></i> Get Report
+                </a>
             </div>
         </div>
     </div>
@@ -1497,27 +1505,27 @@
             quotationDocument: null
         };
 
-                
+                // Sidebar functionality
         document.addEventListener('DOMContentLoaded', function() {
-          
+          // DOM references
           const sidebar = document.getElementById('sidebar');
           const mainContent = document.getElementById('mainContent');
           const sidebarToggle = document.getElementById('sidebarToggle');
           const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
           
-          
+          // Create overlay for mobile
           const overlay = document.createElement('div');
           overlay.className = 'sidebar-overlay';
           document.body.appendChild(overlay);
           
-          
+          // Restore sidebar state from localStorage (only on desktop)
           const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
           if (sidebarCollapsed && window.innerWidth > 768) {
             sidebar.classList.add('collapsed');
             mainContent.classList.add('expanded');
           }
           
-          
+          // Sidebar toggle functionality (desktop)
           function toggleSidebar(event) {
             if (event) event.stopPropagation();
             sidebar.classList.toggle('collapsed');
@@ -1525,14 +1533,14 @@
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
           }
           
-          
+          // Mobile sidebar toggle
           function toggleMobileSidebar(event) {
             if (event) event.stopPropagation();
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
           }
           
-          
+          // Add event listeners
           if (sidebarToggle) {
             sidebarToggle.addEventListener('click', toggleSidebar);
           }
@@ -1541,13 +1549,13 @@
             mobileSidebarToggle.addEventListener('click', toggleMobileSidebar);
           }
           
-          
+          // Close sidebar when clicking overlay
           overlay.addEventListener('click', function() {
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
           });
           
-          
+          // Close sidebar when clicking outside on mobile
           document.addEventListener('click', function(event) {
             if (window.innerWidth <= 768 && 
                 !sidebar.contains(event.target) && 
@@ -1558,14 +1566,14 @@
             }
           });
           
-          
+          // Handle window resize
           window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-              
+              // On desktop
               sidebar.classList.remove('open');
               overlay.classList.remove('active');
               
-              
+              // Restore collapsed state
               if (localStorage.getItem('sidebarCollapsed') === 'true') {
                 sidebar.classList.add('collapsed');
                 mainContent.classList.add('expanded');
@@ -1574,13 +1582,13 @@
                 mainContent.classList.remove('expanded');
               }
             } else {
-              
+              // On mobile
               sidebar.classList.remove('collapsed');
               mainContent.classList.remove('expanded');
             }
           });
           
-          
+          // Add active class to current page sidebar item
           const currentPath = window.location.pathname;
           const sidebarItems = document.querySelectorAll('.sidebar-item');
           
@@ -1593,19 +1601,19 @@
           });
         });
 
-        
+        // Utility function to safely parse comma-separated values with error handling
         function safeParseCommaSeparated(value, fieldName = 'field') {
             try {
                 if (!value || value === 'N/A' || value.trim() === '') {
                     return [];
                 }
                 
-                
+                // Handle both string and array inputs
                 if (Array.isArray(value)) {
                     return value.filter(item => item && item.trim() !== '');
                 }
                 
-                
+                // Split by comma and clean up each item
                 return value.split(',')
                     .map(item => item.trim())
                     .filter(item => item !== '');
@@ -1615,7 +1623,7 @@
             }
         }
 
-        
+        // Function to create display chips with error handling
         function createDisplayChips(value, fieldName = 'field') {
             try {
                 const items = safeParseCommaSeparated(value, fieldName);
@@ -1633,21 +1641,21 @@
             }
         }
 
-        
+        // Function to escape HTML to prevent XSS
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        
+        // Custom Alert Function
         function showAlert(message, type = 'info', title = null) {
             const modal = document.getElementById('alertModal');
             const titleElement = document.getElementById('alertTitle');
             const messageElement = document.getElementById('alertMessage');
             const iconElement = document.getElementById('alertIcon');
 
-            
+            // Set icon and title based on type
             switch(type) {
                 case 'success':
                     iconElement.className = 'fas fa-check-circle';
@@ -1674,7 +1682,7 @@
             document.getElementById('alertModal').style.display = 'none';
         }
 
-        
+        // Load events when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadEvents();
             loadDropdownData();
@@ -1682,13 +1690,13 @@
         });
 
         function setupEventListeners() {
-            
+            // Search functionality
             const searchBox = document.getElementById('searchBox');
             searchBox.addEventListener('input', function() {
                 applyFilters();
             });
 
-            
+            // Modal close functionality
             const modal = document.getElementById('eventModal');
             const closeModal = document.getElementById('closeModal');
             
@@ -1707,7 +1715,7 @@
                 }
             });
 
-            
+            // Edit mode buttons
             document.getElementById('editBtn').addEventListener('click', enterEditMode);
             document.getElementById('saveBtn').addEventListener('click', saveEvent);
             document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
@@ -1746,7 +1754,7 @@
         }
 
         function populateFilterDropdowns() {
-            
+            // Populate status filter
             const statusFilter = document.getElementById('filterStatus');
             const statuses = [...new Set(allEvents.map(event => event.eventStatus).filter(Boolean))];
             statusFilter.innerHTML = '<option value="">All Statuses</option>';
@@ -1757,7 +1765,7 @@
                 statusFilter.appendChild(option);
             });
 
-            
+            // Populate type filter
             const typeFilter = document.getElementById('filterType');
             const types = [...new Set(allEvents.map(event => event.eventType).filter(Boolean))];
             typeFilter.innerHTML = '<option value="">All Types</option>';
@@ -1768,7 +1776,7 @@
                 typeFilter.appendChild(option);
             });
 
-            
+            // Populate company filter
             const companyFilter = document.getElementById('filterCompany');
             const companies = [...new Set(allEvents.map(event => event.affiliatedCompany).filter(Boolean))];
             companyFilter.innerHTML = '<option value="">All Companies</option>';
@@ -1789,7 +1797,7 @@
             const dateToFilter = document.getElementById('filterDateTo').value;
 
             currentEvents = allEvents.filter(event => {
-                
+                // Search filter
                 const matchesSearch = !searchTerm || 
                     event.eventName.toLowerCase().includes(searchTerm) ||
                     event.eventType.toLowerCase().includes(searchTerm) ||
@@ -1797,16 +1805,16 @@
                     event.createdBy.toLowerCase().includes(searchTerm) ||
                     event.eventStatus.toLowerCase().includes(searchTerm);
 
-                
+                // Status filter
                 const matchesStatus = !statusFilter || event.eventStatus === statusFilter;
 
-                
+                // Type filter
                 const matchesType = !typeFilter || event.eventType === typeFilter;
 
-                
+                // Company filter
                 const matchesCompany = !companyFilter || event.affiliatedCompany === companyFilter;
 
-                
+                // Date filters
                 const eventDate = new Date(event.startDate);
                 const matchesDateFrom = !dateFromFilter || eventDate >= new Date(dateFromFilter);
                 const matchesDateTo = !dateToFilter || eventDate <= new Date(dateToFilter);
@@ -1895,6 +1903,11 @@
                             <span class="detail-value">${event.devices.length} device(s)</span>
                         </div>
                     </div>
+                    <div style="margin-top: 1rem;">
+                      <a class="btn btn-save" target="_blank" href="https://script.google.com/macros/s/AKfycbxrWYzKWb1CwhyxTxVafSa4y9tmFY8uFG82jWXxD42lF7XKrPSZdRq6amcKzlX9Pkqx/exec?id=${event.eventId}">
+                        <i class="fas fa-file-alt"></i> Get Report
+                      </a>
+                    </div>
                     <div class="event-id">
                         <i class="fas fa-hashtag"></i>ID: ${event.eventId}
                     </div>
@@ -1922,7 +1935,10 @@
             currentEvent = allEvents.find(e => e.eventId === eventId);
             if (!currentEvent) return;
 
-            
+            document.getElementById('getReportBtn').href =
+            `https://script.google.com/macros/s/AKfycbxrWYzKWb1CwhyxTxVafSa4y9tmFY8uFG82jWXxD42lF7XKrPSZdRq6amcKzlX9Pkqx/exec?id=${currentEvent.eventId}`;
+
+            // Reset pending files
             pendingFiles = {
                 supportingDocument: null,
                 quotationDocument: null
@@ -2172,7 +2188,7 @@
                 </div>
             `;
 
-            
+            // Initialize components if in edit mode
             if (isEditMode) {
                 initializeMultiSelects();
                 initializeTimeSlots();
@@ -2185,13 +2201,13 @@
             const container = document.getElementById('devices-edit-container');
             container.innerHTML = '';
             
-            
+            // Add existing devices
             if (currentEvent.devices && currentEvent.devices.length > 0) {
                 currentEvent.devices.forEach((device, index) => {
                     addDevice(device.demoLaser, device.accessories);
                 });
             } else {
-                
+                // Add one empty device if no devices exist
                 addDevice();
             }
         }
@@ -2230,11 +2246,11 @@
             
             container.appendChild(deviceDiv);
             
-            
+            // Initialize accessories for the selected device
             if (selectedDevice) {
                 updateDeviceAccessories(deviceDiv.querySelector('.device-select'), deviceIndex);
                 
-                
+                // Set selected accessories
                 if (selectedAccessories) {
                     setTimeout(() => {
                         const accessories = safeParseCommaSeparated(selectedAccessories, 'Device Accessories');
@@ -2263,7 +2279,7 @@
                 `<div class="multi-select-option" data-value="${accessory}" onclick="toggleDeviceAccessoryOption(${deviceIndex}, '${accessory}')">${accessory}</div>`
             ).join('');
             
-            
+            // Clear selected accessories when device changes
             updateDeviceAccessoriesDisplay(deviceIndex, []);
         }
 
@@ -2294,7 +2310,7 @@
                 `<span class="chip">${escapeHtml(accessory)} <span class="remove" onclick="removeDeviceAccessoryChip(${deviceIndex}, '${accessory}')">&times;</span></span>`
             ).join('');
             
-            
+            // Update selected state in dropdown
             document.querySelectorAll(`#device-accessories-dropdown-${deviceIndex} .multi-select-option`).forEach(option => {
                 if (selectedAccessories.includes(option.dataset.value)) {
                     option.classList.add('selected');
@@ -2348,24 +2364,24 @@
                 return;
             }
             
-            
+            // Validate file size
             if (file.size > 5 * 1024 * 1024) {
                 showAlert('File size must be less than 5MB', 'error');
                 fileInput.value = '';
                 return;
             }
             
-            
+            // Validate file type for quotation
             if (fileType === 'quotationDocument' && !file.name.toLowerCase().endsWith('.xlsx')) {
                 showAlert('Quotation documents must be in XLSX format', 'error');
                 fileInput.value = '';
                 return;
             }
             
-            
+            // Store file for upload during save
             const reader = new FileReader();
             reader.onload = function(e) {
-                
+                // Convert ArrayBuffer to base64
                 const bytes = new Uint8Array(e.target.result);
                 let binary = '';
                 for (let i = 0; i < bytes.byteLength; i++) {
@@ -2389,12 +2405,12 @@
             isEditMode = true;
             originalEventData = JSON.parse(JSON.stringify(currentEvent));
             
-            
+            // Show/hide buttons
             document.getElementById('editBtn').style.display = 'none';
             document.getElementById('saveBtn').style.display = 'inline-block';
             document.getElementById('cancelBtn').style.display = 'inline-block';
             
-            
+            // Show edit fields, hide display fields
             const editFields = ['eventName', 'eventStatus', 'eventType', 'location', 'locationStatus', 'startDate', 'endDate', 'affiliatedCompany', 'timeSlots', 'supportingDocument', 'quotationDocument', 'officeAssets', 'accompanyingColleagues'];
             
             editFields.forEach(field => {
@@ -2405,11 +2421,11 @@
                 if (editElement) editElement.style.display = 'block';
             });
             
-            
+            // Show/hide devices sections
             document.getElementById('devices-display').style.display = 'none';
             document.getElementById('devices-edit').style.display = 'block';
             
-            
+            // Initialize components
             initializeMultiSelects();
             initializeTimeSlots();
             initializeLocationMap();
@@ -2430,7 +2446,7 @@
         function resetEditMode() {
             isEditMode = false;
             
-            
+            // Show/hide buttons
             document.getElementById('editBtn').style.display = 'inline-block';
             document.getElementById('saveBtn').style.display = 'none';
             document.getElementById('cancelBtn').style.display = 'none';
@@ -2440,7 +2456,7 @@
             console.log('saveEvent called');
             console.log('Pending files:', pendingFiles);
             
-            
+            // Collect form data
             const updatedEvent = {
                 ...currentEvent,
                 eventName: document.getElementById('eventName-input').value,
@@ -2459,7 +2475,7 @@
 
             console.log('Updated event data:', updatedEvent);
 
-            
+            // Validate dates
             if (updatedEvent.startDate && updatedEvent.endDate && new Date(updatedEvent.startDate) > new Date(updatedEvent.endDate)) {
                 showAlert('Start date cannot be after end date', 'error');
                 return;
@@ -2488,11 +2504,11 @@
                 }
             }
 
-            
+            // Show loading
             document.getElementById('saveBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             document.getElementById('saveBtn').disabled = true;
 
-            
+            // Save to server with pending files
             google.script.run
                 .withSuccessHandler(onEventSaved)
                 .withFailureHandler(onSaveError)
@@ -2505,10 +2521,10 @@
             if (result.success) {
                 showAlert('Event updated successfully!', 'success');
                 
-                
+                // Update current event with the saved data
                 Object.assign(currentEvent, result.updatedEvent);
                 
-                
+                // Clear pending files
                 pendingFiles = {
                     supportingDocument: null,
                     quotationDocument: null
@@ -2516,7 +2532,7 @@
                 
                 resetEditMode();
                 renderEventDetails();
-                loadEvents(); 
+                loadEvents(); // Refresh the events list
             } else {
                 showAlert('Error saving event: ' + result.message, 'error');
             }
@@ -2543,23 +2559,23 @@
                 return;
             }
             
-            
+            // Initialize map
             map = new google.maps.Map(mapElement, {
-                center: { lat: 3.1390, lng: 101.6869 }, 
+                center: { lat: 3.1390, lng: 101.6869 }, // Kuala Lumpur
                 zoom: 10
             });
             
-            
+            // Initialize autocomplete
             autocomplete = new google.maps.places.Autocomplete(locationInput);
             autocomplete.bindTo('bounds', map);
             
-            
+            // Add marker
             marker = new google.maps.Marker({
                 map: map,
                 draggable: true
             });
             
-            
+            // Handle place selection
             autocomplete.addListener('place_changed', function() {
                 const place = autocomplete.getPlace();
                 
@@ -2567,7 +2583,7 @@
                     return;
                 }
                 
-                
+                // Update map and marker
                 if (place.geometry.viewport) {
                     map.fitBounds(place.geometry.viewport);
                 } else {
@@ -2577,7 +2593,7 @@
                 
                 marker.setPosition(place.geometry.location);
                 
-                
+                // Calculate location status
                 google.script.run
                     .withSuccessHandler(function(status) {
                         locationStatusInput.value = status;
@@ -2589,7 +2605,7 @@
                     .calculateLocationStatus(place.formatted_address || locationInput.value);
             });
             
-            
+            // Handle marker drag
             marker.addListener('dragend', function() {
                 const position = marker.getPosition();
                 const geocoder = new google.maps.Geocoder();
@@ -2598,7 +2614,7 @@
                     if (status === 'OK' && results[0]) {
                         locationInput.value = results[0].formatted_address;
                         
-                        
+                        // Calculate location status
                         google.script.run
                             .withSuccessHandler(function(status) {
                                 locationStatusInput.value = status;
@@ -2612,7 +2628,7 @@
                 });
             });
             
-            
+            // Set initial location if available
             if (currentEvent.location) {
                 const geocoder = new google.maps.Geocoder();
                 geocoder.geocode({ address: currentEvent.location }, function(results, status) {
@@ -2626,15 +2642,15 @@
         }
 
         function initializeMultiSelects() {
-            
+            // Initialize office assets
             const officeAssetsSelected = safeParseCommaSeparated(currentEvent.officeAssets, 'Office Assets');
             updateMultiSelectDisplay('officeAssets', officeAssetsSelected);
             
-            
+            // Initialize accompanying colleagues
             const colleaguesSelected = safeParseCommaSeparated(currentEvent.accompanyingColleagues, 'Accompanying Colleagues');
             updateMultiSelectDisplay('accompanyingColleagues', colleaguesSelected);
             
-            
+            // Add event listeners for multi-select options
             document.querySelectorAll('.multi-select-option').forEach(option => {
                 option.addEventListener('click', function() {
                     const fieldName = this.closest('.multi-select').id.replace('-multiselect', '');
@@ -2671,7 +2687,7 @@
                 `<span class="chip">${escapeHtml(value)} <span class="remove" onclick="removeChip('${fieldName}', '${value}')">&times;</span></span>`
             ).join('');
             
-            
+            // Update selected state in dropdown
             document.querySelectorAll(`#${fieldName}-dropdown .multi-select-option`).forEach(option => {
                 if (selectedValues.includes(option.dataset.value)) {
                     option.classList.add('selected');
@@ -2749,7 +2765,7 @@
             return slots.join(', ');
         }
 
-        
+        // Close dropdowns when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.multi-select')) {
                 document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
@@ -2761,30 +2777,30 @@
         function generateAssetMovementForm() {
             if (!currentEvent) return;
             
-            
+            // Show loading state
             const generateBtn = document.getElementById('generateFormBtn');
             const originalText = generateBtn.innerHTML;
             generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
             generateBtn.disabled = true;
             
-            
+            // Call server-side function to generate the form
             google.script.run
                 .withSuccessHandler(onFormGenerated)
                 .withFailureHandler(onFormGenerationError)
                 .generateAssetMovementForm(currentEvent);
             
             function onFormGenerated(result) {
-                
+                // Reset button state
                 generateBtn.innerHTML = originalText;
                 generateBtn.disabled = false;
                 
                 if (result.success) {
-                    
+                    // Create a new window with the generated HTML
                     const printWindow = window.open('', '_blank', 'width=900,height=700');
                     printWindow.document.write(result.html);
                     printWindow.document.close();
                     
-                    
+                    // Auto-focus the print window and trigger print dialog
                     printWindow.focus();
                     setTimeout(() => {
                         printWindow.print();
@@ -2795,7 +2811,7 @@
             }
             
             function onFormGenerationError(error) {
-                
+                // Reset button state
                 generateBtn.innerHTML = originalText;
                 generateBtn.disabled = false;
                 
