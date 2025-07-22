@@ -4,7 +4,6 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-
 function getUserInfo() {
   const userEmail = Session.getActiveUser().getEmail();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -27,7 +26,6 @@ function getUserInfo() {
   };
 }
 
-
 function generateApplicationNumber() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const claimSheet = ss.getSheetByName('Claim&Allowance');
@@ -35,7 +33,6 @@ function generateApplicationNumber() {
   
   let newNumber;
   do {
-    
     const randomNum = Math.floor(1000000 + Math.random() * 9000000);
     newNumber = 'HRM' + randomNum;
   } while (existingNumbers.includes(newNumber));
@@ -43,45 +40,132 @@ function generateApplicationNumber() {
   return newNumber;
 }
 
-
 function getAvailableEvents(username) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const eventSheet = ss.getSheetByName('Event Creation');
-  
-  const eventData = eventSheet.getRange('A4:M').getValues();
-  const availableEvents = [];
-  
-  for (let i = 0; i < eventData.length; i++) {
-    if (!eventData[i][3]) continue; 
-    
-    const eventId = eventData[i][0]; 
-    const eventName = eventData[i][3]; 
-    const eventType = eventData[i][4]; 
-    const eventLocation = eventData[i][5]; 
-    const locationStatus = eventData[i][6]; 
-    const timeSlots = eventData[i][9]; 
-    const assignedUser = eventData[i][2]; 
-    const multipleUsers = eventData[i][12]; 
-    
-    
-    if (assignedUser === username || 
-        (multipleUsers && multipleUsers.toString().split(',').some(u => u.trim() === username))) {
-      availableEvents.push({
-        id: eventId,
-        name: eventName,
-        type: eventType,
-        location: eventLocation,
-        locationStatus: locationStatus,
-        timeSlots: timeSlots ? timeSlots.toString().split(',').map(slot => slot.trim()) : []
-      });
-    }
+const testEvents = [
+  {
+    id: "EVT001",
+    name: "Sales Event - Local (KL)",
+    type: "Sales",
+    location: "Kuala Lumpur",
+    locationStatus: "Local",
+    timeSlots: ["2025-05-18 09:00-12:00", "2025-05-19 13:00-17:00"]
+  },
+  {
+    id: "EVT002",
+    name: "Marketing Event - Outstation",
+    type: "Marketing",
+    location: "Penang",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-19 09:00-17:00"]
+  },
+  {
+    id: "EVT003",
+    name: "Exhibition - Overseas",
+    type: "Exhibition",
+    location: "Singapore",
+    locationStatus: "overseas",
+    timeSlots: ["2025-05-20 09:00-17:00", "2025-05-21 09:00-17:00"]
+  },
+  {
+    id: "EVT004",
+    name: "Demo Session - Selangor",
+    type: "Demo Session",
+    location: "Selangor",
+    locationStatus: "local",
+    timeSlots: ["2025-05-21 09:00-12:00", "2025-05-22 13:00-17:00", "2025-05-23 18:00-21:00"]
+  },
+  {
+    id: "EVT005",
+    name: "PL3D Treatment - Outstation",
+    type: "PL3D",
+    location: "Johor Bahru",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-22 09:00-17:00"]
+  },
+  {
+    id: "EVT006",
+    name: "RF Treatment - Local",
+    type: "RF",
+    location: "Kuala Lumpur",
+    locationStatus: "local",
+    timeSlots: ["2025-05-23 09:00-12:00"]
+  },
+  {
+    id: "EVT007",
+    name: "Cryo Session - Outstation",
+    type: "Cryo",
+    location: "Ipoh",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-24 13:00-17:00"]
+  },
+  {
+    id: "EVT008",
+    name: "Training - Local",
+    type: "Training",
+    location: "Negeri Sembilan",
+    locationStatus: "local",
+    timeSlots: ["2025-05-25 09:00-17:00", "2025-05-26 09:00-17:00"]
+  },
+  {
+    id: "EVT009",
+    name: "Training - Outstation",
+    type: "Training",
+    location: "Terengganu",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-26 09:00-17:00"]
+  },
+  {
+    id: "EVT010",
+    name: "Training - Sabah",
+    type: "Training",
+    location: "Sabah",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-27 09:00-17:00", "2025-05-28 09:00-17:00"]
+  },
+  {
+    id: "EVT011",
+    name: "Marketing Event - Sarawak",
+    type: "Marketing",
+    location: "Sarawak",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-29 09:00-17:00"]
+  },
+  {
+    id: "EVT012",
+    name: "CUB Treatment - Outstation",
+    type: "CUB",
+    location: "Melaka",
+    locationStatus: "outstation",
+    timeSlots: ["2025-05-30 09:00-12:00", "2025-05-31 13:00-17:00"]
+  },
+  {
+    id: "EVT013",
+    name: "PL3D-RF Combo - Outstation",
+    type: "PL3D-RF",
+    location: "Kedah",
+    locationStatus: "outstation",
+    timeSlots: ["2025-06-01 09:00-17:00"]
+  },
+  {
+    id: "EVT014",
+    name: "Sales Event - Negeri Sembilan",
+    type: "Sales",
+    location: "Negeri Sembilan",
+    locationStatus: "local",
+    timeSlots: ["2025-06-02 09:00-12:00", "2025-06-03 13:00-17:00"]
+  },
+  {
+    id: "EVT015",
+    name: "Exhibition - Overseas (Tokyo)",
+    type: "Exhibition",
+    location: "Tokyo, Japan",
+    locationStatus: "overseas",
+    timeSlots: ["2025-06-04 09:00-17:00", "2025-06-05 09:00-17:00", "2025-06-06 09:00-17:00"]
   }
-  
-  return availableEvents;
+];
+
+  return testEvents;
 }
-
-
-
 
 function getCompanyCars() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -89,13 +173,11 @@ function getCompanyCars() {
   return settingsSheet.getRange('N5:N').getValues().flat().filter(String);
 }
 
-
 function processFileUpload(fileObject, fileName, folderId) {
   try {
     const decodedBytes = Utilities.base64Decode(fileObject.bytes);
     const blob = Utilities.newBlob(decodedBytes, fileObject.mimeType, fileObject.fileName);
 
-    
     if (blob.getBytes().length > 5 * 1024 * 1024) {
       return {
         success: false,
@@ -124,9 +206,11 @@ function submitFormData(formData) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const timestamp = new Date();
-    
+
     const mainSheet = ss.getSheetByName('Claim&Allowance');
-    const mainLastRow = mainSheet.getLastRow() + 1;
+    const transportSheet = ss.getSheetByName('Claim&Allowance Transportation');
+    const staySheet = ss.getSheetByName('Claim&Allowance Stay');
+    const claimsSheet = ss.getSheetByName('Claim&Allowance Extra Claims');
 
     const totalHours = calculateTotalHours(formData.timeSlots);
 
@@ -137,19 +221,20 @@ function submitFormData(formData) {
       formData.username,
       formData.eventName,
       formData.timeSlots.join(', '),
-      formData.mealAllowance.type,
-      formData.otherAllowances.type,
+      JSON.stringify(formData.mealAllowance),
+      JSON.stringify(formData.otherAllowances),
       formData.totalClaim,
       formData.remarks,
       formData.eventId,
       '',
-      totalHours
+      totalHours,
     ];
 
+    const mainLastRow = mainSheet.getLastRow() + 1;
     mainSheet.getRange(mainLastRow, 1, 1, mainRow.length).setValues([mainRow]);
 
-    if (formData.transportation?.length > 0) {
-      const transportSheet = ss.getSheetByName('Claim&Allowance Transportation');
+    if (formData.transportation?.length) {
+      const transportStartRow = transportSheet.getLastRow() + 1;
       const transportRows = formData.transportation.map(item => {
         const row = [
           formData.applicationNumber,
@@ -159,13 +244,13 @@ function submitFormData(formData) {
 
         if (item.type === 'car') {
           row[2] = item.carType;
-          if (item.carType === 'company') {
-            row[3] = item.companyCar || '';
-          } else if (item.carType === 'personal') {
+          if (item.carType === 'company') row[3] = item.companyCar || '';
+          if (item.carType === 'personal') {
             row[4] = item.kilometers || '';
             row[5] = item.tngAmount || '';
             row[7] = item.receiptUrl || '';
-          } else if (item.carType === 'rental') {
+          }
+          if (item.carType === 'rental') {
             row[6] = item.rentalAmount || '';
             row[7] = item.receiptUrl || '';
           }
@@ -173,45 +258,33 @@ function submitFormData(formData) {
           row[6] = item.ticketCost || '';
           row[7] = item.receiptUrl || '';
         }
-
         return row;
       });
-
-      if (transportRows.length > 0) {
-        transportSheet.getRange(transportSheet.getLastRow() + 1, 1, transportRows.length, 9).setValues(transportRows);
-      }
+      transportSheet.getRange(transportStartRow, 1, transportRows.length, 9).setValues(transportRows);
     }
 
-    if (formData.stay?.length > 0) {
-      const staySheet = ss.getSheetByName('Claim&Allowance Stay');
-      const stayRows = formData.stay.map(item => {
-        if (['hotel', 'homestay', 'airport', 'none'].includes(item.type)) {
-          return [
-            formData.applicationNumber,
-            item.type,
-            (item.type === 'hotel' || item.type === 'homestay') ? item.amount || '' : '',
-            (item.type === 'hotel' || item.type === 'homestay') ? item.receiptUrl || '' : ''
-          ];
-        }
-      }).filter(row => row);
-
-      if (stayRows.length > 0) {
-        staySheet.getRange(staySheet.getLastRow() + 1, 1, stayRows.length, 4).setValues(stayRows);
-      }
+    if (formData.stay?.length) {
+      const stayStartRow = staySheet.getLastRow() + 1;
+      const stayRows = formData.stay
+        .filter(item => ['hotel', 'homestay', 'airport', 'none'].includes(item.type))
+        .map(item => [
+          formData.applicationNumber,
+          item.type,
+          ['hotel', 'homestay'].includes(item.type) ? item.amount || '' : '',
+          ['hotel', 'homestay'].includes(item.type) ? item.receiptUrl || '' : ''
+        ]);
+      staySheet.getRange(stayStartRow, 1, stayRows.length, 4).setValues(stayRows);
     }
 
-    if (formData.extraClaims?.length > 0) {
-      const claimsSheet = ss.getSheetByName('Claim&Allowance Extra Claims');
+    if (formData.extraClaims?.length) {
+      const claimStartRow = claimsSheet.getLastRow() + 1;
       const claimRows = formData.extraClaims.map(item => [
         formData.applicationNumber,
         item.description,
         item.amount,
         item.documentUrl || ''
       ]);
-
-      if (claimRows.length > 0) {
-        claimsSheet.getRange(claimsSheet.getLastRow() + 1, 1, claimRows.length, 4).setValues(claimRows);
-      }
+      claimsSheet.getRange(claimStartRow, 1, claimRows.length, 4).setValues(claimRows);
     }
 
     return {
@@ -219,6 +292,7 @@ function submitFormData(formData) {
       message: 'Form submitted successfully',
       applicationNumber: formData.applicationNumber
     };
+
   } catch (error) {
     return {
       success: false,
@@ -226,6 +300,7 @@ function submitFormData(formData) {
     };
   }
 }
+
 
 function calculateTotalHours(timeSlots) {
   let total = 0;
