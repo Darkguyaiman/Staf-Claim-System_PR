@@ -559,7 +559,6 @@
       font-size: 1rem;
     }
 
-
     .file-pill:hover {
       background-color: rgba(0, 184, 148, 0.3);
       transform: translateY(-2px);
@@ -665,7 +664,6 @@
       font-weight: 500;
       color: var(--color-secondary);
     }
-
     
     .file-name i {
       margin-right: 8px;
@@ -759,6 +757,81 @@
     /* Hide email field */
     .email-field {
       display: none;
+    }
+
+    /* New styles for meal allowance breakdown */
+    .meal-breakdown-container {
+      background-color: rgba(0, 184, 148, 0.05);
+      border: 1px solid rgba(0, 184, 148, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .day-breakdown {
+      background-color: white;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .day-breakdown:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+
+    .day-header {
+      font-weight: bold;
+      color: var(--color-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .day-header i {
+      margin-right: 8px;
+      color: var(--color-accent);
+    }
+
+    .working-type-info {
+      background-color: rgba(0, 184, 148, 0.1);
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin: 8px 0;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .working-type-info i {
+      margin-right: 6px;
+      color: var(--color-accent);
+    }
+
+    .amount-display {
+      font-weight: bold;
+      color: var(--color-primary);
+      font-size: 1.1rem;
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    .total-days-info {
+      background-color: rgba(45, 12, 49, 0.1);
+      border: 1px solid rgba(45, 12, 49, 0.2);
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+
+    .total-days-info i {
+      margin-right: 8px;
+      color: var(--color-accent);
     }
     
     /* Animations */
@@ -971,6 +1044,12 @@
       --color-lighter: #B8FFB5;
     }
 
+    .center-button {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
   </style>
 </head>
 <body>
@@ -1056,26 +1135,16 @@
     <!-- Meal Allowance Section -->
     <div class="form-section">
       <h2><i class="fas fa-utensils"></i> Meal Allowance</h2>
-      <div class="form-group">
-        <label for="mealAllowance"><i class="fas fa-hamburger"></i> Meal Allowance Type:</label>
-        <select id="mealAllowance" name="mealAllowance">
-          <option value="">Select Meal Allowance</option>
-        </select>
+      <div id="mealAllowanceContainer">
+        <p><i class="fas fa-info-circle"></i> Please select an event first to see meal allowance options</p>
       </div>
     </div>
     
     <!-- Other Allowances Section -->
     <div class="form-section">
       <h2><i class="fas fa-coins"></i> Other Allowances</h2>
-      <div class="form-group">
-        <label for="otherAllowances"><i class="fas fa-money-bill-wave"></i> Other Allowances Type:</label>
-        <select id="otherAllowances" name="otherAllowances">
-          <option value="">Select Other Allowances</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="otherAllowancesAmount"><i class="fas fa-dollar-sign"></i> Amount (RM):</label>
-        <input type="number" id="otherAllowancesAmount" name="otherAllowancesAmount" step="0.01" class="icon-input" readonly>
+      <div id="otherAllowancesContainer">
+        <p><i class="fas fa-info-circle"></i> Please select an event first to see other allowance options</p>
       </div>
     </div>
     
@@ -1119,7 +1188,9 @@
       <h2><i class="fas fa-check-circle"></i> Success!</h2>
       <p>Your claim has been submitted successfully.</p>
       <p id="applicationNumberDisplay"></p>
+    <div class="center-button">
       <button type="button" id="closeModalBtn"><i class="fas fa-redo"></i> Submit Another Claim</button>
+    </div>
     </div>
   </div>
 
@@ -1132,61 +1203,49 @@
   </div>
   
   <script>
-    
     let availableEvents = [];
     let totalClaimAmount = 0;
     let transportationCount = 0;
     let stayCount = 0;
     let extraClaimCount = 0;
     let fileUploads = {};
-    
+    let currentEventData = null;
+    let mealAllowanceBreakdown = [];
     
     const TRANSPORTATION_FOLDER_ID = '1qdhuvtUEL5CN83fWXLrKST9IBs6NKYYO';
     const STAY_FOLDER_ID = '13EyxVxkqFYT9dzk7SW8xKddB34AmVPEe';
     const EXTRA_CLAIMS_FOLDER_ID = '13dcgisDDfFbkuTqX2JAlDy6rCkSZA4j7';
     
-    
     document.addEventListener('DOMContentLoaded', function() {
-      
       google.script.run
         .withSuccessHandler(handleUserInfo)
         .withFailureHandler(handleError)
         .getUserInfo();
-      
       
       google.script.run
         .withSuccessHandler(handleApplicationNumber)
         .withFailureHandler(handleError)
         .generateApplicationNumber();
       
-      
       document.getElementById('eventName').addEventListener('change', handleEventChange);
       document.getElementById('addTransportation').addEventListener('click', addTransportation);
       document.getElementById('addStay').addEventListener('click', addStay);
       document.getElementById('addExtraClaim').addEventListener('click', addExtraClaim);
-      document.getElementById('mealAllowance').addEventListener('change', updateTotalClaim);
-      document.getElementById('otherAllowances').addEventListener('change', handleOtherAllowancesChange);
-      
       
       document.getElementById('claimForm').addEventListener('submit', function(e) {
         e.preventDefault();
         submitForm();
       });
 
-      
       document.getElementById('closeModalBtn').addEventListener('click', resetForm);
-
-      
       document.getElementById('closeAlertBtn').addEventListener('click', function() {
         document.getElementById('alertModal').classList.remove('active');
       });
     });
     
-    
     function handleUserInfo(userInfo) {
       document.getElementById('username').value = userInfo.username;
       document.getElementById('email').value = userInfo.email;
-      
       
       google.script.run
         .withSuccessHandler(handleAvailableEvents)
@@ -1194,21 +1253,17 @@
         .getAvailableEvents(userInfo.username);
     }
     
-    
     function handleApplicationNumber(appNumber) {
       document.getElementById('applicationNumber').value = appNumber;
     }
-    
     
     function handleAvailableEvents(events) {
       availableEvents = events;
       const eventSelect = document.getElementById('eventName');
       
-      
       while (eventSelect.options.length > 1) {
         eventSelect.remove(1);
       }
-      
       
       events.forEach(function(event) {
         const option = document.createElement('option');
@@ -1218,11 +1273,9 @@
         eventSelect.appendChild(option);
       });
       
-      
       document.getElementById('loading').style.display = 'none';
       document.getElementById('claimForm').style.display = 'block';
     }
-    
     
     function handleEventChange() {
       const eventSelect = document.getElementById('eventName');
@@ -1230,51 +1283,33 @@
       const selectedOption = eventSelect.options[eventSelect.selectedIndex];
       const eventId = selectedOption ? selectedOption.dataset.id : '';
       
-      
       document.getElementById('eventId').value = eventId;
       
       const selectedEvent = availableEvents.find(event => event.name === eventName);
       
       if (selectedEvent) {
-        
+        currentEventData = selectedEvent;
         document.getElementById('eventType').value = selectedEvent.type;
         document.getElementById('eventLocation').value = selectedEvent.location || 'Not specified';
         document.getElementById('locationStatus').value = selectedEvent.locationStatus;
         
-        
         updateTimeSlots(selectedEvent.timeSlots);
-        
-        
-        updateMealAllowanceOptions(selectedEvent.type, selectedEvent.locationStatus, selectedEvent.location);
-        
-        
-        updateOtherAllowancesOptions(selectedEvent.type, selectedEvent.locationStatus, selectedEvent.location);
+        updateMealAllowanceSection(selectedEvent);
+        updateOtherAllowancesSection(selectedEvent);
       } else {
-        
+        currentEventData = null;
         document.getElementById('eventId').value = '';
         document.getElementById('eventType').value = '';
         document.getElementById('eventLocation').value = '';
         document.getElementById('locationStatus').value = '';
         document.getElementById('timeSlotsContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first</p>';
         
-        
-        const mealAllowanceSelect = document.getElementById('mealAllowance');
-        while (mealAllowanceSelect.options.length > 1) {
-          mealAllowanceSelect.remove(1);
-        }
-        
-        const otherAllowancesSelect = document.getElementById('otherAllowances');
-        while (otherAllowancesSelect.options.length > 1) {
-          otherAllowancesSelect.remove(1);
-        }
-        
-        document.getElementById('otherAllowancesAmount').value = '';
+        document.getElementById('mealAllowanceContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first to see meal allowance options</p>';
+        document.getElementById('otherAllowancesContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first to see other allowance options</p>';
       }
-      
       
       updateTotalClaim();
     }
-    
     
     function updateTimeSlots(timeSlots) {
       const container = document.getElementById('timeSlotsContainer');
@@ -1296,9 +1331,13 @@
           checkbox.id = checkboxId;
           checkbox.name = 'timeSlots';
           checkbox.value = slot;
+          checkbox.addEventListener('change', function() {
+            updateMealAllowanceCalculation();
+            updateOtherAllowancesCalculation();
+            updateTotalClaim();
+          });
           
           label.appendChild(checkbox);
-          
           
           const icon = document.createElement('i');
           icon.className = 'fas fa-clock';
@@ -1315,136 +1354,391 @@
         container.innerHTML = '<p><i class="fas fa-exclamation-circle"></i> No time slots available for this event</p>';
       }
     }
-    
-    
-    function updateMealAllowanceOptions(eventType, locationStatus, location) {
-      const mealAllowanceSelect = document.getElementById('mealAllowance');
+
+    function updateMealAllowanceSection(eventData) {
+      const container = document.getElementById('mealAllowanceContainer');
+      const eventType = eventData.type.toLowerCase();
       
-      
-      while (mealAllowanceSelect.options.length > 1) {
-        mealAllowanceSelect.remove(1);
+      if (['training'].includes(eventType) || 
+          ['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType)) {
+
+        container.innerHTML = `
+          <div class="form-group">
+            <label><i class="fas fa-hamburger"></i> Meal Allowance:</label>
+            <p><i class="fas fa-info-circle"></i> For ${eventType} events, meal allowance is calculated per day regardless of working hours.</p>
+            <div id="mealAllowanceDisplay" class="total-days-info">
+              <i class="fas fa-calculator"></i> Calculating based on selected days...
+            </div>
+          </div>
+        `;
+      } else if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+
+        container.innerHTML = `
+          <div class="form-group">
+            <label><i class="fas fa-hamburger"></i> Meal Allowance:</label>
+            <p><i class="fas fa-info-circle"></i> For ${eventType} events, meal allowance varies based on working hours and food provision.</p>
+            <div id="mealBreakdownContainer" class="meal-breakdown-container">
+              <p><i class="fas fa-clock"></i> Select time slots to see daily breakdown...</p>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="form-group">
+            <label><i class="fas fa-hamburger"></i> Meal Allowance:</label>
+            <p><i class="fas fa-exclamation-circle"></i> No meal allowance applicable for this event type.</p>
+          </div>
+        `;
       }
       
-      
-      const normalizedEventType = eventType.toLowerCase();
-      const normalizedLocation = location ? location.toLowerCase() : '';
-      const normalizedLocationStatus = locationStatus.toLowerCase();
+      updateMealAllowanceCalculation();
+    }
 
+    function updateOtherAllowancesSection(eventData) {
+      const container = document.getElementById('otherAllowancesContainer');
+      const eventType = eventData.type.toLowerCase();
+      const locationStatus = eventData.locationStatus.toLowerCase();
+      const location = eventData.location ? eventData.location.toLowerCase() : '';
       
-      const isSabahSarawak = normalizedLocation.includes('sabah') || normalizedLocation.includes('sarawak');
+      container.innerHTML = `
+        <div class="form-group">
+          <label><i class="fas fa-money-bill-wave"></i> Other Allowances:</label>
+          <p><i class="fas fa-info-circle"></i> Other allowances are calculated per day for this event type.</p>
+          <div id="otherAllowancesDisplay" class="total-days-info">
+            <i class="fas fa-calculator"></i> Calculating based on selected days...
+          </div>
+        </div>
+      `;
+      
+      updateOtherAllowancesCalculation();
+    }
 
+    function updateMealAllowanceCalculation() {
+      if (!currentEventData) return;
       
-      if (['sales', 'marketing', 'demo session', 'exhibition'].includes(normalizedEventType)) {
-        if (normalizedLocationStatus === 'local') {
-          addOption(mealAllowanceSelect, '40.00', 'Full Day (No Food Provided) - RM 40.00');
-          addOption(mealAllowanceSelect, '25.00', 'Half Day (Morning - Afternoon) - RM 25.00');
-          addOption(mealAllowanceSelect, '30.00', 'Half Day (Afternoon - Evening) - RM 30.00');
-          addOption(mealAllowanceSelect, '15.00', 'Food Provided - RM 15.00');
-        } else if (normalizedLocationStatus === 'outstation') {
-          addOption(mealAllowanceSelect, '35.00', 'Outstation - RM 35.00');
-        }
-        
-      } 
+      const selectedTimeSlots = getSelectedTimeSlots();
+      const eventType = currentEventData.type.toLowerCase();
+      const locationStatus = currentEventData.locationStatus.toLowerCase();
+      const location = currentEventData.location ? currentEventData.location.toLowerCase() : '';
       
-      else if (['pl3d', 'rf', 'cryo', 'pl3d-rf'].includes(normalizedEventType) && 
-              normalizedLocationStatus === 'outstation') {
-        addOption(mealAllowanceSelect, '35.00', 'Outstation - RM 35.00');
-      } 
-      
-      else if (normalizedEventType === 'training') {
-        if (normalizedLocationStatus === 'outstation') {
-          if (isSabahSarawak) {
-            addOption(mealAllowanceSelect, '45.00', 'Sabah & Sarawak - RM 45.00');
-          } else {
-            addOption(mealAllowanceSelect, '35.00', 'Outstation - RM 35.00');
+      if (selectedTimeSlots.length === 0) {
+        if (['training'].includes(eventType) || 
+            ['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType)) {
+          const display = document.getElementById('mealAllowanceDisplay');
+          if (display) {
+            display.innerHTML = '<i class="fas fa-calculator"></i> Please select time slots to calculate meal allowance';
+          }
+        } else if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+          const container = document.getElementById('mealBreakdownContainer');
+          if (container) {
+            container.innerHTML = '<p><i class="fas fa-clock"></i> Select time slots to see daily breakdown...</p>';
           }
         }
-        
-      }
-      if (mealAllowanceSelect.options.length === 2) {
-        mealAllowanceSelect.selectedIndex = 1;
-        updateTotalClaim(); 
-      }
-    }
-    
-    
-    function updateOtherAllowancesOptions(eventType, locationStatus, location) {
-      const otherAllowancesSelect = document.getElementById('otherAllowances');
-      const otherAllowancesInput = document.getElementById('otherAllowancesAmount');
-      
-      
-      while (otherAllowancesSelect.options.length > 1) {
-        otherAllowancesSelect.remove(1);
-      }
-      
-      
-      const normalizedEventType = eventType.toLowerCase();
-      const normalizedLocation = location ? location.toLowerCase() : '';
-      const normalizedLocationStatus = locationStatus.toLowerCase();
-      
-      
-      const isSabahSarawak = normalizedLocation.includes('sabah') || normalizedLocation.includes('sarawak');
-      
-      let allowanceValue = '';
-      let allowanceText = '';
-      
-      if (['sales', 'marketing', 'demo session', 'exhibition'].includes(normalizedEventType)) {
-        if (normalizedLocationStatus.includes('outstation')) {
-          allowanceValue = '50.00';
-          allowanceText = 'Outstation - RM 50.00';
-        } else if (normalizedLocationStatus.includes('overseas')) {
-          allowanceValue = '200.00';
-          allowanceText = 'Overseas - RM 200.00';
-        }
-      } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf'].includes(normalizedEventType) && 
-                 normalizedLocationStatus.includes('outstation')) {
-        allowanceValue = '50.00';
-        allowanceText = 'Outstation - RM 50.00';
-      } else if (normalizedEventType === 'training') {
-        if (isSabahSarawak) {
-          allowanceValue = '55.00';
-          allowanceText = 'Training Sabah & Sarawak - RM 55.00';
-        } else if (normalizedLocationStatus.includes('outstation')) {
-          allowanceValue = '50.00';
-          allowanceText = 'Training Outstation - RM 50.00';
-        } else {
-          allowanceValue = '50.00';
-          allowanceText = 'Training Local - RM 50.00';
-        }
-      }
-      
-      if (allowanceValue === '' && allowanceText === '') {
-        addOption(otherAllowancesSelect, '', 'No additional claims applicable');
-        otherAllowancesInput.value = '';
-        otherAllowancesInput.readOnly = true;
-      } else {
-        addOption(otherAllowancesSelect, allowanceValue, allowanceText);
-        otherAllowancesInput.value = allowanceValue;
-        otherAllowancesInput.readOnly = true;
+        return;
       }
 
-      if (otherAllowancesSelect.options.length === 2) {
-        otherAllowancesSelect.selectedIndex = 1;
-        otherAllowancesInput.value = otherAllowancesSelect.value;
-        updateTotalClaim(); 
+      if (['training'].includes(eventType) || 
+          ['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType)) {
+
+        const uniqueDays = getUniqueDaysFromTimeSlots(selectedTimeSlots);
+        const totalDays = uniqueDays.length;
+        
+        let dailyRate = 0;
+        const isSabahSarawak = location.includes('sabah') || location.includes('sarawak');
+        
+        if (eventType === 'training') {
+          if (locationStatus === 'outstation') {
+            dailyRate = isSabahSarawak ? 45.00 : 35.00;
+          }
+        } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && 
+                   locationStatus === 'outstation') {
+          dailyRate = 35.00;
+        }
+        
+        const totalAmount = dailyRate * totalDays;
+        
+        const display = document.getElementById('mealAllowanceDisplay');
+        if (display) {
+          display.innerHTML = `
+            <i class="fas fa-calendar-day"></i> Total Days: ${totalDays} | 
+            <i class="fas fa-dollar-sign"></i> Rate: RM ${dailyRate.toFixed(2)}/day | 
+            <i class="fas fa-calculator"></i> Total: RM ${totalAmount.toFixed(2)}
+          `;
+        }
+        
+
+        mealAllowanceBreakdown = [{
+          type: 'simple',
+          totalDays: totalDays,
+          dailyRate: dailyRate,
+          totalAmount: totalAmount
+        }];
+        
+      } else if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+
+        const dailyBreakdown = calculateDailyMealBreakdown(selectedTimeSlots, locationStatus);
+        displayMealBreakdown(dailyBreakdown);
+        
+
+        mealAllowanceBreakdown = dailyBreakdown;
       }
     }
-    
-    
-    function handleOtherAllowancesChange() {
-      const otherAllowancesSelect = document.getElementById('otherAllowances');
-      const otherAllowancesInput = document.getElementById('otherAllowancesAmount');
+
+    function updateOtherAllowancesCalculation() {
+      if (!currentEventData) return;
       
-      if (otherAllowancesSelect.value) {
-        otherAllowancesInput.value = otherAllowancesSelect.value;
-      } else {
-        otherAllowancesInput.value = '';
+      const selectedTimeSlots = getSelectedTimeSlots();
+      const eventType = currentEventData.type.toLowerCase();
+      const locationStatus = currentEventData.locationStatus.toLowerCase();
+      const location = currentEventData.location ? currentEventData.location.toLowerCase() : '';
+      
+      if (selectedTimeSlots.length === 0) {
+        const display = document.getElementById('otherAllowancesDisplay');
+        if (display) {
+          display.innerHTML = '<i class="fas fa-calculator"></i> Please select time slots to calculate other allowances';
+        }
+        return;
+      }
+
+      const uniqueDays = getUniqueDaysFromTimeSlots(selectedTimeSlots);
+      const totalDays = uniqueDays.length;
+      
+      let dailyRate = 0;
+      const isSabahSarawak = location.includes('sabah') || location.includes('sarawak');
+      
+      if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+        if (locationStatus === 'outstation') {
+          dailyRate = 50.00;
+        } else if (locationStatus === 'overseas') {
+          dailyRate = 200.00;
+        }
+      } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && 
+                 locationStatus === 'outstation') {
+        dailyRate = 50.00;
+      } else if (eventType === 'training') {
+        if (isSabahSarawak) {
+          dailyRate = 55.00;
+        } else if (locationStatus === 'outstation') {
+          dailyRate = 50.00;
+        } else {
+          dailyRate = 50.00; 
+        }
       }
       
+      const totalAmount = dailyRate * totalDays;
+      
+      const display = document.getElementById('otherAllowancesDisplay');
+      if (display) {
+        display.innerHTML = `
+          <i class="fas fa-calendar-day"></i> Total Days: ${totalDays} | 
+          <i class="fas fa-dollar-sign"></i> Rate: RM ${dailyRate.toFixed(2)}/day | 
+          <i class="fas fa-calculator"></i> Total: RM ${totalAmount.toFixed(2)}
+        `;
+      }
+    }
+
+    function getUniqueDaysFromTimeSlots(timeSlots) {
+      const uniqueDays = new Set();
+      timeSlots.forEach(slot => {
+        const date = slot.split(' ')[0];
+        uniqueDays.add(date);
+      });
+      return Array.from(uniqueDays);
+    }
+
+    function calculateDailyMealBreakdown(timeSlots, locationStatus) {
+      const dailyData = {};
+      
+
+      timeSlots.forEach(slot => {
+        const [date, timeRange] = slot.split(' ');
+        if (!dailyData[date]) {
+          dailyData[date] = [];
+        }
+        dailyData[date].push(timeRange);
+      });
+      
+      const breakdown = [];
+      
+      Object.keys(dailyData).forEach(date => {
+        const timeRanges = dailyData[date];
+        const workingType = determineWorkingType(timeRanges);
+        
+
+        const dayEntry = {
+          date: date,
+          workingType: workingType,
+          foodProvided: 'with_food', 
+          amount: 0
+        };
+        
+
+        if (locationStatus === 'local') {
+          if (workingType === 'full_day') {
+            dayEntry.amount = 40.00; 
+          } else if (workingType === 'half_day_morning') {
+            dayEntry.amount = 25.00; 
+          } else if (workingType === 'half_day_afternoon') {
+            dayEntry.amount = 30.00; 
+          }
+        } else if (locationStatus === 'outstation') {
+          dayEntry.amount = 35.00; 
+        }
+        
+        breakdown.push(dayEntry);
+      });
+      
+      return breakdown;
+    }
+
+    function determineWorkingType(timeRanges) {
+      let totalHours = 0;
+      let earliestStart = 24;
+      let latestEnd = 0;
+      
+      timeRanges.forEach(range => {
+        const [startTime, endTime] = range.split('-');
+        const startHour = parseInt(startTime.split(':')[0]);
+        const endHour = parseInt(endTime.split(':')[0]);
+        const startMinute = parseInt(startTime.split(':')[1]);
+        const endMinute = parseInt(endTime.split(':')[1]);
+        
+        const startDecimal = startHour + startMinute / 60;
+        const endDecimal = endHour + endMinute / 60;
+        
+        totalHours += (endDecimal - startDecimal);
+        earliestStart = Math.min(earliestStart, startDecimal);
+        latestEnd = Math.max(latestEnd, endDecimal);
+      });
+      
+      if (totalHours > 4) {
+        return 'full_day';
+      } else if (totalHours >= 3 && totalHours <= 4) {
+
+        if (earliestStart >= 9 && latestEnd <= 13) {
+          return 'half_day_morning'; 
+        } else if (earliestStart >= 14 && latestEnd <= 18) {
+          return 'half_day_afternoon'; 
+        } else {
+          return 'half_day_morning'; 
+        }
+      } else {
+        return 'half_day_morning'; 
+      }
+    }
+
+    function displayMealBreakdown(breakdown) {
+      const container = document.getElementById('mealBreakdownContainer');
+      if (!container) return;
+      
+      let html = '';
+      let totalAmount = 0;
+      
+      breakdown.forEach((day, index) => {
+        const workingTypeText = getWorkingTypeText(day.workingType);
+        
+        html += `
+          <div class="day-breakdown">
+            <div class="day-header">
+              <i class="fas fa-calendar-day"></i> ${day.date}
+            </div>
+            <div class="working-type-info">
+              <i class="fas fa-clock"></i> ${workingTypeText}
+            </div>
+            <div class="form-group">
+              <label for="foodProvided_${index}"><i class="fas fa-utensils"></i> Food Provision:</label>
+              <select id="foodProvided_${index}" onchange="updateDayMealAmount(${index})" class="food-provision-select">
+                <option value="no_food">No Food Provided</option>
+                <option value="with_food">Food Provided</option>
+              </select>
+            </div>
+            <div class="amount-display" id="dayAmount_${index}">
+              RM ${day.amount.toFixed(2)}
+            </div>
+          </div>
+        `;
+        
+        totalAmount += day.amount;
+      });
+      
+      html += `
+        <div class="total-days-info">
+          <i class="fas fa-calculator"></i> Total Meal Allowance: RM <span id="totalMealAmount">${totalAmount.toFixed(2)}</span>
+        </div>
+      `;
+      
+      container.innerHTML = html;
+      
+
+      breakdown.forEach((day, index) => {
+        const select = document.getElementById(`foodProvided_${index}`);
+        if (select) {
+          select.value = day.foodProvided;
+        }
+      });
+    }
+
+    function getWorkingTypeText(workingType) {
+      switch (workingType) {
+        case 'full_day':
+          return 'Full Day (More than 4 hours)';
+        case 'half_day_morning':
+          return 'Half Day - Morning to Afternoon (9am-1pm)';
+        case 'half_day_afternoon':
+          return 'Half Day - Afternoon to Evening (2pm-6pm)';
+        default:
+          return 'Unknown working type';
+      }
+    }
+
+    function updateDayMealAmount(dayIndex) {
+      if (!mealAllowanceBreakdown[dayIndex]) return;
+      
+      const foodSelect = document.getElementById(`foodProvided_${dayIndex}`);
+      const amountDisplay = document.getElementById(`dayAmount_${dayIndex}`);
+      const totalDisplay = document.getElementById('totalMealAmount');
+      
+      if (!foodSelect || !amountDisplay) return;
+      
+      const day = mealAllowanceBreakdown[dayIndex];
+      const locationStatus = currentEventData.locationStatus.toLowerCase();
+      
+      let newAmount = 0;
+      
+      if (foodSelect.value === 'with_food') {
+        newAmount = 15.00; 
+      } else {
+
+        if (locationStatus === 'local') {
+          if (day.workingType === 'full_day') {
+            newAmount = 40.00;
+          } else if (day.workingType === 'half_day_morning') {
+            newAmount = 25.00;
+          } else if (day.workingType === 'half_day_afternoon') {
+            newAmount = 30.00;
+          }
+        } else if (locationStatus === 'outstation') {
+          newAmount = 35.00;
+        }
+      }
+      
+
+      mealAllowanceBreakdown[dayIndex].amount = newAmount;
+      mealAllowanceBreakdown[dayIndex].foodProvided = foodSelect.value;
+      
+
+      amountDisplay.textContent = `RM ${newAmount.toFixed(2)}`;
+      
+
+      const total = mealAllowanceBreakdown.reduce((sum, day) => sum + day.amount, 0);
+      if (totalDisplay) {
+        totalDisplay.textContent = total.toFixed(2);
+      }
+      
+
       updateTotalClaim();
     }
-    
-    
+
     function addTransportation() {
       const container = document.getElementById('transportationContainer');
       const transportationId = transportationCount++;
@@ -1473,7 +1767,6 @@
       
       container.appendChild(transportationDiv);
       
-      
       document.getElementById(`transportationType_${transportationId}`).addEventListener('change', function() {
         updateTransportationDetails(transportationId);
       });
@@ -1481,11 +1774,9 @@
       updateTotalClaim();
     }
     
-    
     function updateTransportationDetails(id) {
       const transportationType = document.getElementById(`transportationType_${id}`).value;
       const detailsContainer = document.getElementById(`transportationDetails_${id}`);
-      
       
       detailsContainer.innerHTML = '';
       detailsContainer.style.display = 'block';
@@ -1504,7 +1795,6 @@
           
           <div id="carDetails_${id}" class="nested-section" style="display: none;"></div>
         `;
-        
         
         document.getElementById(`carType_${id}`).addEventListener('change', function() {
           updateCarDetails(id);
@@ -1537,10 +1827,7 @@
           </div>
         `;
         
-        
         document.getElementById(`airTicketCost_${id}`).addEventListener('input', updateTotalClaim);
-        
-        
         setupDragAndDrop(`airFileDropArea_${id}`, `airReceipt_${id}`, `air_${id}`, TRANSPORTATION_FOLDER_ID);
       } else if (transportationType === 'train') {
         detailsContainer.innerHTML = `
@@ -1570,21 +1857,16 @@
           </div>
         `;
         
-        
         document.getElementById(`trainTicketCost_${id}`).addEventListener('input', updateTotalClaim);
-        
-        
         setupDragAndDrop(`trainFileDropArea_${id}`, `trainReceipt_${id}`, `train_${id}`, TRANSPORTATION_FOLDER_ID);
       }
       
       updateTotalClaim();
     }
     
-    
     function updateCarDetails(id) {
       const carType = document.getElementById(`carType_${id}`).value;
       const detailsContainer = document.getElementById(`carDetails_${id}`);
-      
       
       detailsContainer.innerHTML = '';
       detailsContainer.style.display = 'block';
@@ -1598,7 +1880,6 @@
             </select>
           </div>
         `;
-        
         
         google.script.run
           .withSuccessHandler(function(cars) {
@@ -1645,14 +1926,11 @@
           </div>
         `;
         
-        
         document.getElementById(`kilometers_${id}`).addEventListener('input', function() {
           updateTotalClaim();
         });
         
         document.getElementById(`tngAmount_${id}`).addEventListener('input', updateTotalClaim);
-        
-        
         setupDragAndDrop(`tngFileDropArea_${id}`, `tngReceipt_${id}`, `tng_${id}`, TRANSPORTATION_FOLDER_ID);
       } else if (carType === 'rental') {
         detailsContainer.innerHTML = `
@@ -1682,16 +1960,12 @@
           </div>
         `;
         
-        
         document.getElementById(`rentalAmount_${id}`).addEventListener('input', updateTotalClaim);
-        
-        
         setupDragAndDrop(`rentalFileDropArea_${id}`, `rentalReceipt_${id}`, `rental_${id}`, TRANSPORTATION_FOLDER_ID);
       }
       
       updateTotalClaim();
     }
-    
     
     function removeTransportation(id) {
       const transportationDiv = document.getElementById(`transportation_${id}`);
@@ -1699,7 +1973,6 @@
         transportationDiv.style.animation = 'fadeOut 0.3s ease forwards';
         setTimeout(() => {
           transportationDiv.remove();
-          
           
           Object.keys(fileUploads).forEach(key => {
             if (key.includes(`_${id}`)) {
@@ -1711,7 +1984,6 @@
         }, 300);
       }
     }
-    
     
     function addStay() {
       const container = document.getElementById('stayContainer');
@@ -1742,7 +2014,6 @@
       
       container.appendChild(stayDiv);
       
-      
       document.getElementById(`stayType_${stayId}`).addEventListener('change', function() {
         updateStayDetails(stayId);
       });
@@ -1750,11 +2021,9 @@
       updateTotalClaim();
     }
     
-    
     function updateStayDetails(id) {
       const stayType = document.getElementById(`stayType_${id}`).value;
       const detailsContainer = document.getElementById(`stayDetails_${id}`);
-      
       
       detailsContainer.innerHTML = '';
       
@@ -1788,7 +2057,6 @@
           </div>
         `;
         
-        
         document.getElementById(`stayAmount_${id}`).addEventListener('input', function() {
           const amount = parseFloat(this.value) || 0;
           if (amount > 200) {
@@ -1796,7 +2064,6 @@
           }
           updateTotalClaim();
         });
-        
         
         setupDragAndDrop(`stayFileDropArea_${id}`, `stayReceipt_${id}`, `stay_${id}`, STAY_FOLDER_ID);
       } else if (stayType === 'airport' || stayType === 'none') {
@@ -1811,14 +2078,12 @@
       updateTotalClaim();
     }
     
-    
     function removeStay(id) {
       const stayDiv = document.getElementById(`stay_${id}`);
       if (stayDiv) {
         stayDiv.style.animation = 'fadeOut 0.3s ease forwards';
         setTimeout(() => {
           stayDiv.remove();
-          
           
           Object.keys(fileUploads).forEach(key => {
             if (key.includes(`stay_${id}`)) {
@@ -1830,7 +2095,6 @@
         }, 300);
       }
     }
-    
     
     function addExtraClaim() {
       const container = document.getElementById('extraClaimsContainer');
@@ -1878,15 +2142,11 @@
       
       container.appendChild(claimDiv);
       
-      
       document.getElementById(`claimAmount_${claimId}`).addEventListener('input', updateTotalClaim);
-      
-      
       setupDragAndDrop(`claimFileDropArea_${claimId}`, `claimDocument_${claimId}`, `claim_${claimId}`, EXTRA_CLAIMS_FOLDER_ID);
       
       updateTotalClaim();
     }
-    
     
     function removeExtraClaim(id) {
       const claimDiv = document.getElementById(`extraClaim_${id}`);
@@ -1894,7 +2154,6 @@
         claimDiv.style.animation = 'fadeOut 0.3s ease forwards';
         setTimeout(() => {
           claimDiv.remove();
-          
           
           Object.keys(fileUploads).forEach(key => {
             if (key.includes(`claim_${id}`)) {
@@ -1906,7 +2165,6 @@
         }, 300);
       }
     }
-    
     
     function setupDragAndDrop(dropAreaId, fileInputId, fileId, folderId) {
       const dropArea = document.getElementById(dropAreaId);
@@ -1961,7 +2219,6 @@
         const fileInfoElement = document.getElementById(`${fileId.split('_')[0]}FileInfo_${fileId.split('_')[1]}`);
         const dropAreaElement = document.getElementById(`${fileId.split('_')[0]}FileDropArea_${fileId.split('_')[1]}`);
         
-        
         if (file.size > 5 * 1024 * 1024) {
           if (fileErrorElement) {
             fileErrorElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> File size exceeds 5MB limit';
@@ -1980,7 +2237,6 @@
           fileErrorElement.textContent = '';
         }
         
-        
         if (fileNameElement) {
           fileNameElement.innerHTML = '';
           const filePill = document.createElement('div');
@@ -1993,7 +2249,6 @@
           fileNameElement.appendChild(filePill);
         }
 
-        
         if (fileInfoElement) {
           fileInfoElement.classList.add('visible');
         }
@@ -2002,8 +2257,6 @@
           dropAreaElement.classList.add('has-file');
         }
 
-        
-        
         fileUploads[fileId] = {
           file: file,
           element: fileInput,
@@ -2019,11 +2272,9 @@
 
       delete fileUploads[fileId];
 
-      
       const input = document.getElementById(`${prefix}Receipt_${index}`);
       if (input) input.value = '';
 
-      
       const dropArea = document.getElementById(`${prefix}FileDropArea_${index}`);
       const fileInfo = document.getElementById(`${prefix}FileInfo_${index}`);
       const fileName = document.getElementById(`${prefix}ReceiptName_${index}`);
@@ -2035,11 +2286,10 @@
       if (fileInfo) fileInfo.classList.remove('visible');
     }
 
-    
     function updateTotalClaim() {
       let total = 0;
       
-      
+
       for (let i = 0; i < transportationCount; i++) {
         const transportationDiv = document.getElementById(`transportation_${i}`);
         if (!transportationDiv) continue;
@@ -2058,8 +2308,6 @@
           if (carType === 'personal') {
             const kilometers = parseFloat(document.getElementById(`kilometers_${i}`)?.value) || 0;
             const tngAmount = parseFloat(document.getElementById(`tngAmount_${i}`)?.value) || 0;
-            
-            
             total += (kilometers * 0.5) + tngAmount;
           } else if (carType === 'rental') {
             const rentalAmount = parseFloat(document.getElementById(`rentalAmount_${i}`)?.value) || 0;
@@ -2068,7 +2316,7 @@
         }
       }
       
-      
+
       for (let i = 0; i < stayCount; i++) {
         const stayDiv = document.getElementById(`stay_${i}`);
         if (!stayDiv) continue;
@@ -2081,15 +2329,54 @@
         }
       }
       
+
+      if (mealAllowanceBreakdown && mealAllowanceBreakdown.length > 0) {
+        if (mealAllowanceBreakdown[0].type === 'simple') {
+          total += mealAllowanceBreakdown[0].totalAmount;
+        } else {
+          const mealTotal = mealAllowanceBreakdown.reduce((sum, day) => sum + day.amount, 0);
+          total += mealTotal;
+        }
+      }
       
-      const mealAllowance = parseFloat(document.getElementById('mealAllowance')?.value) || 0;
-      total += mealAllowance;
+
+      if (currentEventData) {
+        const selectedTimeSlots = getSelectedTimeSlots();
+        if (selectedTimeSlots.length > 0) {
+          const uniqueDays = getUniqueDaysFromTimeSlots(selectedTimeSlots);
+          const totalDays = uniqueDays.length;
+          
+          const eventType = currentEventData.type.toLowerCase();
+          const locationStatus = currentEventData.locationStatus.toLowerCase();
+          const location = currentEventData.location ? currentEventData.location.toLowerCase() : '';
+          
+          let dailyRate = 0;
+          const isSabahSarawak = location.includes('sabah') || location.includes('sarawak');
+          
+          if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+            if (locationStatus === 'outstation') {
+              dailyRate = 50.00;
+            } else if (locationStatus === 'overseas') {
+              dailyRate = 200.00;
+            }
+          } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && 
+                     locationStatus === 'outstation') {
+            dailyRate = 50.00;
+          } else if (eventType === 'training') {
+            if (isSabahSarawak) {
+              dailyRate = 55.00;
+            } else if (locationStatus === 'outstation') {
+              dailyRate = 50.00;
+            } else {
+              dailyRate = 50.00; 
+            }
+          }
+          
+          total += dailyRate * totalDays;
+        }
+      }
       
-      
-      const otherAllowancesAmount = parseFloat(document.getElementById('otherAllowancesAmount')?.value) || 0;
-      total += otherAllowancesAmount;
-      
-      
+
       for (let i = 0; i < extraClaimCount; i++) {
         const claimDiv = document.getElementById(`extraClaim_${i}`);
         if (!claimDiv) continue;
@@ -2098,17 +2385,12 @@
         total += claimAmount;
       }
       
-      
       const totalElement = document.getElementById('totalClaimValue');
       const currentTotal = parseFloat(totalElement.textContent) || 0;
       
-      
       animateValue(totalElement, currentTotal, total, 500);
-      
-      
       totalClaimAmount = total;
     }
-    
     
     function animateValue(element, start, end, duration) {
       let startTimestamp = null;
@@ -2124,7 +2406,6 @@
       window.requestAnimationFrame(step);
     }
     
-    
     function addOption(selectElement, value, text) {
       const option = document.createElement('option');
       option.value = value;
@@ -2132,22 +2413,71 @@
       selectElement.appendChild(option);
     }
     
-    
     function submitForm() {
-      
       if (!validateForm()) {
         return;
       }
       
-      
       document.getElementById('submitSpinner').classList.add('active');
-      
-      
       document.getElementById('submitButton').disabled = true;
-      
       
       processAllFileUploads()
         .then(function(fileResults) {
+          const selectedTimeSlots = getSelectedTimeSlots();
+          const uniqueDays = getUniqueDaysFromTimeSlots(selectedTimeSlots);
+          
+
+          let mealAllowanceData = {
+            type: '',
+            amount: 0,
+            totalAmount: 0,
+            dailyBreakdown: []
+          };
+          
+          if (mealAllowanceBreakdown && mealAllowanceBreakdown.length > 0) {
+            if (mealAllowanceBreakdown[0].type === 'simple') {
+              mealAllowanceData.type = 'Simple calculation';
+              mealAllowanceData.amount = mealAllowanceBreakdown[0].totalAmount;
+              mealAllowanceData.totalAmount = mealAllowanceBreakdown[0].totalAmount;
+            } else {
+              mealAllowanceData.type = 'Daily breakdown';
+              mealAllowanceData.totalAmount = mealAllowanceBreakdown.reduce((sum, day) => sum + day.amount, 0);
+              mealAllowanceData.dailyBreakdown = mealAllowanceBreakdown;
+            }
+          }
+          
+
+          let otherAllowancesAmount = 0;
+          if (currentEventData && selectedTimeSlots.length > 0) {
+            const totalDays = uniqueDays.length;
+            const eventType = currentEventData.type.toLowerCase();
+            const locationStatus = currentEventData.locationStatus.toLowerCase();
+            const location = currentEventData.location ? currentEventData.location.toLowerCase() : '';
+            
+            let dailyRate = 0;
+            const isSabahSarawak = location.includes('sabah') || location.includes('sarawak');
+            
+            if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+              if (locationStatus === 'outstation') {
+                dailyRate = 50.00;
+              } else if (locationStatus === 'overseas') {
+                dailyRate = 200.00;
+              }
+            } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && 
+                       locationStatus === 'outstation') {
+              dailyRate = 50.00;
+            } else if (eventType === 'training') {
+              if (isSabahSarawak) {
+                dailyRate = 55.00;
+              } else if (locationStatus === 'outstation') {
+                dailyRate = 50.00;
+              } else {
+                dailyRate = 50.00; 
+              }
+            }
+            
+            otherAllowancesAmount = dailyRate * totalDays;
+          }
           
           const formData = {
             username: document.getElementById('username').value,
@@ -2158,77 +2488,58 @@
             eventType: document.getElementById('eventType').value,
             eventLocation: document.getElementById('eventLocation').value,
             locationStatus: document.getElementById('locationStatus').value,
-            timeSlots: getSelectedTimeSlots(),
+            timeSlots: selectedTimeSlots,
+            totalDays: uniqueDays.length,
             transportation: getTransportationData(fileResults),
             stay: getStayData(fileResults),
-            mealAllowance: {
-              type: document.getElementById('mealAllowance').options[document.getElementById('mealAllowance').selectedIndex]?.text || '',
-              amount: parseFloat(document.getElementById('mealAllowance').value) || 0
-            },
+            mealAllowance: mealAllowanceData,
             otherAllowances: {
-              type: document.getElementById('otherAllowances').options[document.getElementById('otherAllowances').selectedIndex]?.text || '',
-              amount: parseFloat(document.getElementById('otherAllowancesAmount').value) || 0
+              type: 'Per day calculation',
+              amount: otherAllowancesAmount,
+              totalAmount: otherAllowancesAmount
             },
             extraClaims: getExtraClaimsData(fileResults),
             remarks: document.getElementById('remarks').value,
             totalClaim: totalClaimAmount
           };
           
-          
           google.script.run
             .withSuccessHandler(function(response) {
-              
               document.getElementById('submitSpinner').classList.remove('active');
               
               if (response.success) {
-                
                 document.getElementById('applicationNumberDisplay').textContent = 
                   `Your application number is: ${response.applicationNumber}`;
                 document.getElementById('successModal').classList.add('active');
-                
-                
                 resetFormState();
               } else {
                 showAlert('Error submitting form: ' + response.error);
                 console.error('Error:', response.error);
-                
-                
                 document.getElementById('submitButton').disabled = false;
               }
             })
             .withFailureHandler(function(error) {
-              
               document.getElementById('submitSpinner').classList.remove('active');
-              
               showAlert('Error submitting form: ' + error);
               console.error('Error:', error);
-              
-              
               document.getElementById('submitButton').disabled = false;
             })
             .submitFormData(formData);
         })
         .catch(function(error) {
-          
           document.getElementById('submitSpinner').classList.remove('active');
-          
           showAlert('Error processing file uploads: ' + error);
           console.error('Error:', error);
-          
-          
           document.getElementById('submitButton').disabled = false;
         });
     }
-    
     
     function resetForm() {
       document.getElementById('successModal').classList.remove('active');
       document.getElementById('claimForm').reset();
       resetFormState();
       
-      
       document.getElementById('submitButton').disabled = false;
-      
       
       google.script.run
         .withSuccessHandler(handleUserInfo)
@@ -2241,53 +2552,34 @@
         .generateApplicationNumber();
     }
     
-    
     function resetFormState() {
-      
       document.getElementById('transportationContainer').innerHTML = '';
       transportationCount = 0;
-      
       
       document.getElementById('stayContainer').innerHTML = '';
       stayCount = 0;
       
-      
       document.getElementById('extraClaimsContainer').innerHTML = '';
       extraClaimCount = 0;
       
-      
       fileUploads = {};
-      
+      currentEventData = null;
+      mealAllowanceBreakdown = [];
       
       totalClaimAmount = 0;
       document.getElementById('totalClaimValue').textContent = '0.00';
       
-      
       document.getElementById('timeSlotsContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first</p>';
-      
-      
-      const mealAllowanceSelect = document.getElementById('mealAllowance');
-      while (mealAllowanceSelect.options.length > 1) {
-        mealAllowanceSelect.remove(1);
-      }
-      
-      const otherAllowancesSelect = document.getElementById('otherAllowances');
-      while (otherAllowancesSelect.options.length > 1) {
-        otherAllowancesSelect.remove(1);
-      }
-      
-      document.getElementById('otherAllowancesAmount').value = '';
+      document.getElementById('mealAllowanceContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first to see meal allowance options</p>';
+      document.getElementById('otherAllowancesContainer').innerHTML = '<p><i class="fas fa-info-circle"></i> Please select an event first to see other allowance options</p>';
     }
     
-    
     function validateForm() {
-      
       if (!document.getElementById('eventName').value) {
         showAlert('Please select an event');
         document.getElementById('eventName').focus();
         return false;
       }
-      
       
       const timeSlots = getSelectedTimeSlots();
       if (timeSlots.length === 0) {
@@ -2295,7 +2587,7 @@
         return false;
       }
       
-      
+
       for (let i = 0; i < transportationCount; i++) {
         const transportationDiv = document.getElementById(`transportation_${i}`);
         if (!transportationDiv) continue;
@@ -2307,27 +2599,25 @@
           return false;
         }
         
-      if (transportationType === 'air') {
-        const ticketCost = document.getElementById(`airTicketCost_${i}`)?.value;
-        if (!ticketCost) {
-          showAlert('Please enter ticket cost for air transportation');
-          document.getElementById(`airTicketCost_${i}`).focus();
-          return false;
-        }
-        
-        
-        if (!fileUploads[`air_${i}`]) {
-          showAlert('Please upload a receipt for air transportation');
-          return false;
-        }
-      } else if (transportationType === 'train') {
+        if (transportationType === 'air') {
+          const ticketCost = document.getElementById(`airTicketCost_${i}`)?.value;
+          if (!ticketCost) {
+            showAlert('Please enter ticket cost for air transportation');
+            document.getElementById(`airTicketCost_${i}`).focus();
+            return false;
+          }
+          
+          if (!fileUploads[`air_${i}`]) {
+            showAlert('Please upload a receipt for air transportation');
+            return false;
+          }
+        } else if (transportationType === 'train') {
           const ticketCost = document.getElementById(`trainTicketCost_${i}`)?.value;
           if (!ticketCost) {
             showAlert('Please enter ticket cost for train transportation');
             document.getElementById(`trainTicketCost_${i}`).focus();
             return false;
           }
-          
           
           if (!fileUploads[`train_${i}`]) {
             showAlert('Please upload a receipt for train transportation');
@@ -2362,7 +2652,6 @@
               return false;
             }
             
-            
             if (!fileUploads[`tng_${i}`]) {
               showAlert('Please upload a receipt for Touch N Go');
               return false;
@@ -2375,7 +2664,6 @@
               return false;
             }
             
-            
             if (!fileUploads[`rental_${i}`]) {
               showAlert('Please upload a receipt for car rental');
               return false;
@@ -2384,7 +2672,7 @@
         }
       }
       
-      
+
       for (let i = 0; i < stayCount; i++) {
         const stayDiv = document.getElementById(`stay_${i}`);
         if (!stayDiv) continue;
@@ -2404,7 +2692,6 @@
             return false;
           }
           
-          
           if (!fileUploads[`stay_${i}`]) {
             showAlert('Please upload a receipt for your stay');
             return false;
@@ -2412,7 +2699,7 @@
         }
       }
       
-      
+
       for (let i = 0; i < extraClaimCount; i++) {
         const claimDiv = document.getElementById(`extraClaim_${i}`);
         if (!claimDiv) continue;
@@ -2432,7 +2719,6 @@
           return false;
         }
         
-        
         if (!fileUploads[`claim_${i}`]) {
           showAlert('Please upload a document for your extra claim');
           return false;
@@ -2441,7 +2727,6 @@
       
       return true;
     }
-    
     
     function processAllFileUploads() {
       return new Promise(function(resolve, reject) {
@@ -2461,15 +2746,12 @@
           const file = fileInfo.file;
           const folderId = fileInfo.folderId;
           
-          
           const timestamp = new Date().getTime();
           const uniqueFileName = `${document.getElementById('applicationNumber').value}_${fileId}_${timestamp}_${file.name}`;
-          
           
           const reader = new FileReader();
           reader.onload = function(e) {
             const content = e.target.result.split(',')[1]; 
-            
             
             google.script.run
               .withSuccessHandler(function(result) {
@@ -2481,7 +2763,6 @@
                   console.error('Error uploading file:', result.error);
                   hasError = true;
                 }
-                
                 
                 if (completedUploads === fileIds.length) {
                   if (hasError) {
@@ -2495,7 +2776,6 @@
                 completedUploads++;
                 console.error('Error uploading file:', error);
                 hasError = true;
-                
                 
                 if (completedUploads === fileIds.length) {
                   reject('One or more file uploads failed');
@@ -2513,7 +2793,6 @@
             console.error('Error reading file');
             hasError = true;
             
-            
             if (completedUploads === fileIds.length) {
               reject('Error reading one or more files');
             }
@@ -2523,7 +2802,6 @@
         });
       });
     }
-    
     
     function getSelectedTimeSlots() {
       const timeSlots = [];
@@ -2535,7 +2813,6 @@
       
       return timeSlots;
     }
-    
     
     function getTransportationData(fileResults) {
       const transportation = [];
@@ -2579,7 +2856,6 @@
       return transportation;
     }
     
-    
     function getStayData(fileResults) {
       const stays = [];
       
@@ -2605,7 +2881,6 @@
       return stays;
     }
     
-    
     function getExtraClaimsData(fileResults) {
       const claims = [];
       
@@ -2628,24 +2903,21 @@
       return claims;
     }
     
-    
     function handleError(error) {
       console.error('Error:', error);
       showAlert('An error occurred: ' + error);
     }
 
-    
     function showAlert(message) {
       document.getElementById('alertMessage').textContent = message;
       document.getElementById('alertModal').classList.add('active');
-      
       
       setTimeout(() => {
         document.getElementById('closeAlertBtn').focus();
       }, 100);
     }
     
-    
+
     (function() {
       const style = document.createElement('style');
       style.type = 'text/css';
