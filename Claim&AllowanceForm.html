@@ -1358,10 +1358,29 @@
     function updateMealAllowanceSection(eventData) {
       const container = document.getElementById('mealAllowanceContainer');
       const eventType = eventData.type.toLowerCase();
-      
-      if (['training'].includes(eventType) || 
-          ['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType)) {
+      const locationStatus = eventData.locationStatus.toLowerCase();
+      const disallowedTypes = ['sales', 'marketing', 'demo session', 'exhibition'];
 
+      if (disallowedTypes.includes(eventType) && locationStatus === 'overseas') {
+        container.innerHTML = `
+          <div class="form-group">
+            <label><i class="fas fa-utensils"></i> Meal Allowance:</label>
+            <p><i class="fas fa-ban"></i> Meal allowance is not applicable for overseas ${eventType} events.</p>
+          </div>
+        `;
+        return;
+      } else if (disallowedTypes.includes(eventType) && locationStatus === 'outstation') {
+        container.innerHTML = `
+          <div class="form-group">
+            <label><i class="fas fa-hamburger"></i> Meal Allowance:</label>
+            <p><i class="fas fa-info-circle"></i> For outstation ${eventType} events, meal allowance is RM 35.00 per day.</p>
+            <div id="mealAllowanceDisplay" class="total-days-info">
+              <i class="fas fa-calculator"></i> Calculating based on selected days...
+            </div>
+          </div>
+        `;
+      } else if (['training'].includes(eventType) || 
+          ['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType)) {
         container.innerHTML = `
           <div class="form-group">
             <label><i class="fas fa-hamburger"></i> Meal Allowance:</label>
@@ -1371,8 +1390,7 @@
             </div>
           </div>
         `;
-      } else if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
-
+      } else if (disallowedTypes.includes(eventType)) {
         container.innerHTML = `
           <div class="form-group">
             <label><i class="fas fa-hamburger"></i> Meal Allowance:</label>
@@ -1390,9 +1408,10 @@
           </div>
         `;
       }
-      
+
       updateMealAllowanceCalculation();
     }
+
 
     function updateOtherAllowancesSection(eventData) {
       const container = document.getElementById('otherAllowancesContainer');
@@ -1420,6 +1439,7 @@
       const eventType = currentEventData.type.toLowerCase();
       const locationStatus = currentEventData.locationStatus.toLowerCase();
       const location = currentEventData.location ? currentEventData.location.toLowerCase() : '';
+      const disallowedTypes = ['sales', 'marketing', 'demo session', 'exhibition'];
       
       if (selectedTimeSlots.length === 0) {
         if (['training'].includes(eventType) || 
@@ -1428,12 +1448,38 @@
           if (display) {
             display.innerHTML = '<i class="fas fa-calculator"></i> Please select time slots to calculate meal allowance';
           }
-        } else if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
+        } else if (disallowedTypes.includes(eventType)) {
           const container = document.getElementById('mealBreakdownContainer');
           if (container) {
             container.innerHTML = '<p><i class="fas fa-clock"></i> Select time slots to see daily breakdown...</p>';
           }
         }
+        return;
+      }
+
+
+      if (disallowedTypes.includes(eventType) && locationStatus === 'outstation') {
+        const uniqueDays = getUniqueDaysFromTimeSlots(selectedTimeSlots);
+        const totalDays = uniqueDays.length;
+        const dailyRate = 35.00;
+        const totalAmount = dailyRate * totalDays;
+        
+        const display = document.getElementById('mealAllowanceDisplay');
+        if (display) {
+          display.innerHTML = `
+            <i class="fas fa-calendar-day"></i> Total Days: ${totalDays} | 
+            <i class="fas fa-dollar-sign"></i> Rate: RM ${dailyRate.toFixed(2)}/day | 
+            <i class="fas fa-calculator"></i> Total: RM ${totalAmount.toFixed(2)}
+          `;
+        }
+        
+        mealAllowanceBreakdown = [{
+          type: 'simple',
+          totalDays: totalDays,
+          dailyRate: dailyRate,
+          totalAmount: totalAmount
+        }];
+        
         return;
       }
 
@@ -1451,7 +1497,7 @@
             dailyRate = isSabahSarawak ? 45.00 : 35.00;
           }
         } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && 
-                   locationStatus === 'outstation') {
+                  locationStatus === 'outstation') {
           dailyRate = 35.00;
         }
         
@@ -1466,7 +1512,6 @@
           `;
         }
         
-
         mealAllowanceBreakdown = [{
           type: 'simple',
           totalDays: totalDays,
@@ -1474,12 +1519,10 @@
           totalAmount: totalAmount
         }];
         
-      } else if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
-
+      } else if (disallowedTypes.includes(eventType)) {
         const dailyBreakdown = calculateDailyMealBreakdown(selectedTimeSlots, locationStatus);
         displayMealBreakdown(dailyBreakdown);
         
-
         mealAllowanceBreakdown = dailyBreakdown;
       }
     }
@@ -1549,7 +1592,6 @@
     function calculateDailyMealBreakdown(timeSlots, locationStatus) {
       const dailyData = {};
       
-
       timeSlots.forEach(slot => {
         const [date, timeRange] = slot.split(' ');
         if (!dailyData[date]) {
@@ -1564,26 +1606,12 @@
         const timeRanges = dailyData[date];
         const workingType = determineWorkingType(timeRanges);
         
-
         const dayEntry = {
           date: date,
           workingType: workingType,
-          foodProvided: 'with_food', 
-          amount: 0
+          foodProvided: '', 
+          amount: 0 
         };
-        
-
-        if (locationStatus === 'local') {
-          if (workingType === 'full_day') {
-            dayEntry.amount = 40.00; 
-          } else if (workingType === 'half_day_morning') {
-            dayEntry.amount = 25.00; 
-          } else if (workingType === 'half_day_afternoon') {
-            dayEntry.amount = 30.00; 
-          }
-        } else if (locationStatus === 'outstation') {
-          dayEntry.amount = 35.00; 
-        }
         
         breakdown.push(dayEntry);
       });
@@ -1595,35 +1623,35 @@
       let totalHours = 0;
       let earliestStart = 24;
       let latestEnd = 0;
-      
+
       timeRanges.forEach(range => {
-        const [startTime, endTime] = range.split('-');
-        const startHour = parseInt(startTime.split(':')[0]);
-        const endHour = parseInt(endTime.split(':')[0]);
-        const startMinute = parseInt(startTime.split(':')[1]);
-        const endMinute = parseInt(endTime.split(':')[1]);
-        
+        const [startRaw, endRaw] = range.split('-');
+        const startTime = startRaw.includes(':') ? startRaw : `${startRaw}:00`;
+        const endTime = endRaw.includes(':') ? endRaw : `${endRaw}:00`;
+
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const [endHour, endMinute] = endTime.split(':').map(Number);
+
         const startDecimal = startHour + startMinute / 60;
         const endDecimal = endHour + endMinute / 60;
-        
-        totalHours += (endDecimal - startDecimal);
+
+        totalHours += endDecimal - startDecimal;
         earliestStart = Math.min(earliestStart, startDecimal);
         latestEnd = Math.max(latestEnd, endDecimal);
       });
-      
+
       if (totalHours > 4) {
         return 'full_day';
       } else if (totalHours >= 3 && totalHours <= 4) {
-
         if (earliestStart >= 9 && latestEnd <= 13) {
-          return 'half_day_morning'; 
-        } else if (earliestStart >= 14 && latestEnd <= 18) {
-          return 'half_day_afternoon'; 
+          return 'half_day_morning';
+        } else if (earliestStart >= 13 && latestEnd <= 18) {
+          return 'half_day_afternoon';
         } else {
-          return 'half_day_morning'; 
+          return 'half_day_afternoon';
         }
       } else {
-        return 'half_day_morning'; 
+        return 'half_day_morning';
       }
     }
 
@@ -1632,7 +1660,7 @@
       if (!container) return;
       
       let html = '';
-      let totalAmount = 0;
+      let totalAmount = 0; 
       
       breakdown.forEach((day, index) => {
         const workingTypeText = getWorkingTypeText(day.workingType);
@@ -1648,35 +1676,27 @@
             <div class="form-group">
               <label for="foodProvided_${index}"><i class="fas fa-utensils"></i> Food Provision:</label>
               <select id="foodProvided_${index}" onchange="updateDayMealAmount(${index})" class="food-provision-select">
+                <option value="">Select Food Provision</option>
                 <option value="no_food">No Food Provided</option>
                 <option value="with_food">Food Provided</option>
               </select>
             </div>
             <div class="amount-display" id="dayAmount_${index}">
-              RM ${day.amount.toFixed(2)}
+              RM 0.00
             </div>
           </div>
         `;
-        
-        totalAmount += day.amount;
       });
       
       html += `
         <div class="total-days-info">
-          <i class="fas fa-calculator"></i> Total Meal Allowance: RM <span id="totalMealAmount">${totalAmount.toFixed(2)}</span>
+          <i class="fas fa-calculator"></i> Total Meal Allowance: RM <span id="totalMealAmount">0.00</span>
         </div>
       `;
       
       container.innerHTML = html;
-      
-
-      breakdown.forEach((day, index) => {
-        const select = document.getElementById(`foodProvided_${index}`);
-        if (select) {
-          select.value = day.foodProvided;
-        }
-      });
     }
+
 
     function getWorkingTypeText(workingType) {
       switch (workingType) {
@@ -1685,7 +1705,7 @@
         case 'half_day_morning':
           return 'Half Day - Morning to Afternoon (9am-1pm)';
         case 'half_day_afternoon':
-          return 'Half Day - Afternoon to Evening (2pm-6pm)';
+          return 'Half Day - Afternoon to Evening (1pm-6pm)';
         default:
           return 'Unknown working type';
       }
@@ -1700,6 +1720,20 @@
       
       if (!foodSelect || !amountDisplay) return;
       
+
+      if (foodSelect.value === '') {
+        amountDisplay.textContent = 'RM 0.00';
+        mealAllowanceBreakdown[dayIndex].amount = 0;
+        mealAllowanceBreakdown[dayIndex].foodProvided = '';
+        
+        const total = mealAllowanceBreakdown.reduce((sum, day) => sum + day.amount, 0);
+        if (totalDisplay) {
+          totalDisplay.textContent = total.toFixed(2);
+        }
+        updateTotalClaim();
+        return;
+      }
+      
       const day = mealAllowanceBreakdown[dayIndex];
       const locationStatus = currentEventData.locationStatus.toLowerCase();
       
@@ -1708,7 +1742,6 @@
       if (foodSelect.value === 'with_food') {
         newAmount = 15.00; 
       } else {
-
         if (locationStatus === 'local') {
           if (day.workingType === 'full_day') {
             newAmount = 40.00;
@@ -1722,20 +1755,16 @@
         }
       }
       
-
       mealAllowanceBreakdown[dayIndex].amount = newAmount;
       mealAllowanceBreakdown[dayIndex].foodProvided = foodSelect.value;
       
-
       amountDisplay.textContent = `RM ${newAmount.toFixed(2)}`;
       
-
       const total = mealAllowanceBreakdown.reduce((sum, day) => sum + day.amount, 0);
       if (totalDisplay) {
         totalDisplay.textContent = total.toFixed(2);
       }
       
-
       updateTotalClaim();
     }
 
