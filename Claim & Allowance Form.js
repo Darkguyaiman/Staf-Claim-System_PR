@@ -1,170 +1,85 @@
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Claim&AllowanceForm')
     .setTitle('Claims & Allowances Form')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
-function getUserInfo() {
+
+function getUserInfoAndApplicationNumber() {
   const userEmail = Session.getActiveUser().getEmail();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const settingsSheet = ss.getSheetByName('Settings');
-  const emailRange = settingsSheet.getRange('C5:C').getValues();
-  const usernameRange = settingsSheet.getRange('B5:B').getValues();
-  
+
+  const sheets = {
+    settings: ss.getSheetByName('Settings'),
+    claim: ss.getSheetByName('Claim&Allowance')
+  };
+
+  const [emailRange, usernameRange, existingNumbers] = [
+    sheets.settings.getRange('C5:C').getValues(),
+    sheets.settings.getRange('B5:B').getValues(),
+    sheets.claim.getRange('C4:C').getValues().flat().filter(String)
+  ];
+
+  let username = 'User not found';
   for (let i = 0; i < emailRange.length; i++) {
     if (emailRange[i][0] === userEmail) {
-      return {
-        email: userEmail,
-        username: usernameRange[i][0]
-      };
-    }
+      username = usernameRange[i][0];
+      break;     }
   }
-  
-  return {
-    email: userEmail,
-    username: 'User not found'
-  };
-}
 
-function generateApplicationNumber() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const claimSheet = ss.getSheetByName('Claim&Allowance');
-  const existingNumbers = claimSheet.getRange('C4:C').getValues().flat().filter(String);
-  
   let newNumber;
+  const existingSet = new Set(existingNumbers);
   do {
     const randomNum = Math.floor(1000000 + Math.random() * 9000000);
     newNumber = 'HRM' + randomNum;
-  } while (existingNumbers.includes(newNumber));
+  } while (existingSet.has(newNumber));
   
-  return newNumber;
+  return {
+    userInfo: {
+      email: userEmail,
+      username: username
+    },
+    applicationNumber: newNumber
+  };
 }
 
 function getAvailableEvents(username) {
-const testEvents = [
-  {
-    id: "EVT001",
-    name: "Sales Event - Local (KL)",
-    type: "Sales",
-    location: "Kuala Lumpur",
-    locationStatus: "Local",
-    timeSlots: ["2025-05-18 09:00-12:00", "2025-05-19 13:00-17:00"]
-  },
-  {
-    id: "EVT002",
-    name: "Marketing Event - Outstation",
-    type: "Marketing",
-    location: "Penang",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-19 09:00-17:00"]
-  },
-  {
-    id: "EVT003",
-    name: "Exhibition - Overseas",
-    type: "Exhibition",
-    location: "Singapore",
-    locationStatus: "overseas",
-    timeSlots: ["2025-05-20 09:00-17:00", "2025-05-21 09:00-17:00"]
-  },
-  {
-    id: "EVT004",
-    name: "Demo Session - Selangor",
-    type: "Demo Session",
-    location: "Selangor",
-    locationStatus: "local",
-    timeSlots: ["2025-05-21 09:00-12:00", "2025-05-22 13:00-17:00", "2025-05-23 18:00-21:00"]
-  },
-  {
-    id: "EVT005",
-    name: "PL3D Treatment - Outstation",
-    type: "PL3D",
-    location: "Johor Bahru",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-22 09:00-17:00"]
-  },
-  {
-    id: "EVT006",
-    name: "RF Treatment - Local",
-    type: "RF",
-    location: "Kuala Lumpur",
-    locationStatus: "local",
-    timeSlots: ["2025-05-23 09:00-12:00"]
-  },
-  {
-    id: "EVT007",
-    name: "Cryo Session - Outstation",
-    type: "Cryo",
-    location: "Ipoh",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-24 13:00-17:00"]
-  },
-  {
-    id: "EVT008",
-    name: "Training - Local",
-    type: "Training",
-    location: "Negeri Sembilan",
-    locationStatus: "local",
-    timeSlots: ["2025-05-25 09:00-17:00", "2025-05-26 09:00-17:00"]
-  },
-  {
-    id: "EVT009",
-    name: "Training - Outstation",
-    type: "Training",
-    location: "Terengganu",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-26 09:00-17:00"]
-  },
-  {
-    id: "EVT010",
-    name: "Training - Sabah",
-    type: "Training",
-    location: "Sabah",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-27 09:00-17:00", "2025-05-28 09:00-17:00"]
-  },
-  {
-    id: "EVT011",
-    name: "Marketing Event - Sarawak",
-    type: "Marketing",
-    location: "Sarawak",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-29 09:00-17:00"]
-  },
-  {
-    id: "EVT012",
-    name: "CUB Treatment - Outstation",
-    type: "CUB",
-    location: "Melaka",
-    locationStatus: "outstation",
-    timeSlots: ["2025-05-30 09:00-12:00", "2025-05-31 13:00-17:00"]
-  },
-  {
-    id: "EVT013",
-    name: "PL3D-RF Combo - Outstation",
-    type: "PL3D-RF",
-    location: "Kedah",
-    locationStatus: "outstation",
-    timeSlots: ["2025-06-01 09:00-17:00"]
-  },
-  {
-    id: "EVT014",
-    name: "Sales Event - Negeri Sembilan",
-    type: "Sales",
-    location: "Negeri Sembilan",
-    locationStatus: "local",
-    timeSlots: ["2025-06-02 09:00-12:00", "2025-06-03 13:00-17:00"]
-  },
-  {
-    id: "EVT015",
-    name: "Exhibition - Overseas (Tokyo)",
-    type: "Exhibition",
-    location: "Tokyo, Japan",
-    locationStatus: "overseas",
-    timeSlots: ["2025-06-04 09:00-17:00", "2025-06-05 09:00-17:00", "2025-06-06 09:00-17:00"]
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const eventSheet = ss.getSheetByName('Event Creation');
+  
+  const eventData = eventSheet.getRange('A4:M').getValues();
+  const availableEvents = [];
+  
+  for (const row of eventData) {
+    if (!row[3]) continue;
+    
+    const assignedUser = row[2];
+    const multipleUsers = row[12];
+    
+    if (assignedUser !== username && 
+        !(multipleUsers && multipleUsers.toString().includes(username))) {
+      continue;
+    }
+    
+    if (multipleUsers && assignedUser !== username) {
+      const userList = multipleUsers.toString().split(',');
+      if (!userList.some(u => u.trim() === username)) {
+        continue;
+      }
+    }
+    
+    availableEvents.push({
+      id: row[0],
+      name: row[3],
+      type: row[4],
+      location: row[5],
+      locationStatus: row[6],
+      timeSlots: row[9] ? row[9].toString().split(',').map(slot => slot.trim()) : []
+    });
   }
-];
-
-  return testEvents;
+  
+  return availableEvents;
 }
 
 function getCompanyCars() {
