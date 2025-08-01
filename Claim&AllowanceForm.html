@@ -754,12 +754,10 @@
       left: 100%;
     }
     
-    /* Hide email field */
     .email-field {
       display: none;
     }
 
-    /* New styles for meal allowance breakdown */
     .meal-breakdown-container {
       background-color: rgba(0, 184, 148, 0.05);
       border: 1px solid rgba(0, 184, 148, 0.2);
@@ -833,8 +831,7 @@
       margin-right: 8px;
       color: var(--color-accent);
     }
-    
-    /* Animations */
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -1010,32 +1007,30 @@
       cursor: pointer;
     }
 
-    /* For WebKit Browsers (Chrome, Safari, Edge) */
     ::-webkit-scrollbar {
       width: 12px;
     }
 
     ::-webkit-scrollbar-track {
-      background: var(--color-lighter); /* light green */
+      background: var(--color-lighter); 
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: var(--color-primary); /* deep purple */
+      background-color: var(--color-primary); 
       border-radius: 10px;
       border: 2px solid var(--color-lighter);
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background-color: var(--color-secondary); /* dark teal */
+      background-color: var(--color-secondary);
     }
 
-    /* For Firefox */
+  
     * {
       scrollbar-width: thin;
       scrollbar-color: var(--color-primary) var(--color-lighter);
     }
 
-    /* CSS Variables */
     :root {
       --color-primary: #2D0C31;
       --color-secondary: #004D4D;
@@ -1212,20 +1207,15 @@
     let currentEventData = null;
     let mealAllowanceBreakdown = [];
     
-    const TRANSPORTATION_FOLDER_ID = '1qdhuvtUEL5CN83fWXLrKST9IBs6NKYYO';
-    const STAY_FOLDER_ID = '13EyxVxkqFYT9dzk7SW8xKddB34AmVPEe';
-    const EXTRA_CLAIMS_FOLDER_ID = '13dcgisDDfFbkuTqX2JAlDy6rCkSZA4j7';
+      const TRANSPORTATION_FOLDER_ID = 'YOUR_GOOGLE_DRIVE_FOLDER_ID';
+    const STAY_FOLDER_ID = 'YOUR_STAY_GOOGLE_DRIVE_FOLDER_ID)';
+    const EXTRA_CLAIMS_FOLDER_ID = 'YOUR_EXTRA_CLAIMS_GOGOLE_DRIVE_FOLDER_ID';
     
-    document.addEventListener('DOMContentLoaded', function() {
-      google.script.run
-        .withSuccessHandler(handleUserInfo)
-        .withFailureHandler(handleError)
-        .getUserInfo();
-      
-      google.script.run
-        .withSuccessHandler(handleApplicationNumber)
-        .withFailureHandler(handleError)
-        .generateApplicationNumber();
+      document.addEventListener('DOMContentLoaded', function() {
+        google.script.run
+          .withSuccessHandler(handleCombinedResults)
+          .withFailureHandler(handleError)
+          .getUserInfoAndApplicationNumber();
       
       document.getElementById('eventName').addEventListener('change', handleEventChange);
       document.getElementById('addTransportation').addEventListener('click', addTransportation);
@@ -1242,21 +1232,23 @@
         document.getElementById('alertModal').classList.remove('active');
       });
     });
+
+  function handleCombinedResults(result) {
+
+    document.getElementById('applicationNumber').value = result.applicationNumber;
     
-    function handleUserInfo(userInfo) {
-      document.getElementById('username').value = userInfo.username;
-      document.getElementById('email').value = userInfo.email;
-      
-      google.script.run
-        .withSuccessHandler(handleAvailableEvents)
-        .withFailureHandler(handleError)
-        .getAvailableEvents(userInfo.username);
-    }
+
+    document.getElementById('username').value = result.userInfo.username;
+    document.getElementById('email').value = result.userInfo.email;
     
-    function handleApplicationNumber(appNumber) {
-      document.getElementById('applicationNumber').value = appNumber;
-    }
-    
+
+    google.script.run
+      .withSuccessHandler(handleAvailableEvents)
+      .withFailureHandler(handleError)
+      .getAvailableEvents(result.userInfo.username);
+  }
+
+  
     function handleAvailableEvents(events) {
       availableEvents = events;
       const eventSelect = document.getElementById('eventName');
@@ -2570,17 +2562,13 @@
       
       document.getElementById('submitButton').disabled = false;
       
+
       google.script.run
-        .withSuccessHandler(handleUserInfo)
+        .withSuccessHandler(handleCombinedResults)
         .withFailureHandler(handleError)
-        .getUserInfo();
-      
-      google.script.run
-        .withSuccessHandler(handleApplicationNumber)
-        .withFailureHandler(handleError)
-        .generateApplicationNumber();
+        .getUserInfoAndApplicationNumber();
     }
-    
+
     function resetFormState() {
       document.getElementById('transportationContainer').innerHTML = '';
       transportationCount = 0;
