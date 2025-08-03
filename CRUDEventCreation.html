@@ -1320,36 +1320,36 @@
     </div>
     <h2 class="sidebar-title">Claim System</h2>
   </div>
-  <div class="sidebar-menu">
-    <a href="https://script.google.com/macros/s/AKfycbzYNp35xJjccAsya0HTjrdZ2rXx_-GgiJT1PpztHYYWje3_LPiab4hV9fNypiXy4lo/exec" target="_top" class="sidebar-item">
-      <i class="fas fa-tachometer-alt"></i>
-      <span>Dashboard</span>
-    </a>
-    <a class="sidebar-item active">
-      <i class="fas fa-calendar-alt"></i>
-      <span>Event Panel</span>
-    </a>
-    <a href="https://script.google.com/macros/s/AKfycbyzt-CBKwSPCfVMDSaWy2EKGVO8-TAfMTbf7nub0KafQmFr-jKw2XVKzKImOM3hEF00/exec" target="_top" class="sidebar-item">
-      <i class="fas fa-hand-holding-usd"></i>
-      <span>Claims & Allowance Panel</span>
-    </a>
-    <a href="https://script.google.com/macros/s/AKfycbwQ9m3uoLf1oQVtat-wmhRanjO93a5k5ef0XJY6BaJBnGJz7lSh_0OJc2YRv5hQwco/exec" target="_top" class="sidebar-item">
-      <i class="fas fa-dollar-sign"></i>
-      <span>Budget & Expenses Panel</span>
-    </a>
-    <a href="https://script.google.com/macros/s/AKfycbxysT_mH8BoDqczulSbcDiILyqBMUv7HW9qsXuVMSsHER1z2m_kmGF7-_IjrmrfqehF/exec" target="_top" class="sidebar-item">
-      <i class="fas fa-shopping-cart"></i>
-      <span>Advance Purchases Panel</span>
-    </a>
-    <a href="https://script.google.com/macros/s/AKfycbwkh4_T2ygXjLRn4-bt0p5VThfEMvX2jBW3nJD9BZwYpXurxUs6M5ilGz2OfGCCuRR8/exec" target="_top" class="sidebar-item">
-      <i class="fas fa-wallet"></i>
-      <span>Petty Cash Panel</span>
-    </a>
-    <a href="https://script.google.com/macros/s/AKfycbx4ult7m64buaRAzKks6HsfsHdxkp-WErvrRosKW8UBRiWU1KoKr3KeWIVOfOmcuwtC/exec" target="_top" class="sidebar-item">
-      <i class="fas fa-cog"></i>
-      <span>Settings</span>
-    </a>
-  </div>
+    <div class="sidebar-menu">
+      <a href="YOUR_DASHBOARD_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+      <a class="sidebar-item active">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Event Panel</span>
+      </a>
+      <a href="YOUR_CLAIMS_ALLOWANCE_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+        <i class="fas fa-hand-holding-usd"></i>
+        <span>Claims & Allowance Panel</span>
+      </a>
+      <a href="YOUR_BUDGET_EXPENSES_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+        <i class="fas fa-dollar-sign"></i>
+        <span>Budget & Expenses Panel</span>
+      </a>
+      <a href="YOUR_ADVANCE_PURCHASES_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Advance Purchases Panel</span>
+      </a>
+      <a href="YOUR_PETTY_CASH_PANEL_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+        <i class="fas fa-wallet"></i>
+        <span>Petty Cash Panel</span>
+      </a>
+      <a href="YOUR_SETTINGS_DEPLOYMENT_LINK" target="_top" class="sidebar-item">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+    </div>
 </aside>
 
 <!-- Sidebar toggle button -->
@@ -1364,6 +1364,12 @@
 
 <!-- Main content -->
 <main class="main-content" id="mainContent">
+    <a href="YOUR_TIMELY_REPORT_DEPLOYMENT_LINK"
+      class="btn btn-save"
+      target="_blank"
+      style="position: absolute; top: 70px; right: 20px; font-size: 0.9rem; padding: 0.6rem 1.2rem; z-index: 2000;">
+      <i class="fas fa-external-link-alt"></i> Generate a Timely Report
+    </a>
     <div class="header">
         <h1><i class="fas fa-calendar-alt"></i><strong>Event Management</strong></h1>
     </div>
@@ -1852,68 +1858,68 @@
             `;
         }
 
-        function displayEvents(events) {
-            const container = document.getElementById('eventsContainer');
-            const noEvents = document.getElementById('noEvents');
+function displayEvents(events) {
+    const container = document.getElementById('eventsContainer');
+    const noEvents = document.getElementById('noEvents');
 
-            if (events.length === 0) {
-                container.style.display = 'none';
-                noEvents.style.display = 'block';
-                return;
-            }
+    if (events.length === 0) {
+        container.style.display = 'none';
+        noEvents.style.display = 'block';
+        return;
+    }
 
-            container.style.display = 'grid';
-            noEvents.style.display = 'none';
+    container.style.display = 'grid';
+    noEvents.style.display = 'none';
 
-            container.innerHTML = events.map(event => `
-                <div class="event-card" onclick="showEventDetails('${event.eventId}')">
-                    <div class="event-header">
-                        <div>
-                            <div class="event-name">
-                                <i class="fas fa-calendar-alt"></i>${event.eventName || 'Untitled Event'}
-                            </div>
-                            <span class="event-status ${getStatusClass(event.eventStatus)}">
-                                ${getStatusIcon(event.eventStatus)}${event.eventStatus || 'Unknown'}
-                            </span>
-                        </div>
+    container.innerHTML = events.map(event => `
+        <div class="event-card" onclick="showEventDetails('${event.eventId}')">
+            <div class="event-header">
+                <div>
+                    <div class="event-name">
+                        <i class="fas fa-calendar-alt"></i>${event.eventName || 'Untitled Event'}
                     </div>
-                    <div class="event-details">
-                        <div class="detail-row">
-                            <span class="detail-label"><i class="fas fa-tag"></i>Type:</span>
-                            <span class="detail-value">${event.eventType || 'N/A'}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label"><i class="fas fa-map-marker-alt"></i>Location:</span>
-                            <span class="detail-value">${event.location || 'N/A'}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label"><i class="fas fa-calendar-day"></i>Start Date:</span>
-                            <span class="detail-value">${event.startDate || 'N/A'}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label"><i class="fas fa-dollar-sign"></i>Budget:</span>
-                            <span class="detail-value">${event.totalBudget ? 'RM ' + event.totalBudget : 'N/A'}</span>
-                        </div>
-                        <div class="detail-row">
-                          <span class="detail-label"><i class="fas fa-coins"></i>Expenses:</span>
-                          <span class="detail-value">${event.totalExpenses ? 'RM ' + event.totalExpenses : 'N/A'}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label"><i class="fas fa-laptop"></i>Devices:</span>
-                            <span class="detail-value">${event.devices.length} device(s)</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 1rem;">
-                      <a class="btn btn-save" target="_blank" href="https://script.google.com/macros/s/AKfycbxrWYzKWb1CwhyxTxVafSa4y9tmFY8uFG82jWXxD42lF7XKrPSZdRq6amcKzlX9Pkqx/exec?id=${event.eventId}">
-                        <i class="fas fa-file-alt"></i> Get Report
-                      </a>
-                    </div>
-                    <div class="event-id">
-                        <i class="fas fa-hashtag"></i>ID: ${event.eventId}
-                    </div>
+                    <span class="event-status ${getStatusClass(event.eventStatus)}">
+                        ${getStatusIcon(event.eventStatus)}${event.eventStatus || 'Unknown'}
+                    </span>
                 </div>
-            `).join('');
-        }
+            </div>
+            <div class="event-details">
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-tag"></i>Type:</span>
+                    <span class="detail-value">${event.eventType || 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-map-marker-alt"></i>Location:</span>
+                    <span class="detail-value">${event.location || 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-calendar-day"></i>Start Date:</span>
+                    <span class="detail-value">${event.startDate || 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-dollar-sign"></i>Budget:</span>
+                    <span class="detail-value">${event.totalBudget ? 'RM ' + event.totalBudget : 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label"><i class="fas fa-coins"></i>Expenses:</span>
+                  <span class="detail-value">${event.totalExpenses ? 'RM ' + event.totalExpenses : 'N/A'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-laptop"></i>Devices:</span>
+                    <span class="detail-value">${event.devices.length} device(s)</span>
+                </div>
+            </div>
+            <div style="margin-top: 1rem;">
+            <a class="btn btn-save" target="_blank" href="YOUR_EVENT_REPORT_DEPLOYMENT_LINK?id=${event.eventId}">
+              <i class="fas fa-file-alt"></i> Get Report
+            </a>
+            </div>
+            <div class="event-id">
+                <i class="fas fa-hashtag"></i>ID: ${event.eventId}
+            </div>
+        </div>
+    `).join('');
+}
 
         function getStatusClass(status) {
             if (!status) return '';
@@ -1936,7 +1942,7 @@
             if (!currentEvent) return;
 
             document.getElementById('getReportBtn').href =
-            `https://script.google.com/macros/s/AKfycbxrWYzKWb1CwhyxTxVafSa4y9tmFY8uFG82jWXxD42lF7XKrPSZdRq6amcKzlX9Pkqx/exec?id=${currentEvent.eventId}`;
+            `YOUR_EVENT_REPORT_DEPLOYMENT_LINK?id=${event.eventId}"`;
 
             
             pendingFiles = {
