@@ -436,6 +436,25 @@
             box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
         }
 
+        .status-selector textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: var(--color-white);
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 15px;
+        }
+
+        .status-selector textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+        }
+
         .save-status-btn {
             background-color: var(--color-accent);
             color: var(--color-white);
@@ -952,7 +971,7 @@
     </a>
   </div>
 </aside>
-    
+
 <!-- Sidebar toggle button -->
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
   <i class="fas fa-bars"></i>
@@ -1198,7 +1217,6 @@
                 personFilter.appendChild(option);
             });
 
-            // Hook filter events
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
             document.getElementById('personFilter').addEventListener('change', applyFilters);
@@ -1364,139 +1382,131 @@
             return foodProvided.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
 
-function renderAllowance(allowanceData, label) {
-    console.log('Rendering allowance:', label, allowanceData);
+        function renderAllowance(allowanceData, label) {
 
-    if (!allowanceData || (typeof allowanceData === 'object' && Object.keys(allowanceData).length === 0)) {
-        return '';
-    }
-
-    let parsedData;
-
-    // Case: allowanceData.label contains stringified JSON
-    if (typeof allowanceData === 'object' && typeof allowanceData.label === 'string') {
-        const maybeJson = allowanceData.label.trim();
-        if (maybeJson.startsWith('{') || maybeJson.startsWith('[')) {
-            try {
-                parsedData = JSON.parse(maybeJson);
-            } catch (e) {
-                console.error('Failed to parse JSON in label field:', e);
+            if (!allowanceData || (typeof allowanceData === 'object' && Object.keys(allowanceData).length === 0)) {
                 return '';
             }
-        }
-    }
 
-    // If parsedData still not found, handle normally
-    if (!parsedData) {
-        if (typeof allowanceData === 'string') {
-            const trimmed = allowanceData.trim();
-            if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-                try {
-                    parsedData = JSON.parse(trimmed);
-                } catch (e) {
-                    console.error('Failed to parse JSON:', e);
+            let parsedData;
+
+            if (typeof allowanceData === 'object' && typeof allowanceData.label === 'string') {
+                const maybeJson = allowanceData.label.trim();
+                if (maybeJson.startsWith('{') || maybeJson.startsWith('[')) {
+                    try {
+                        parsedData = JSON.parse(maybeJson);
+                    } catch (e) {
+                        console.error('Failed to parse JSON in label field:', e);
+                        return '';
+                    }
+                }
+            }
+
+    
+            if (!parsedData) {
+                if (typeof allowanceData === 'string') {
+                    const trimmed = allowanceData.trim();
+                    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                        try {
+                            parsedData = JSON.parse(trimmed);
+                        } catch (e) {
+                            console.error('Failed to parse JSON:', e);
+                            return '';
+                        }
+                    } else {
+                        if (trimmed.toLowerCase().includes('select') || trimmed === 'N/A') {
+                            return '';
+                        }
+                        return `
+                            <div class="allowance-container">
+                                <div style="padding: 10px; text-align: center;">
+                                    ${escapeHtml(trimmed)}
+                                </div>
+                            </div>`;
+                    }
+                } else if (typeof allowanceData === 'object') {
+                    parsedData = allowanceData;
+                } else {
                     return '';
                 }
-            } else {
-                if (trimmed.toLowerCase().includes('select') || trimmed === 'N/A') {
-                    return '';
+            }
+
+            if (!parsedData.type) {
+                return '';
+            }
+
+            const isEmptySimpleCalc =
+                parsedData.type === 'Simple calculation' &&
+                (!parsedData.totalAmount || parsedData.totalAmount === 0) &&
+                (!parsedData.amount || parsedData.amount === 0) &&
+                (!Array.isArray(parsedData.dailyBreakdown) || parsedData.dailyBreakdown.length === 0);
+
+            if (isEmptySimpleCalc) {
+                return '';
+            }
+
+            const total = parsedData.totalAmount || parsedData.amount || 0;
+            if (!total || total === 0) {
+                return '';
+            }
+
+            let html = `<div class="allowance-container">`;
+
+            if (parsedData.type === 'Daily breakdown') {
+                if (Array.isArray(parsedData.dailyBreakdown) && parsedData.dailyBreakdown.length > 0) {
+                    html += '<div class="daily-breakdown">';
+                    parsedData.dailyBreakdown.forEach((day, index) => {
+                        html += `
+                            <div class="daily-item">
+                                <div class="daily-item-header">
+                                    <i class="fas fa-calendar-day"></i>
+                                    Day ${index + 1}: ${formatDate(day.date)}
+                                </div>
+                                <div class="daily-item-details">
+                                    <div class="daily-detail">
+                                        <i class="fas fa-clock"></i>
+                                        <strong>Working Type:</strong> ${formatWorkingType(day.workingType)}
+                                    </div>
+                                    <div class="daily-detail">
+                                        <i class="fas fa-utensils"></i>
+                                        <strong>Food Provided:</strong> ${formatFoodProvided(day.foodProvided)}
+                                    </div>
+                                    <div class="daily-detail">
+                                        <i class="fas fa-money-bill"></i>
+                                        <strong>Amount:</strong> RM ${formatCurrency(day.amount)}
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                    html += '</div>';
                 }
-                return `
-                    <div class="allowance-container">
-                        <div style="padding: 10px; text-align: center;">
-                            ${escapeHtml(trimmed)}
-                        </div>
+            } else if (parsedData.type === 'Per day calculation') {
+                if (parsedData.amount && parsedData.amount > 0) {
+                    html += `
+                        <div class="per-day-calculation">
+                            <i class="fas fa-calendar-day"></i>
+                            <strong>Per Day Rate:</strong> RM ${formatCurrency(parsedData.amount)}
+                        </div>`;
+                }
+            }
+
+            if (parsedData.totalAmount && parsedData.totalAmount > 0) {
+                html += `
+                    <div class="allowance-total">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Total ${label}: RM ${formatCurrency(parsedData.totalAmount)}
+                    </div>`;
+            } else if (parsedData.amount && parsedData.amount > 0) {
+                html += `
+                    <div class="allowance-total">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Total ${label}: RM ${formatCurrency(parsedData.amount)}
                     </div>`;
             }
-        } else if (typeof allowanceData === 'object') {
-            parsedData = allowanceData;
-        } else {
-            return '';
-        }
-    }
 
-    if (!parsedData.type) {
-        return '';
-    }
-
-    // Don't show anything if type is "Simple calculation" and no amount or breakdown
-    const isEmptySimpleCalc =
-        parsedData.type === 'Simple calculation' &&
-        (!parsedData.totalAmount || parsedData.totalAmount === 0) &&
-        (!parsedData.amount || parsedData.amount === 0) &&
-        (!Array.isArray(parsedData.dailyBreakdown) || parsedData.dailyBreakdown.length === 0);
-
-    if (isEmptySimpleCalc) {
-        return '';
-    }
-
-    // Also skip display if amount is 0
-    const total = parsedData.totalAmount || parsedData.amount || 0;
-    if (!total || total === 0) {
-        return '';
-    }
-
-    let html = `<div class="allowance-container">`;
-
-    if (parsedData.type === 'Daily breakdown') {
-        if (Array.isArray(parsedData.dailyBreakdown) && parsedData.dailyBreakdown.length > 0) {
-            html += '<div class="daily-breakdown">';
-            parsedData.dailyBreakdown.forEach((day, index) => {
-                html += `
-                    <div class="daily-item">
-                        <div class="daily-item-header">
-                            <i class="fas fa-calendar-day"></i>
-                            Day ${index + 1}: ${formatDate(day.date)}
-                        </div>
-                        <div class="daily-item-details">
-                            <div class="daily-detail">
-                                <i class="fas fa-clock"></i>
-                                <strong>Working Type:</strong> ${formatWorkingType(day.workingType)}
-                            </div>
-                            <div class="daily-detail">
-                                <i class="fas fa-utensils"></i>
-                                <strong>Food Provided:</strong> ${formatFoodProvided(day.foodProvided)}
-                            </div>
-                            <div class="daily-detail">
-                                <i class="fas fa-money-bill"></i>
-                                <strong>Amount:</strong> RM ${formatCurrency(day.amount)}
-                            </div>
-                        </div>
-                    </div>`;
-            });
             html += '</div>';
+            return html;
         }
-    } else if (parsedData.type === 'Per day calculation') {
-        if (parsedData.amount && parsedData.amount > 0) {
-            html += `
-                <div class="per-day-calculation">
-                    <i class="fas fa-calendar-day"></i>
-                    <strong>Per Day Rate:</strong> RM ${formatCurrency(parsedData.amount)}
-                </div>`;
-        }
-    }
-
-    // Show total only if it exists and > 0
-    if (parsedData.totalAmount && parsedData.totalAmount > 0) {
-        html += `
-            <div class="allowance-total">
-                <i class="fas fa-money-bill-wave"></i>
-                Total ${label}: RM ${formatCurrency(parsedData.totalAmount)}
-            </div>`;
-    } else if (parsedData.amount && parsedData.amount > 0) {
-        html += `
-            <div class="allowance-total">
-                <i class="fas fa-money-bill-wave"></i>
-                Total ${label}: RM ${formatCurrency(parsedData.amount)}
-            </div>`;
-    }
-
-    html += '</div>';
-    return html;
-}
-
-
-
 
         const escapeHtml = (unsafe) =>
             unsafe.replace(/&/g, "&amp;")
@@ -1510,7 +1520,7 @@ function renderAllowance(allowanceData, label) {
                 return '<span class="no-data"><i class="fas fa-receipt"></i> No Receipt Available</span>';
 
             let validUrl = url;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            if (!url.startsWith('http://') && !url.startsWith('https:
                 validUrl = 'https://' + url;
             }
 
@@ -1569,6 +1579,10 @@ function renderAllowance(allowanceData, label) {
                         <div class="detail-item">
                             <i class="fas fa-id-card"></i>
                             <strong>Event ID:</strong> ${claim.eventId || 'N/A'}
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-comment"></i>
+                            <strong>Remarks:</strong> ${claim.remarks || 'N/A'}
                         </div>
                     </div>
                 </div>
@@ -1718,34 +1732,6 @@ function renderAllowance(allowanceData, label) {
                 html += `</div>`;
             }
 
-            if (claim.remarks || claim.notesOperations) {
-                html += `
-                    <div class="detail-section">
-                        <h3><i class="fas fa-sticky-note"></i> Additional Information</h3>
-                        <div class="detail-grid">
-                `;
-                if (claim.remarks) {
-                    html += `
-                        <div class="detail-item">
-                            <i class="fas fa-comment"></i>
-                            <strong>Remarks:</strong> ${claim.remarks}
-                        </div>
-                    `;
-                }
-                if (claim.notesOperations) {
-                    html += `
-                        <div class="detail-item">
-                            <i class="fas fa-clipboard"></i>
-                            <strong>Notes (Operations):</strong> ${claim.notesOperations}
-                        </div>
-                    `;
-                }
-                html += `
-                        </div>
-                    </div>
-                `;
-            }
-
             html += `
                 <div class="status-selector">
                     <h3><i class="fas fa-edit"></i> Update Status</h3>
@@ -1756,8 +1742,12 @@ function renderAllowance(allowanceData, label) {
                         <option value="Rejected" ${claim.eventStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
                         <option value="Canceled" ${claim.eventStatus === 'Canceled' ? 'selected' : ''}>Canceled</option>
                     </select>
+                    <label for="operationalNotes" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--color-text-light);">
+                        <i class="fas fa-clipboard" style="margin-right: 8px;"></i>Operational Notes:
+                    </label>
+                    <textarea id="operationalNotes" placeholder="Write any operational notes regarding this application...">${claim.notesOperations || ''}</textarea>
                     <button id="saveStatusBtn" class="save-status-btn">
-                        <i class="fas fa-save"></i> Save Status
+                        <i class="fas fa-save"></i> Save Status & Notes
                     </button>
                     <div id="statusMessage" class="status-message"></div>
                 </div>
@@ -1770,7 +1760,9 @@ function renderAllowance(allowanceData, label) {
             if (!currentClaimNumber) return;
             
             const statusSelect = document.getElementById('statusSelect');
+            const operationalNotes = document.getElementById('operationalNotes');
             const newStatus = statusSelect.value;
+            const newNotes = operationalNotes.value;
             const statusMessage = document.getElementById('statusMessage');
             
             statusMessage.textContent = '';
@@ -1800,6 +1792,7 @@ function renderAllowance(allowanceData, label) {
                         const claimIndex = allClaims.findIndex(c => c.applicationNumber === currentClaimNumber);
                         if (claimIndex !== -1) {
                             allClaims[claimIndex].eventStatus = newStatus;
+                            allClaims[claimIndex].notesOperations = newNotes;
                             displayClaims(allClaims);
                         }
                     }
@@ -1816,7 +1809,7 @@ function renderAllowance(allowanceData, label) {
                     statusMessage.className = 'status-message error';
                     statusMessage.style.display = 'flex';
                 })
-                .updateClaimStatus(currentClaimNumber, newStatus);
+                .updateClaimStatusAndNotes(currentClaimNumber, newStatus, newNotes);
         }
 
         function closeModal() {
