@@ -23,8 +23,7 @@
     --border-radius: 8px;
     --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
-    
-    /* Compact mode variables */
+   
     --padding-section: 20px;
     --padding-card: 16px;
     --margin-bottom: 20px;
@@ -113,7 +112,7 @@
     display: inline-block;
   }
 
-  /* Section styles */
+
   .section {
     background: var(--color-white);
     border-radius: var(--border-radius);
@@ -151,7 +150,6 @@
     gap: 8px;
   }
 
-  /* Summary section - always visible */
   .summary-section {
     background: linear-gradient(135deg, var(--color-white) 0%, #f8f9fa 100%);
     border-radius: var(--border-radius);
@@ -261,7 +259,6 @@
     font-style: italic;
   }
 
-  /* Detail grid - more compact */
   .detail-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-width), 1fr));
@@ -300,7 +297,6 @@
     word-wrap: break-word;
   }
 
-  /* Grouped data items */
   .grouped-item {
     display: flex;
     justify-content: space-between;
@@ -326,7 +322,7 @@
     font-size: 0.85rem;
   }
 
-  /* Tooltips */
+
   .tooltip {
     position: relative;
     cursor: help;
@@ -437,7 +433,6 @@
     font-size: 0.85rem;
   }
 
-  /* Budget and Financial Styles - Compact */
   .budget-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -554,7 +549,6 @@
     margin: 8px 0;
   }
 
-  /* Purchase and Claim Cards - Compact */
   .purchase-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -653,7 +647,7 @@
     font-size: 0.85rem;
   }
 
-  /* Claims specific styles - compact */
+  
   .claim-basic-info {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -752,7 +746,7 @@
     color: var(--color-dark);
   }
 
-  /* Loading Styles */
+
   .loading {
     display: flex;
     flex-direction: column;
@@ -841,6 +835,233 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+.allowance-container *:not(.fa):not(.fas):not(.far):not(.fab),
+.claim-card *:not(.fa):not(.fas):not(.far):not(.fab) {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  hyphens: auto;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.allowance-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+  overflow: visible;
+}
+
+.allowance-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.daily-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.daily-item {
+  padding: 10px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+.daily-item.multi-day {
+  border-left: 4px solid #4CAF50;
+}
+
+.daily-item-header {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.daily-item-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+  gap: 8px;
+}
+
+.daily-detail {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.allowance-total {
+  margin-top: 15px;
+  padding: 10px;
+  background: #e8f5e9;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.allowance-total.multi-day-total {
+  background: #4CAF50;
+  color: white;
+  text-align: center;
+}
+
+.per-day-calculation {
+  padding: 8px;
+  background: #e3f2fd;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.claim-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.claim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.claim-app-number {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.purchase-status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.claim-basic-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.claim-info-item {
+  break-inside: avoid;
+}
+
+.claim-info-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.claim-info-value {
+  line-height: 1.5;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.createChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.createChips > span {
+  background: #e0e0e0;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  white-space: nowrap;
+}
+
+.transport-details {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.transport-item {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.extra-claims {
+  margin-top: 15px;
+}
+
+.extra-claims ul {
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.extra-claims li {
+  margin-bottom: 5px;
+}
+
+.fa, .fas, .far, .fab {
+  min-width: 16px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .claim-basic-info {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-item-details {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1315,101 +1536,414 @@
       </div>
     `;
   }
+  
+function renderClaimsAllowances() {
+  let claimsHtml = '';
 
-  function renderClaimsAllowances() {
-    let claimsHtml = '';
-    
-    if (eventData.claimsAllowances && eventData.claimsAllowances.length > 0) {
-      claimsHtml = eventData.claimsAllowances.map(claim => `
-        <div class="claim-card">
-          <div class="claim-header">
-            <div class="claim-app-number"><i class="fas fa-hashtag"></i>App #${claim.applicationNumber}</div>
-            <div class="purchase-status ${getStatusClass(claim.applicationStatus)}">
-              <i class="${getStatusIcon(claim.applicationStatus)}"></i>${claim.applicationStatus}
-            </div>
-          </div>
-          
-          <div class="claim-basic-info">
-            <div class="claim-info-item">
-              <div class="claim-info-label"><i class="fas fa-user"></i>Person</div>
-              <div class="claim-info-value">${claim.person}</div>
-            </div>
-            <div class="claim-info-item">
-              <div class="claim-info-label"><i class="fas fa-clock"></i>Timeslot</div>
-              <div class="claim-info-value">${createChips(claim.timeslot)}</div>
-            </div>
-            <div class="claim-info-item">
-              <div class="claim-info-label"><i class="fas fa-utensils"></i>Meal</div>
-              <div class="claim-info-value">${formatMealAllowance(claim.mealAllowance)}</div>
-            </div>
-            <div class="claim-info-item">
-              <div class="claim-info-label"><i class="fas fa-plus"></i>Other</div>
-              <div class="claim-info-value">${claim.otherAllowances || 'None'}</div>
-            </div>
-            <div class="claim-info-item">
-              <div class="claim-info-label"><i class="fas fa-money-check-alt"></i>Total</div>
-              <div class="claim-info-value" style="font-weight: bold; color: var(--color-success);">${formatCurrency(claim.totalClaim)}</div>
-            </div>
-            <div class="claim-info-item">
-              <div class="claim-info-label"><i class="fas fa-business-time"></i>Time</div>
-              <div class="claim-info-value">${formatTimeOnDuty(claim.totalTimeOnDuty)}</div>
-            </div>
-          </div>
+  const escapeHtml = (unsafe) =>
+    unsafe.replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
 
-          ${claim.remarks && claim.remarks.toString().trim() ? `
-            <div class="claim-info-item" style="margin-top: 12px;">
-              <div class="claim-info-label"><i class="fas fa-sticky-note"></i>Remarks</div>
-              <div class="claim-info-value">${claim.remarks}</div>
-            </div>
-          ` : ''}
+  const renderAllowanceInline = (allowanceData, label) => {
+    if (!allowanceData || (typeof allowanceData === 'object' && Object.keys(allowanceData).length === 0)) return '';
 
-          ${renderStayDetails(claim.stayDetails)}
-          ${renderTransportationDetails(claim.transportationDetails)}
-          ${renderExtraClaims(claim.extraClaims)}
-        </div>
-      `).join('');
-    } else {
-      claimsHtml = '<div class="empty-state"><i class="fas fa-hand-holding-usd"></i>No claims and allowances found</div>';
+    let parsedData;
+
+    if (typeof allowanceData === 'object' && typeof allowanceData.label === 'string') {
+      const maybeJson = allowanceData.label.trim();
+      if (maybeJson.startsWith('{') || maybeJson.startsWith('[')) {
+        try {
+          parsedData = JSON.parse(maybeJson);
+        } catch {
+          return '';
+        }
+      }
     }
 
-    return `
-      <div class="section fade-in">
-        <h2 class="section-title"><i class="fas fa-hand-holding-usd"></i>Claims and Allowances</h2>
-        ${claimsHtml}
+    if (!parsedData) {
+      if (typeof allowanceData === 'string') {
+        const trimmed = allowanceData.trim();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+          try {
+            parsedData = JSON.parse(trimmed);
+          } catch {
+            return '';
+          }
+        } else {
+          if (trimmed.toLowerCase().includes('select') || trimmed === 'N/A') return '';
+          return `
+            <div class="allowance-container">
+              <div style="padding: 10px; text-align: center;">
+                ${escapeHtml(trimmed)}
+              </div>
+            </div>`;
+        }
+      } else if (typeof allowanceData === 'object') {
+        parsedData = allowanceData;
+      } else {
+        return '';
+      }
+    }
+
+    if (!parsedData.type) return '';
+
+    const isEmptySimpleCalc =
+      parsedData.type === 'Simple calculation' &&
+      (!parsedData.totalAmount || parsedData.totalAmount === 0) &&
+      (!parsedData.amount || parsedData.amount === 0) &&
+      (!Array.isArray(parsedData.dailyBreakdown) || parsedData.dailyBreakdown.length === 0);
+
+    if (isEmptySimpleCalc) return '';
+
+    const total = parsedData.totalAmount || parsedData.amount || 0;
+    if (!total || total === 0) return '';
+
+    let html = `<div class="allowance-container">`;
+
+    if (parsedData.type === 'Daily breakdown') {
+      if (Array.isArray(parsedData.dailyBreakdown)) {
+        html += '<div class="daily-breakdown">';
+        parsedData.dailyBreakdown.forEach((day, index) => {
+          html += `
+            <div class="daily-item">
+              <div class="daily-item-header">
+                <i class="fas fa-calendar-day"></i>
+                Day ${index + 1}: ${formatDate(day.date)}
+              </div>
+              <div class="daily-item-details">
+                <div class="daily-detail">
+                  <i class="fas fa-clock"></i>
+                  <strong>Working Type:</strong> ${formatWorkingType(day.workingType)}
+                </div>
+                <div class="daily-detail">
+                  <i class="fas fa-utensils"></i>
+                  <strong>Food Provided:</strong> ${formatFoodProvided(day.foodProvided)}
+                </div>
+                <div class="daily-detail">
+                  <i class="fas fa-money-bill"></i>
+                  <strong>Amount:</strong> RM ${formatCurrency(day.amount)}
+                </div>
+              </div>
+            </div>`;
+        });
+        html += '</div>';
+      }
+    } else if (parsedData.type === 'Per day calculation') {
+      if (parsedData.amount && parsedData.amount > 0) {
+        html += `
+          <div class="per-day-calculation">
+            <i class="fas fa-calendar-day"></i>
+            <strong>Per Day Rate:</strong> RM ${formatCurrency(parsedData.amount)}
+          </div>`;
+      }
+    }
+
+    if (parsedData.totalAmount && parsedData.totalAmount > 0) {
+      html += `
+        <div class="allowance-total">
+          <i class="fas fa-money-bill-wave"></i>
+          Total ${label}: RM ${formatCurrency(parsedData.totalAmount)}
+        </div>`;
+    } else if (parsedData.amount && parsedData.amount > 0) {
+      html += `
+        <div class="allowance-total">
+          <i class="fas fa-money-bill-wave"></i>
+          Total ${label}: RM ${formatCurrency(parsedData.amount)}
+        </div>`;
+    }
+
+    html += '</div>';
+    return html;
+  };
+
+  if (eventData.claimsAllowances && eventData.claimsAllowances.length > 0) {
+    claimsHtml = eventData.claimsAllowances.map(claim => `
+      <div class="claim-card">
+        <div class="claim-header">
+          <div class="claim-app-number"><i class="fas fa-hashtag"></i>App #${claim.applicationNumber}</div>
+          <div class="purchase-status ${getStatusClass(claim.applicationStatus)}">
+            <i class="${getStatusIcon(claim.applicationStatus)}"></i>${claim.applicationStatus}
+          </div>
+        </div>
+
+        <div class="claim-basic-info">
+          <div class="claim-info-item">
+            <div class="claim-info-label"><i class="fas fa-user"></i>Person</div>
+            <div class="claim-info-value">${claim.person}</div>
+          </div>
+          <div class="claim-info-item">
+            <div class="claim-info-label"><i class="fas fa-clock"></i>Timeslot</div>
+            <div class="claim-info-value">${createChips(claim.timeslot)}</div>
+          </div>
+          <div class="claim-info-item">
+            <div class="claim-info-label"><i class="fas fa-utensils"></i>Meal</div>
+            <div class="claim-info-value">${renderAllowanceInline(claim.mealAllowance, 'Meal Allowance')}</div>
+          </div>
+          <div class="claim-info-item">
+            <div class="claim-info-label"><i class="fas fa-plus"></i>Other</div>
+            <div class="claim-info-value">${renderAllowanceInline(claim.otherAllowances, 'Other Allowance') || 'None'}</div>
+          </div>
+          <div class="claim-info-item">
+            <div class="claim-info-label"><i class="fas fa-money-check-alt"></i>Total</div>
+            <div class="claim-info-value" style="font-weight: bold; color: var(--color-success);">${formatCurrency(claim.totalClaim)}</div>
+          </div>
+          <div class="claim-info-item">
+            <div class="claim-info-label"><i class="fas fa-business-time"></i>Time</div>
+            <div class="claim-info-value">${formatTimeOnDuty(claim.totalTimeOnDuty)}</div>
+          </div>
+        </div>
+
+        ${claim.remarks && claim.remarks.toString().trim() ? `
+          <div class="claim-info-item" style="margin-top: 12px;">
+            <div class="claim-info-label"><i class="fas fa-sticky-note"></i>Remarks</div>
+            <div class="claim-info-value">${claim.remarks}</div>
+          </div>
+        ` : ''}
+
+        ${renderStayDetails(claim.stayDetails)}
+        ${renderTransportationDetails(claim.transportationDetails)}
+        ${renderExtraClaims(claim.extraClaims)}
       </div>
-    `;
+    `).join('');
+  } else {
+    claimsHtml = '<div class="empty-state"><i class="fas fa-hand-holding-usd"></i>No claims and allowances found</div>';
   }
 
-  function renderStayDetails(stayDetails) {
-    if (!stayDetails || stayDetails.length === 0) return '';
-    
-    return `
-      <div class="claim-subsection">
-        <div class="claim-subsection-title">
-          <i class="fas fa-bed"></i>Stay Details
-        </div>
-        <div class="subsection-grid">
-          ${stayDetails.map(stay => `
-            <div class="subsection-item">
-              <div class="grouped-item">
-                <span class="grouped-label"><i class="fas fa-hotel"></i>Type</span>
-                <span class="grouped-value">${stay.stayType}</span>
-              </div>
-              <div class="grouped-item">
-                <span class="grouped-label"><i class="fas fa-dollar-sign"></i>Cost</span>
-                <span class="grouped-value">${formatCurrency(stay.stayCost)}</span>
-              </div>
-              ${stay.stayReceipt && stay.stayReceipt.toString().trim() ? `
-                <div style="margin-top: 8px;">
-                  <a href="${stay.stayReceipt}" target="_blank" class="document-link"><i class="fas fa-receipt"></i>Receipt</a>
-                </div>
-              ` : ''}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
+  return `
+    <div class="section fade-in">
+      <h2 class="section-title"><i class="fas fa-hand-holding-usd"></i>Claims and Allowances</h2>
+      ${claimsHtml}
+    </div>
+  `;
+}
+
+
+function renderAllowanceInline(allowanceData, label) {
+  if (!allowanceData || (typeof allowanceData === 'object' && Object.keys(allowanceData).length === 0)) return '';
+
+  let parsedData;
+
+
+  if (typeof allowanceData === 'object' && typeof allowanceData.label === 'string') {
+    const maybeJson = allowanceData.label.trim();
+    if (maybeJson.startsWith('{') || maybeJson.startsWith('[')) {
+      try {
+        parsedData = JSON.parse(maybeJson);
+      } catch {
+        return '';
+      }
+    }
   }
+
+  if (!parsedData) {
+    if (typeof allowanceData === 'string') {
+      const trimmed = allowanceData.trim();
+      if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+          parsedData = JSON.parse(trimmed);
+        } catch {
+          return '';
+        }
+      } else {
+        if (trimmed.toLowerCase().includes('select') || trimmed === 'N/A') return '';
+        return `
+          <div class="allowance-container">
+            <div style="padding: 10px; text-align: center;">
+              ${escapeHtml(trimmed)}
+            </div>
+          </div>`;
+      }
+    } else if (typeof allowanceData === 'object') {
+      parsedData = allowanceData;
+    } else {
+      return '';
+    }
+  }
+
+  if (!parsedData.type) return '';
+
+  const isEmptySimpleCalc =
+    parsedData.type === 'Simple calculation' &&
+    (!parsedData.totalAmount || parsedData.totalAmount === 0) &&
+    (!parsedData.amount || parsedData.amount === 0) &&
+    (!Array.isArray(parsedData.dailyBreakdown) || parsedData.dailyBreakdown.length === 0);
+
+  if (isEmptySimpleCalc) return '';
+
+  const total = parsedData.totalAmount || parsedData.amount || 0;
+  if (!total || total === 0) return '';
+
+  let html = `<div class="allowance-container">`;
+  let hasMultipleDays = false;
+
+  if (parsedData.type === 'Daily breakdown') {
+    if (Array.isArray(parsedData.dailyBreakdown)) {
+      hasMultipleDays = parsedData.dailyBreakdown.length > 1;
+      
+
+      if (hasMultipleDays) {
+        html += `<div class="allowance-header">
+                   <i class="fas fa-calendar-week"></i>
+                   ${label} Breakdown
+                 </div>`;
+      }
+      
+      html += '<div class="daily-breakdown">';
+      parsedData.dailyBreakdown.forEach((day, index) => {
+        html += `
+          <div class="daily-item ${hasMultipleDays ? 'multi-day' : ''}">
+            <div class="daily-item-header">
+              <i class="fas fa-calendar-day"></i>
+              ${hasMultipleDays ? `Day ${index + 1}: ` : ''}${formatDate(day.date)}
+            </div>
+            <div class="daily-item-details">
+              <div class="daily-detail">
+                <i class="fas fa-clock"></i>
+                <strong>Working Type:</strong> ${formatWorkingType(day.workingType)}
+              </div>
+              <div class="daily-detail">
+                <i class="fas fa-utensils"></i>
+                <strong>Food Provided:</strong> ${formatFoodProvided(day.foodProvided)}
+              </div>
+              <div class="daily-detail">
+                <i class="fas fa-money-bill"></i>
+                <strong>Amount:</strong> RM ${formatCurrency(day.amount)}
+              </div>
+            </div>
+          </div>`;
+      });
+      html += '</div>';
+    }
+  } else if (parsedData.type === 'Per day calculation') {
+    if (parsedData.amount && parsedData.amount > 0) {
+      html += `
+        <div class="per-day-calculation">
+          <i class="fas fa-calendar-day"></i>
+          <strong>Per Day Rate:</strong> RM ${formatCurrency(parsedData.amount)}
+        </div>`;
+    }
+  }
+
+
+  if (parsedData.totalAmount && parsedData.totalAmount > 0) {
+    html += `
+      <div class="allowance-total ${hasMultipleDays ? 'multi-day-total' : ''}">
+        <i class="fas fa-money-bill-wave"></i>
+        Total ${label}: RM ${formatCurrency(parsedData.totalAmount)}
+      </div>`;
+  } else if (parsedData.amount && parsedData.amount > 0) {
+    html += `
+      <div class="allowance-total ${hasMultipleDays ? 'multi-day-total' : ''}">
+        <i class="fas fa-money-bill-wave"></i>
+        Total ${label}: RM ${formatCurrency(parsedData.amount)}
+      </div>`;
+  }
+
+  html += '</div>';
+  return html;
+}
+
+
+function formatWorkingType(type) {
+  if (!type) return 'Unknown';
+  return type
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+function formatFoodProvided(value) {
+  if (!value) return 'Not specified';
+  const map = {
+    with_food: 'With Food',
+    no_food: 'No Food'
+  };
+  return map[value.toLowerCase()] || value;
+}
+
+function formatTimeHours(time) {
+  const h = Math.floor(time);
+  const m = Math.round((time - h) * 60);
+  return `${h} hours${m > 0 ? ` ${m} minutes` : ''}`;
+}
+
+function formatCurrency(amount) {
+  if (!amount || isNaN(amount)) return '0.00';
+  return parseFloat(amount).toFixed(2);
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return 'Invalid date';
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
+
+function renderTransportationDetails(transportationDetails) {
+  if (!transportationDetails || typeof transportationDetails !== 'object') return '';
+  let html = `<div class="transport-details"><h4><i class="fas fa-car"></i> Transportation</h4>`;
+  for (const key in transportationDetails) {
+    const item = transportationDetails[key];
+    html += `
+      <div class="transport-item">
+        <strong>${escapeHtml(item.carType || 'Type')}:</strong>
+        RM ${formatCurrency(item.totalCost || 0)}
+      </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderExtraClaims(extraClaims) {
+  if (!Array.isArray(extraClaims) || extraClaims.length === 0) return '';
+  return `
+    <div class="extra-claims">
+      <h4><i class="fas fa-folder-plus"></i> Extra Claims</h4>
+      <ul>
+        ${extraClaims.map(claim => `<li>${escapeHtml(claim.label || 'Unnamed')}: RM ${formatCurrency(claim.amount || 0)}</li>`).join('')}
+      </ul>
+    </div>`;
+}
+
+
+
+    function renderStayDetails(stayDetails) {
+      if (!stayDetails || stayDetails.length === 0) return '';
+      
+      return `
+        <div class="claim-subsection">
+          <div class="claim-subsection-title">
+            <i class="fas fa-bed"></i>Stay Details
+          </div>
+          <div class="subsection-grid">
+            ${stayDetails.map(stay => `
+              <div class="subsection-item">
+                <div class="grouped-item">
+                  <span class="grouped-label"><i class="fas fa-hotel"></i>Type</span>
+                  <span class="grouped-value">${stay.stayType}</span>
+                </div>
+                <div class="grouped-item">
+                  <span class="grouped-label"><i class="fas fa-dollar-sign"></i>Cost</span>
+                  <span class="grouped-value">${formatCurrency(stay.stayCost)}</span>
+                </div>
+                ${stay.stayReceipt && stay.stayReceipt.toString().trim() ? `
+                  <div style="margin-top: 8px;">
+                    <a href="${stay.stayReceipt}" target="_blank" class="document-link"><i class="fas fa-receipt"></i>Receipt</a>
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
 
   function renderTransportationDetails(transportDetails) {
     if (!transportDetails || transportDetails.length === 0) return '';
