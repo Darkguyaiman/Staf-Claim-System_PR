@@ -5,17 +5,16 @@ function doGet() {
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
-
 function generateReport(startDate, endDate) {
   try {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = parseLocalDate(startDate);
+    const end = parseLocalDate(endDate);
 
     const eventsData = getEventsData(start, end);
     const advancePurchasesData = getAdvancePurchasesData(start, end);
     const pettyCashData = getPettyCashData(start, end);
     const claimsData = getClaimsAndAllowancesData(start, end);
-    
+
     const report = {
       dateRange: {
         start: startDate,
@@ -26,12 +25,11 @@ function generateReport(startDate, endDate) {
       pettyCash: pettyCashData,
       claimsAndAllowances: claimsData
     };
-    
+
     return {
       success: true,
       data: report
     };
-    
   } catch (error) {
     console.error('Error generating report:', error);
     return {
@@ -40,6 +38,12 @@ function generateReport(startDate, endDate) {
     };
   }
 }
+
+function parseLocalDate(dateString) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 
 function getEventsData(startDate, endDate) {
   try {
