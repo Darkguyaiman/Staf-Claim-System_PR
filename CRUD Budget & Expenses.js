@@ -7,40 +7,55 @@ function doGet() {
 
 function getAllEvents() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
+  
   const eventSheet = ss.getSheetByName('Event Creation');
   const settingsSheet = ss.getSheetByName('Settings');
   
+  const lastEventRow = eventSheet.getLastRow();
+  if (lastEventRow < 4) return { events: [], eventTypes: [] };
   
-  const eventRange = eventSheet.getRange('D4:Q' + eventSheet.getLastRow()).getValues();
-  const eventTypes = settingsSheet.getRange('K5:K' + settingsSheet.getLastRow()).getValues().flat().filter(Boolean);
+  const lastSettingsRow = settingsSheet.getLastRow();
   
+  const eventRange = eventSheet.getRange(4, 4, lastEventRow - 3, 14).getDisplayValues();
   
-  const eventData = eventRange
-    .map(row => {
-      const eventId = row[13]; 
-      const qualifier = row[12]; 
-      const eventName = row[0]; 
-      
-      
-      return (eventId && qualifier) ? { id: eventId, name: eventName } : null;
-    })
-    .filter(item => item !== null);
+  const eventData = [];
+  const len = eventRange.length;
+  for (let i = 0; i < len; i++) {
+    const row = eventRange[i];
+    if (row[13] && row[12]) {
+      eventData.push({ id: row[13], name: row[0] });
+    }
+  }
 
-  return {
-    events: eventData,
-    eventTypes: eventTypes
-  };
+  const eventTypes = lastSettingsRow > 4 
+    ? settingsSheet.getRange(5, 11, lastSettingsRow - 4, 1).getDisplayValues().map(r => r[0]).filter(v => v)
+    : [];
+
+  return { events: eventData, eventTypes: eventTypes };
 }
 
 function getPreEventBudgets() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const budgetSheet = ss.getSheetByName('Pre-Event Budget');
+  const lastRow = budgetSheet.getLastRow();
   
-  const budgetRange = budgetSheet.getRange('A4:D' + budgetSheet.getLastRow()).getValues();
+  if (lastRow < 4) return [];
   
-  const budgetData = budgetRange
-    .map(row => row[0] ? { eventId: row[0], type: row[1], amount: row[2], lastModified: row[3] } : null)
-    .filter(item => item !== null);
+  const budgetRange = budgetSheet.getRange(4, 1, lastRow - 3, 4).getValues();
+  const budgetData = [];
+  const len = budgetRange.length;
+  
+  for (let i = 0; i < len; i++) {
+    const row = budgetRange[i];
+    if (row[0]) {
+      budgetData.push({
+        eventId: row[0],
+        type: row[1], 
+        amount: row[2],
+        lastModified: row[3]
+      });
+    }
+  }
 
   return budgetData;
 }
@@ -48,12 +63,25 @@ function getPreEventBudgets() {
 function getPostEventExpenses() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const expensesSheet = ss.getSheetByName('Post-Event Expenses');
+  const lastRow = expensesSheet.getLastRow();
   
-  const expensesRange = expensesSheet.getRange('A4:D' + expensesSheet.getLastRow()).getValues();
+  if (lastRow < 4) return [];
   
-  const expensesData = expensesRange
-    .map(row => row[0] ? { eventId: row[0], type: row[1], amount: row[2], lastModified: row[3] } : null)
-    .filter(item => item !== null);
+  const expensesRange = expensesSheet.getRange(4, 1, lastRow - 3, 4).getValues();
+  const expensesData = [];
+  const len = expensesRange.length;
+  
+  for (let i = 0; i < len; i++) {
+    const row = expensesRange[i];
+    if (row[0]) {
+      expensesData.push({
+        eventId: row[0],
+        type: row[1],
+        amount: row[2], 
+        lastModified: row[3]
+      });
+    }
+  }
 
   return expensesData;
 }
