@@ -242,6 +242,7 @@
             width: 32px;
             height: 32px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .edit-btn {
@@ -639,6 +640,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            position: relative;
         }
 
         .btn-primary {
@@ -656,9 +658,26 @@
             color: var(--color-white);
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Button spinner styles */
+        .btn-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 5px;
         }
 
         /* Alert modal */
@@ -1149,7 +1168,6 @@
   </div>
 </aside>
 
-
 <!-- Sidebar toggle button -->
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
   <i class="fas fa-bars"></i>
@@ -1313,7 +1331,7 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
-                <button class="btn btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> Save</button>
+                <button id="save-btn" class="btn btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> Save</button>
             </div>
         </div>
     </div>
@@ -1354,48 +1372,42 @@
         let availableAccessories = [];
         let confirmCallback = null;
         let currentHighlightedIndex = -1;
+        let currentDeleteCallback = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             loadSettingsData();
         });
 
-
-        
         document.addEventListener('DOMContentLoaded', function() {
-          
+
           const sidebar = document.getElementById('sidebar');
           const mainContent = document.getElementById('mainContent');
           const sidebarToggle = document.getElementById('sidebarToggle');
           const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
-          
-          
+
           const overlay = document.createElement('div');
           overlay.className = 'sidebar-overlay';
           document.body.appendChild(overlay);
-          
-          
+
           const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
           if (sidebarCollapsed && window.innerWidth > 768) {
             sidebar.classList.add('collapsed');
             mainContent.classList.add('expanded');
           }
-          
-          
+
           function toggleSidebar(event) {
             if (event) event.stopPropagation();
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('expanded');
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
           }
-          
-          
+
           function toggleMobileSidebar(event) {
             if (event) event.stopPropagation();
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
           }
-          
-          
+
           if (sidebarToggle) {
             sidebarToggle.addEventListener('click', toggleSidebar);
           }
@@ -1403,14 +1415,12 @@
           if (mobileSidebarToggle) {
             mobileSidebarToggle.addEventListener('click', toggleMobileSidebar);
           }
-          
-          
+
           overlay.addEventListener('click', function() {
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
           });
-          
-          
+
           document.addEventListener('click', function(event) {
             if (window.innerWidth <= 768 && 
                 !sidebar.contains(event.target) && 
@@ -1420,15 +1430,13 @@
               overlay.classList.remove('active');
             }
           });
-          
-          
+
           window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-              
+
               sidebar.classList.remove('open');
               overlay.classList.remove('active');
-              
-              
+
               if (localStorage.getItem('sidebarCollapsed') === 'true') {
                 sidebar.classList.add('collapsed');
                 mainContent.classList.add('expanded');
@@ -1437,13 +1445,12 @@
                 mainContent.classList.remove('expanded');
               }
             } else {
-              
+
               sidebar.classList.remove('collapsed');
               mainContent.classList.remove('expanded');
             }
           });
-          
-          
+
           const currentPath = window.location.pathname;
           const sidebarItems = document.querySelectorAll('.sidebar-item');
           
@@ -1474,8 +1481,7 @@
             currentData = data;
             availableAccessories = data.accessories || [];
             document.getElementById('content').style.display = 'block';
-            
-            
+
             populateUsers(data.users);
             populateAdmins(data.admins);
             populateEventTypes(data.eventTypes);
@@ -1635,7 +1641,6 @@
             populateListItems(accessories, 'accessories-container', 'editAccessory', 'deleteAccessory', 'fas fa-plug');
         }
 
-        
         function openAddModal(type) {
             currentEditType = type;
             currentEditIndex = -1;
@@ -1649,8 +1654,7 @@
             body.innerHTML = getFormHTML(type);
             
             modal.style.display = 'block';
-            
-            
+
             if (type === 'device') {
                 initializeAccessoriesSearch();
             }
@@ -1669,8 +1673,7 @@
             body.innerHTML = getFormHTML(type, data);
             
             modal.style.display = 'block';
-            
-            
+
             if (type === 'device') {
                 initializeAccessoriesSearch();
             }
@@ -1809,17 +1812,14 @@
             }
         }
 
-        
         function initializeAccessoriesSearch() {
             const searchInput = document.getElementById('accessoriesSearch');
             const dropdownList = document.getElementById('accessoriesDropdownList');
             
             if (!searchInput || !dropdownList) return;
-            
-            
+
             populateAccessoriesDropdown('');
-            
-            
+
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 populateAccessoriesDropdown(searchTerm);
@@ -1833,8 +1833,7 @@
             searchInput.addEventListener('keydown', function(e) {
                 handleKeyNavigation(e);
             });
-            
-            
+
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.accessories-dropdown')) {
                     hideDropdown();
@@ -1845,12 +1844,10 @@
         function populateAccessoriesDropdown(searchTerm) {
             const dropdownList = document.getElementById('accessoriesDropdownList');
             if (!dropdownList) return;
-            
-            
+
             const selectedAccessories = Array.from(document.querySelectorAll('#accessoriesSelector .accessory-chip'))
                 .map(chip => chip.textContent.replace('×', '').trim());
-            
-            
+
             const filteredAccessories = availableAccessories.filter(acc => 
                 acc.toLowerCase().includes(searchTerm) && !selectedAccessories.includes(acc)
             );
@@ -1933,7 +1930,7 @@
             const searchInput = document.getElementById('accessoriesSearch');
             
             if (selector && accessory) {
-                
+
                 const existing = Array.from(selector.querySelectorAll('.accessory-chip')).find(chip => 
                     chip.textContent.replace('×', '').trim() === accessory
                 );
@@ -1944,8 +1941,7 @@
                     chip.innerHTML = `${escapeHtml(accessory)}<button type="button" class="remove-chip" onclick="removeAccessoryChip(this)">×</button>`;
                     selector.appendChild(chip);
                 }
-                
-                
+
                 if (searchInput) {
                     searchInput.value = '';
                     populateAccessoriesDropdown('');
@@ -1957,7 +1953,7 @@
 
         function removeAccessoryChip(button) {
             button.parentElement.remove();
-            
+
             const searchInput = document.getElementById('accessoriesSearch');
             if (searchInput) {
                 populateAccessoriesDropdown(searchInput.value.toLowerCase());
@@ -2025,20 +2021,33 @@
                     newData = itemValue;
                     break;
             }
-            
-            
-            if (index === -1) {
+
+            const saveBtn = document.getElementById('save-btn');
+            const originalContent = saveBtn.innerHTML;
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<div class="btn-spinner"></div>Saving...';
+
+            saveToSheet(type, index === -1 ? 'add' : 'edit', newData, index, function(success, message) {
+
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalContent;
                 
-                addItemToData(type, newData);
-                showAlert('success', 'Success', `${getTypeDisplayName(type)} added successfully`);
-            } else {
-                
-                updateItemInData(type, index, newData);
-                showAlert('success', 'Success', `${getTypeDisplayName(type)} updated successfully`);
-            }
-            
-            closeModal();
-            saveToSheet(type, index === -1 ? 'add' : 'edit', newData, index);
+                if (success) {
+
+                    if (index === -1) {
+
+                        addItemToData(type, newData);
+                    } else {
+
+                        updateItemInData(type, index, newData);
+                    }
+                    
+                    closeModal();
+                    showAlert('success', 'Success', message || `${getTypeDisplayName(type)} ${index === -1 ? 'added' : 'updated'} successfully`);
+                } else {
+                    showAlert('error', 'Error', message || 'Failed to save data');
+                }
+            });
         }
 
         function addItemToData(type, data) {
@@ -2076,6 +2085,7 @@
                     populateDevices(currentData.devices);
                     break;
                 case 'accessory':
+                    currentData.accessories.push(data);
                     availableAccessories.push(data);
                     populateAccessories(currentData.accessories);
                     break;
@@ -2119,7 +2129,7 @@
                 case 'accessory':
                     const oldValue = currentData.accessories[index];
                     currentData.accessories[index] = data;
-                    
+
                     const accIndex = availableAccessories.indexOf(oldValue);
                     if (accIndex !== -1) {
                         availableAccessories[accIndex] = data;
@@ -2129,7 +2139,6 @@
             }
         }
 
-        
         function editUser(index) {
             openEditModal('user', index, currentData.users[index]);
         }
@@ -2166,116 +2175,141 @@
             openEditModal('accessory', index, currentData.accessories[index]);
         }
 
-        
         function deleteUser(index) {
             showConfirm('Delete User', 'Are you sure you want to delete this user?', function() {
-                currentData.users.splice(index, 1);
-                populateUsers(currentData.users);
-                saveToSheet('user', 'delete', null, index);
-                showAlert('success', 'Success', 'User deleted successfully');
+                performDelete('user', index, function() {
+                    currentData.users.splice(index, 1);
+                    populateUsers(currentData.users);
+                });
             });
         }
 
         function deleteAdmin(index) {
             showConfirm('Delete Administrator', 'Are you sure you want to delete this administrator?', function() {
-                currentData.admins.splice(index, 1);
-                populateAdmins(currentData.admins);
-                saveToSheet('admin', 'delete', null, index);
-                showAlert('success', 'Success', 'Administrator deleted successfully');
+                performDelete('admin', index, function() {
+                    currentData.admins.splice(index, 1);
+                    populateAdmins(currentData.admins);
+                });
             });
         }
 
         function deleteEventType(index) {
             showConfirm('Delete Event Type', 'Are you sure you want to delete this event type?', function() {
-                currentData.eventTypes.splice(index, 1);
-                populateEventTypes(currentData.eventTypes);
-                saveToSheet('eventType', 'delete', null, index);
-                showAlert('success', 'Success', 'Event type deleted successfully');
+                performDelete('eventType', index, function() {
+                    currentData.eventTypes.splice(index, 1);
+                    populateEventTypes(currentData.eventTypes);
+                });
             });
         }
 
         function deletePettyCashType(index) {
             showConfirm('Delete Transaction Type', 'Are you sure you want to delete this petty cash transaction type?', function() {
-                currentData.pettyCashTypes.splice(index, 1);
-                populatePettyCashTypes(currentData.pettyCashTypes);
-                saveToSheet('pettyCashType', 'delete', null, index);
-                showAlert('success', 'Success', 'Transaction type deleted successfully');
+                performDelete('pettyCashType', index, function() {
+                    currentData.pettyCashTypes.splice(index, 1);
+                    populatePettyCashTypes(currentData.pettyCashTypes);
+                });
             });
         }
 
         function deleteExpensesBudgetType(index) {
             showConfirm('Delete Expense Type', 'Are you sure you want to delete this expenses & budget type?', function() {
-                currentData.expensesBudgetTypes.splice(index, 1);
-                populateExpensesBudgetTypes(currentData.expensesBudgetTypes);
-                saveToSheet('expensesBudgetType', 'delete', null, index);
-                showAlert('success', 'Success', 'Expense type deleted successfully');
+                performDelete('expensesBudgetType', index, function() {
+                    currentData.expensesBudgetTypes.splice(index, 1);
+                    populateExpensesBudgetTypes(currentData.expensesBudgetTypes);
+                });
             });
         }
 
         function deleteOfficeAsset(index) {
             showConfirm('Delete Office Asset', 'Are you sure you want to delete this office asset?', function() {
-                currentData.officeAssets.splice(index, 1);
-                populateOfficeAssets(currentData.officeAssets);
-                saveToSheet('officeAsset', 'delete', null, index);
-                showAlert('success', 'Success', 'Office asset deleted successfully');
+                performDelete('officeAsset', index, function() {
+                    currentData.officeAssets.splice(index, 1);
+                    populateOfficeAssets(currentData.officeAssets);
+                });
             });
         }
 
         function deleteCompanyCar(index) {
             showConfirm('Delete Company Car', 'Are you sure you want to delete this company car?', function() {
-                currentData.companyCars.splice(index, 1);
-                populateCompanyCars(currentData.companyCars);
-                saveToSheet('companyCar', 'delete', null, index);
-                showAlert('success', 'Success', 'Company car deleted successfully');
+                performDelete('companyCar', index, function() {
+                    currentData.companyCars.splice(index, 1);
+                    populateCompanyCars(currentData.companyCars);
+                });
             });
         }
 
         function deleteDevice(index) {
             showConfirm('Delete Device', 'Are you sure you want to delete this device?', function() {
-                currentData.devices.splice(index, 1);
-                populateDevices(currentData.devices);
-                saveToSheet('device', 'delete', null, index);
-                showAlert('success', 'Success', 'Device deleted successfully');
+                performDelete('device', index, function() {
+                    currentData.devices.splice(index, 1);
+                    populateDevices(currentData.devices);
+                });
             });
         }
 
         function deleteAccessory(index) {
             showConfirm('Delete Accessory', 'Are you sure you want to delete this accessory?', function() {
-                const deletedAccessory = currentData.accessories[index];
-                currentData.accessories.splice(index, 1);
-                
-                const accIndex = availableAccessories.indexOf(deletedAccessory);
-                if (accIndex !== -1) {
-                    availableAccessories.splice(accIndex, 1);
-                }
-                populateAccessories(currentData.accessories);
-                saveToSheet('accessory', 'delete', null, index);
-                showAlert('success', 'Success', 'Accessory deleted successfully');
+                performDelete('accessory', index, function() {
+                    const deletedAccessory = currentData.accessories[index];
+                    currentData.accessories.splice(index, 1);
+
+                    const accIndex = availableAccessories.indexOf(deletedAccessory);
+                    if (accIndex !== -1) {
+                        availableAccessories.splice(accIndex, 1);
+                    }
+                    populateAccessories(currentData.accessories);
+                });
             });
         }
 
-        function saveToSheet(type, action, data, index) {
+        function performDelete(type, index, updateUICallback) {
+
+            currentDeleteCallback = updateUICallback;
+
+            const confirmOk = document.getElementById('confirm-ok');
+            const originalContent = confirmOk.innerHTML;
+            confirmOk.disabled = true;
+            confirmOk.innerHTML = '<div class="btn-spinner"></div>Deleting...';
+
+            saveToSheet(type, 'delete', null, index, function(success, message) {
+
+                confirmOk.disabled = false;
+                confirmOk.innerHTML = originalContent;
+
+                closeConfirmModal();
+                
+                if (success) {
+                    currentDeleteCallback();
+                    showAlert('success', 'Success', message || `${getTypeDisplayName(type)} deleted successfully`);
+                } else {
+                    showAlert('error', 'Error', message || 'Failed to delete item');
+                }
+                
+                currentDeleteCallback = null;
+            });
+        }
+
+        function saveToSheet(type, action, data, index, callback) {
             google.script.run
-                .withSuccessHandler(() => {
-                    console.log('Data saved successfully');
+                .withSuccessHandler(function(result) {
+                    if (result && result.success) {
+                        callback(true, result.message);
+                    } else {
+                        callback(false, result ? result.error : 'Unknown error occurred');
+                    }
                 })
-                .withFailureHandler((error) => {
-                    console.error('Error saving data:', error);
-                    showAlert('error', 'Error', 'Error saving data: ' + error.toString());
-                    
-                    loadSettingsData();
+                .withFailureHandler(function(error) {
+                    callback(false, 'Error saving data: ' + error.toString());
                 })
                 .updateSettingsData(type, action, data, index);
         }
 
-        
         function showAlert(type, title, message) {
             const alertModal = document.getElementById('alert-modal');
             const alertIcon = document.getElementById('alert-icon');
             const alertTitle = document.getElementById('alert-title');
             const alertMessage = document.getElementById('alert-message');
-            
-            
+
             let iconClass = '';
             switch(type) {
                 case 'success':
@@ -2316,13 +2350,10 @@
             
             confirmTitle.textContent = title;
             confirmMessage.textContent = message;
-            
-            
+
             confirmCallback = callback;
-            
-            
+
             confirmOk.onclick = function() {
-                closeConfirmModal();
                 if (confirmCallback) confirmCallback();
             };
             
@@ -2347,7 +2378,6 @@
             return div.innerHTML;
         }
 
-        
         window.onclick = function(event) {
             const modal = document.getElementById('modal');
             const alertModal = document.getElementById('alert-modal');
