@@ -13,40 +13,32 @@ function getDashboardData() {
       return { error: true, message: 'Dashboard sheet not found' };
     }
 
+    const values = sheet.getRange('C4:C7').getValues().flat();
+    const financialValues = sheet.getRange('F4:F11').getValues().flat();
+    const statusRange = sheet.getRange('I4:J').getValues();
+    const chartValues = sheet.getRange('B15:D45').getValues();
+
     const eventsOverview = {
-      totalEvents: sheet.getRange('C4').getValue() || 0,
-      todaysEvents: sheet.getRange('C5').getValue() || 0,
-      averageDevices: sheet.getRange('C6').getValue() || 0,
-      budgetVariance: sheet.getRange('C7').getValue() || 0
+      totalEvents: values[0] || 0,
+      todaysEvents: values[1] || 0,
+      averageDevices: values[2] || 0,
+      budgetVariance: values[3] || 0
     };
 
     const financialSummary = {
-      totalApplications: sheet.getRange('F4').getValue() || 0,
-      transportationCost: sheet.getRange('F5').getValue() || 0,
-      stayCost: sheet.getRange('F6').getValue() || 0,
-      mealAllowances: sheet.getRange('F7').getValue() || 0,
-      extraClaims: sheet.getRange('F8').getValue() || 0,
-      otherAllowances: sheet.getRange('F9').getValue() || 0,
-      averageAdvanceCost: sheet.getRange('F10').getValue() || 0,
-      averagePettyCash: sheet.getRange('F11').getValue() || 0
+      totalApplications: financialValues[0] || 0,
+      transportationCost: financialValues[1] || 0,
+      stayCost: financialValues[2] || 0,
+      mealAllowances: financialValues[3] || 0,
+      extraClaims: financialValues[4] || 0,
+      otherAllowances: financialValues[5] || 0,
+      averageAdvanceCost: financialValues[6] || 0,
+      averagePettyCash: financialValues[7] || 0
     };
 
-    const statusRange = sheet.getRange('I4:I').getValues();
-    const countRange = sheet.getRange('J4:J').getValues();
-
-    const statusBreakdown = [];
-    for (let i = 0; i < statusRange.length; i++) {
-      if (statusRange[i][0] && statusRange[i][0] !== '') {
-        statusBreakdown.push({
-          status: statusRange[i][0],
-          count: countRange[i][0] || 0
-        });
-      }
-    }
-
-    const daysRange = sheet.getRange('B15:B45').getValues();
-    const eventsRange = sheet.getRange('C15:C45').getValues();
-    const applicationsRange = sheet.getRange('D15:D45').getValues();
+    const statusBreakdown = statusRange
+      .filter(row => row[0])
+      .map(row => ({ status: row[0], count: row[1] || 0 }));
 
     const chartData = {
       days: [],
@@ -54,31 +46,30 @@ function getDashboardData() {
       applications: []
     };
 
-    for (let i = 0; i < daysRange.length; i++) {
-      if (daysRange[i][0] && daysRange[i][0] !== '') {
-        let dayValue = daysRange[i][0];
-        if (dayValue instanceof Date) {
-          dayValue = Utilities.formatDate(dayValue, Session.getScriptTimeZone(), 'MMM d');
-        }
-        
-        chartData.days.push(dayValue);
-        chartData.events.push(eventsRange[i][0] || 0);
-        chartData.applications.push(applicationsRange[i][0] || 0);
-      }
+    const timeZone = Session.getScriptTimeZone();
+    for (const row of chartValues) {
+      const [day, eventCount, applicationCount] = row;
+      if (!day) continue;
+      const formattedDay = day instanceof Date
+        ? Utilities.formatDate(day, timeZone, 'MMM d')
+        : day.toString();
+      chartData.days.push(formattedDay);
+      chartData.events.push(eventCount || 0);
+      chartData.applications.push(applicationCount || 0);
     }
 
-    
     const recentEvents = getRecentEvents();
 
     return {
-      eventsOverview: eventsOverview,
-      financialSummary: financialSummary,
-      statusBreakdown: statusBreakdown,
-      chartData: chartData,
-      recentEvents: recentEvents
+      eventsOverview,
+      financialSummary,
+      statusBreakdown,
+      chartData,
+      recentEvents
     };
 
   } catch (error) {
+    console.error('Dashboard error:', error);
     return {
       error: true,
       message: 'Failed to retrieve dashboard data'
@@ -88,86 +79,61 @@ function getDashboardData() {
 
 function getRecentEvents() {
   try {
-    const eventSheet = SpreadsheetApp.getActive().getSheetByName("Event Creation");
-    if (!eventSheet) {
+    const sheet = SpreadsheetApp.getActive().getSheetByName("Event Creation");
+    if (!sheet) {
       return { error: true, message: 'Event Creation sheet not found' };
     }
 
-    
-    const lastRow = eventSheet.getLastRow();
-    
-    
-    if (lastRow < 4) {
-      return [];
-    }
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 4) return [];
 
-    
-    const statusRange = eventSheet.getRange('A4:A' + lastRow).getValues();
-    const createdByRange = eventSheet.getRange('C4:C' + lastRow).getValues();
-    const eventNameRange = eventSheet.getRange('D4:D' + lastRow).getValues();
-    const eventTypeRange = eventSheet.getRange('E4:E' + lastRow).getValues();
-    const locationRange = eventSheet.getRange('F4:F' + lastRow).getValues();
-    const startDateRange = eventSheet.getRange('H4:H' + lastRow).getValues();
-    const endDateRange = eventSheet.getRange('I4:I' + lastRow).getValues();
-
+    const range = sheet.getRange(`A4:I${lastRow}`).getValues();
     const events = [];
-    
-    
-    for (let i = 0; i < statusRange.length; i++) {
-      
-      if (!eventNameRange[i][0] || eventNameRange[i][0] === '') {
-        continue;
-      }
 
-      const startDate = startDateRange[i][0];
-      const endDate = endDateRange[i][0];
-      
-      
-      let dateRange = '';
-      let shortDateRange = '';
+    const timeZone = Session.getScriptTimeZone();
+
+    for (let i = 0; i < range.length; i++) {
+      const row = range[i];
+      const [status, , createdBy, eventName, eventType, location, , startDate, endDate] = row;
+
+      if (!eventName) continue;
+
+      const formatDate = (date, format) =>
+        date instanceof Date
+          ? Utilities.formatDate(date, timeZone, format)
+          : date?.toString() || '';
+
+      const fullStart = formatDate(startDate, 'MMM d, yyyy');
+      const fullEnd = formatDate(endDate, 'MMM d, yyyy');
+      const shortStart = formatDate(startDate, 'MMM d');
+      const shortEnd = formatDate(endDate, 'MMM d');
+
+      let dateRange = fullStart;
+      let shortDateRange = shortStart;
+
       if (startDate && endDate) {
-        const startFormatted = startDate instanceof Date ? 
-          Utilities.formatDate(startDate, Session.getScriptTimeZone(), 'MMM d, yyyy') : 
-          startDate.toString();
-        const endFormatted = endDate instanceof Date ? 
-          Utilities.formatDate(endDate, Session.getScriptTimeZone(), 'MMM d, yyyy') : 
-          endDate.toString();
-        const startShort = startDate instanceof Date ? 
-          Utilities.formatDate(startDate, Session.getScriptTimeZone(), 'MMM d') : 
-          startDate.toString();
-        const endShort = endDate instanceof Date ? 
-          Utilities.formatDate(endDate, Session.getScriptTimeZone(), 'MMM d') : 
-          endDate.toString();
-        dateRange = startFormatted + ' - ' + endFormatted;
-        shortDateRange = startShort + ' - ' + endShort;
-      } else if (startDate) {
-        dateRange = startDate instanceof Date ? 
-          Utilities.formatDate(startDate, Session.getScriptTimeZone(), 'MMM d, yyyy') : 
-          startDate.toString();
-        shortDateRange = startDate instanceof Date ? 
-          Utilities.formatDate(startDate, Session.getScriptTimeZone(), 'MMM d') : 
-          startDate.toString();
+        dateRange += ' - ' + fullEnd;
+        shortDateRange += ' - ' + shortEnd;
       }
 
       events.push({
-        status: statusRange[i][0] || 'N/A',
-        createdBy: createdByRange[i][0] || 'N/A',
-        eventName: eventNameRange[i][0] || 'N/A',
-        eventType: eventTypeRange[i][0] || 'N/A',
-        location: locationRange[i][0] || 'N/A',
+        status: status || 'N/A',
+        createdBy: createdBy || 'N/A',
+        eventName: eventName || 'N/A',
+        eventType: eventType || 'N/A',
+        location: location || 'N/A',
         dateRange: dateRange || 'N/A',
         shortDateRange: shortDateRange || 'N/A',
-        rowIndex: i + 4 
+        rowIndex: i + 4
       });
     }
 
-    
-    events.sort((a, b) => b.rowIndex - a.rowIndex);
-
-    
-    return events.slice(0, 10);
+    return events
+      .sort((a, b) => b.rowIndex - a.rowIndex)
+      .slice(0, 10);
 
   } catch (error) {
+    console.error('Recent events error:', error);
     return { error: true, message: 'Failed to retrieve recent events data' };
   }
 }
