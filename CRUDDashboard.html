@@ -1732,12 +1732,28 @@
             });
         }
 
+        const cached = localStorage.getItem('dashboardData');
+        if (cached) {
+            try {
+                const data = JSON.parse(cached);
+                populateDashboard(data);
+            } catch (e) {
+                localStorage.removeItem('dashboardData');
+            }
+        }
+
         google.script.run
-            .withSuccessHandler(populateDashboard)
+            .withSuccessHandler(function(data) {
+                try {
+                    localStorage.setItem('dashboardData', JSON.stringify(data));
+                } catch (e) {}
+                populateDashboard(data);
+            })
             .withFailureHandler(function(error) {
                 showError('Failed to load dashboard data');
             })
             .getDashboardData();
+
     </script>
 </body>
 </html>
