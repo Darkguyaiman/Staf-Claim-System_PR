@@ -44,6 +44,11 @@
               scaleOut: {
                 '0%': { transform: 'scale(1)', opacity: '1' },
                 '100%': { transform: 'scale(0.9)', opacity: '0' }
+              },
+              shake: {
+                '0%, 100%': { transform: 'translateX(0)' },
+                '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-2px)' },
+                '20%, 40%, 60%, 80%': { transform: 'translateX(2px)' }
               }
             },
             animation: {
@@ -52,7 +57,8 @@
               slideDown: 'slideDown 0.5s ease-out',
               pulse: 'pulse 1.5s ease-in-out infinite',
               scaleIn: 'scaleIn 0.3s ease-out',
-              scaleOut: 'scaleOut 0.3s ease-out'
+              scaleOut: 'scaleOut 0.3s ease-out',
+              shake: 'shake 0.5s ease-in-out'
             },
             boxShadow: {
               'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
@@ -68,7 +74,6 @@
         background-color: rgba(187, 255, 153, 0.1) !important;
       }
       
-      /* Advanced Loading Spinner */
       .spinner-container {
         display: flex;
         flex-direction: column;
@@ -118,7 +123,6 @@
         }
       }
       
-      /* Loading dots animation */
       .loading-dots:after {
         content: '.';
         animation: loading-dots 1.5s infinite;
@@ -130,7 +134,6 @@
         60%, 100% { content: '...'; }
       }
       
-      /* Modal backdrop */
       .modal-backdrop {
         position: fixed;
         top: 0;
@@ -167,13 +170,11 @@
         opacity: 1;
       }
       
-      /* Form field animations */
       .form-field {
         opacity: 0;
         transform: translateY(10px);
       }
       
-      /* Custom input styles */
       .custom-input {
         transition: all 0.3s ease;
         border: 2px solid transparent;
@@ -188,7 +189,6 @@
         border-color: #00999A;
       }
       
-      /* Button styles */
       .btn-primary {
         position: relative;
         overflow: hidden;
@@ -215,7 +215,6 @@
         cursor: not-allowed;
       }
       
-      /* Loading overlay */
       #loadingScreen {
         position: fixed;
         top: 0;
@@ -230,7 +229,6 @@
         transition: opacity 0.5s ease;
       }
       
-      /* Success checkmark animation */
       .checkmark {
         width: 80px;
         height: 80px;
@@ -283,7 +281,6 @@
         }
       }
       
-      /* Error X animation */
       .error-x {
         width: 80px;
         height: 80px;
@@ -320,10 +317,34 @@
           box-shadow: inset 0px 0px 0px 30px #FF5252;
         }
       }
+
+      .delete-btn {
+        transition: all 0.2s ease;
+        opacity: 0;
+        transform: scale(0.8);
+        animation: scaleIn 0.3s ease-out forwards;
+      }
+      
+      .delete-btn:hover {
+        background-color: #ef4444;
+        transform: scale(1.05);
+      }
+      
+      .file-info-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      
+      .file-details {
+        flex: 1;
+        min-width: 0;
+      }
     </style>
   </head>
   <body class="bg-gradient-to-br from-lavender to-lime min-h-screen">
-    <!-- Loading Screen with Advanced Spinner -->
     <div id="loadingScreen">
       <div class="spinner-container">
         <div class="spinner-ring">
@@ -336,7 +357,6 @@
       </div>
     </div>
     
-    <!-- Success Modal Template -->
     <div id="successModal" class="modal-backdrop hidden">
       <div class="modal-content p-6">
         <div class="text-center">
@@ -353,7 +373,6 @@
       </div>
     </div>
     
-    <!-- Error Modal Template -->
     <div id="errorModal" class="modal-backdrop hidden">
       <div class="modal-content p-6">
         <div class="text-center">
@@ -380,7 +399,6 @@
         </div>
         
         <form id="pettyCashForm" class="p-6 space-y-6">
-          <!-- User Field -->
           <div class="form-field">
             <label for="user" class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-user mr-1"></i> User
@@ -394,7 +412,6 @@
             </div>
           </div>
           
-          <!-- Purpose Field -->
           <div class="form-field">
             <label for="purpose" class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-clipboard-list mr-1"></i> Purpose
@@ -408,7 +425,6 @@
             </div>
           </div>
           
-          <!-- Transaction Type Field -->
           <div class="form-field">
             <label for="transactionType" class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-tags mr-1"></i> Transaction Type
@@ -427,7 +443,6 @@
             </div>
           </div>
           
-          <!-- Amount Field -->
           <div class="form-field">
             <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-coins mr-1"></i> Amount (RM)
@@ -442,7 +457,6 @@
             </div>
           </div>
           
-          <!-- File Upload Field -->
           <div class="form-field">
             <label for="additionalDocs" class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-file-upload mr-1"></i> Additional Documents
@@ -458,14 +472,18 @@
                   </label>
                   <p class="pl-1">or drag and drop</p>
                 </div>
-                <p class="text-xs text-gray-500 mt-2" id="fileInfo">
-                  <i class="fas fa-times-circle mr-1"></i> No file selected
-                </p>
+                <div class="file-info-container mt-2">
+                  <p class="text-xs text-gray-500 file-details" id="fileInfo">
+                    <i class="fas fa-times-circle mr-1"></i> No file selected
+                  </p>
+                  <button type="button" id="deleteFileBtn" class="delete-btn hidden px-2 py-1 bg-red-500 text-white text-xs rounded-md hover:bg-red-600 transition-all duration-200 flex items-center gap-1">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
           
-          <!-- Remarks Field -->
           <div class="form-field">
             <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-comment-alt mr-1"></i> Remarks (Optional)
@@ -479,7 +497,6 @@
             </div>
           </div>
           
-          <!-- Submit Button -->
           <div class="pt-4 form-field">
             <button type="submit" id="submitButton"
               class="btn-primary w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-md text-sm font-medium text-white bg-gradient-to-r from-teal to-emerald hover:from-teal hover:to-lightTeal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal transition-all duration-300 transform hover:scale-[1.02] hover:shadow-glow">
@@ -491,7 +508,6 @@
     </div>
 
     <script>
-      
       function animateFormFields() {
         const formFields = document.querySelectorAll('.form-field');
         formFields.forEach((field, index) => {
@@ -503,7 +519,6 @@
         });
       }
 
-      
       function showModal(modalId, message) {
         const modal = document.getElementById(modalId);
         if (modalId === 'successModal') {
@@ -517,11 +532,9 @@
           modal.classList.add('active');
         }, 10);
         
-        
         modal.querySelectorAll('.close-modal').forEach(button => {
           button.addEventListener('click', () => closeModal(modal));
         });
-        
         
         modal.addEventListener('click', (e) => {
           if (e.target === modal) {
@@ -537,7 +550,6 @@
         }, 300);
       }
 
-      
       window.onload = function() {
         Promise.all([
           new Promise(resolve => {
@@ -562,7 +574,7 @@
           setTimeout(() => {
             hideLoadingScreen();
             animateFormFields();
-          }, 800); 
+          }, 800);
         });
       };
 
@@ -574,10 +586,10 @@
         }, 500);
       }
 
-      
       const dropZone = document.getElementById('dropZone');
       const fileInput = document.getElementById('additionalDocs');
       const fileInfo = document.getElementById('fileInfo');
+      const deleteFileBtn = document.getElementById('deleteFileBtn');
 
       ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, preventDefaults, false);
@@ -615,6 +627,20 @@
 
       fileInput.addEventListener('change', updateFileInfo);
 
+      deleteFileBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        fileInput.value = '';
+        
+        updateFileInfo();
+        
+        deleteFileBtn.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+          deleteFileBtn.style.transform = 'scale(1)';
+        }, 150);
+      });
+
       function updateFileInfo() {
         const file = fileInput.files[0];
         if (file) {
@@ -628,6 +654,9 @@
             <span class="text-gray-500"> (${formattedSize} ${fileSizeUnit})</span>
           `;
           
+          deleteFileBtn.classList.remove('hidden');
+          deleteFileBtn.style.opacity = '1';
+          deleteFileBtn.style.transform = 'scale(1)';
           
           fileInfo.classList.add('animate-pulse');
           setTimeout(() => {
@@ -635,10 +664,15 @@
           }, 1000);
         } else {
           fileInfo.innerHTML = '<i class="fas fa-times-circle mr-1"></i> No file selected';
+          
+          deleteFileBtn.style.opacity = '0';
+          deleteFileBtn.style.transform = 'scale(0.8)';
+          setTimeout(() => {
+            deleteFileBtn.classList.add('hidden');
+          }, 200);
         }
       }
 
-      
       document.getElementById('pettyCashForm').onsubmit = function(e) {
         e.preventDefault();
         const form = this;
@@ -650,7 +684,6 @@
           return;
         }
 
-        
         submitButton.disabled = true;
         submitButton.classList.add('opacity-70', 'cursor-not-allowed');
         submitButton.innerHTML = `
@@ -663,7 +696,6 @@
           Processing submission<span class="loading-dots"></span>
         `;
         
-        
         const overlay = document.createElement('div');
         overlay.id = 'formOverlay';
         overlay.className = 'absolute inset-0 bg-white bg-opacity-50 z-10 flex items-center justify-center';
@@ -672,64 +704,51 @@
         
         google.script.run
           .withSuccessHandler(function(result) {
-            
             submitButton.disabled = false;
             submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
             submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Submit Form';
-            
             
             if (document.getElementById('formOverlay')) {
               document.getElementById('formOverlay').remove();
             }
             
-            
             showModal('successModal', 'Form submitted successfully!');
             
-            
             form.reset();
-            fileInfo.innerHTML = '<i class="fas fa-times-circle mr-1"></i> No file selected';
-            document.getElementById('remarks').value = ''; 
-            
+            updateFileInfo();
+            document.getElementById('remarks').value = '';
             
             google.script.run.withSuccessHandler(function(user) {
               document.getElementById('user').value = user;
             }).getUserInfo();
           })
           .withFailureHandler(function(error) {
-            
             submitButton.disabled = false;
             submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
             submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Submit Form';
             
-            
             if (document.getElementById('formOverlay')) {
               document.getElementById('formOverlay').remove();
             }
-            
             
             showModal('errorModal', error.message || 'An error occurred while submitting the form.');
           })
           .submitForm(form);
       };
 
-      
       const inputs = document.querySelectorAll('input, select, textarea');
       inputs.forEach(input => {
-        
         input.addEventListener('focus', () => {
           input.parentElement.classList.add('scale-[1.01]');
           input.parentElement.style.transition = 'all 0.2s ease-in-out';
         });
         
-        
         input.addEventListener('blur', () => {
           input.parentElement.classList.remove('scale-[1.01]');
-          
           
           if (!input.readOnly && input.required && input.value.trim() === '') {
             input.classList.add('border-red-300');
             input.classList.add('bg-red-50');
-            
             
             input.parentElement.classList.add('animate-shake');
             setTimeout(() => {
@@ -741,7 +760,6 @@
           }
         });
         
-        
         input.addEventListener('input', () => {
           if (input.required && input.value.trim() !== '') {
             input.classList.remove('border-red-300');
@@ -750,9 +768,7 @@
         });
       });
       
-      
       document.querySelectorAll('.modal-backdrop').forEach(modal => {
-        
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
             closeModal(modal);
