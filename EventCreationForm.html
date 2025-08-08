@@ -4,11 +4,8 @@
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Creation Form</title>
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Select2 for better dropdowns -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <!-- Flatpickr for date/time -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
     :root {
@@ -142,7 +139,6 @@
       background-color: white;
     }
     
-    /* Custom styling for Select2 */
     .select2-container--default .select2-selection--multiple {
       border: 2px solid #e0e0e0;
       border-radius: 8px;
@@ -180,7 +176,6 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
     
-    /* Custom styling for Flatpickr */
     .flatpickr-calendar {
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -402,7 +397,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* Initial loader */
     .loader-container {
       position: fixed;
       top: 0;
@@ -439,7 +433,6 @@
       text-align: center;
     }
     
-    /* Responsive styles */
     @media (max-width: 768px) {
       .container {
         padding: 20px;
@@ -464,7 +457,6 @@
       }
     }
     
-    /* Animations */
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -475,48 +467,112 @@
       animation: pulse 2s infinite;
     }
     
-    /* File name display */
     .file-name {
       margin-top: 10px;
       padding: 8px 15px;
       background-color: rgba(0, 184, 148, 0.1);
       border-radius: 20px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
       color: var(--color-secondary);
       font-weight: 500;
+      min-width: 200px;
+      animation: slideIn 0.3s ease;
     }
     
-    .file-name i {
-      margin-right: 5px;
+    .file-name i.fa-file {
+      margin-right: 8px;
       color: var(--color-accent);
     }
+    
+    .file-name .file-text {
+      flex: 1;
+      margin-right: 10px;
+    }
+    
+    .file-delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+    }
+    
+    .file-delete-btn:hover {
+      background-color: #c0392b;
+      transform: scale(1.1);
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+    }
+    
+    .file-delete-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .file-delete-btn i {
+      margin: 0;
+      line-height: 1;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slideOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+    }
+    
+    .file-name.removing {
+      animation: slideOut 0.3s ease forwards;
+    }
 
-    /* For WebKit Browsers (Chrome, Safari, Edge) */
     ::-webkit-scrollbar {
       width: 12px;
     }
 
     ::-webkit-scrollbar-track {
-      background: var(--color-lighter); /* light green */
+      background: var(--color-lighter);
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: var(--color-primary); /* deep purple */
+      background-color: var(--color-primary);
       border-radius: 10px;
       border: 2px solid var(--color-lighter);
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background-color: var(--color-secondary); /* dark teal */
+      background-color: var(--color-secondary);
     }
 
-    /* For Firefox */
     * {
       scrollbar-width: thin;
       scrollbar-color: var(--color-primary) var(--color-lighter);
     }
 
-/* CSS Variables */
 :root {
   --color-primary: #2D0C31;
   --color-secondary: #004D4D;
@@ -544,7 +600,6 @@
 </head>
 
 <body>
-  <!-- Initial Loader -->
   <div class="loader-container" id="initialLoader">
     <div class="loader"></div>
     <div class="loader-text">Loading form data...</div>
@@ -554,7 +609,6 @@
     <h1><i class="fas fa-calendar-plus"></i> Event Creation Form</h1>
     
     <form id="eventForm">
-      <!-- User Information Section -->
       <div class="form-section">
         <h2><i class="fas fa-user-circle"></i> User Information</h2>
         <div class="form-group">
@@ -563,7 +617,6 @@
         </div>
       </div>
       
-      <!-- Event Details Section -->
       <div class="form-section">
         <h2><i class="fas fa-info-circle"></i> Event Details</h2>
         <div class="form-group">
@@ -578,7 +631,6 @@
         </div>
       </div>
       
-      <!-- Location Section -->
       <div class="form-section">
         <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
         <div class="form-group">
@@ -589,7 +641,6 @@
         </div>
       </div>
       
-      <!-- Date and Time Section -->
       <div class="form-section">
         <h2><i class="fas fa-clock"></i> Date and Time</h2>
         <div class="form-group">
@@ -609,7 +660,6 @@
         </div>
       </div>
       
-      <!-- Supporting Document Section -->
       <div class="form-section">
         <h2><i class="fas fa-file-alt"></i> Supporting Document</h2>
         <div class="form-group">
@@ -624,7 +674,6 @@
         </div>
       </div>
       
-      <!-- Office Assets Section -->
       <div class="form-section">
         <h2><i class="fas fa-building"></i> Office Assets</h2>
         <div class="form-group">
@@ -633,7 +682,6 @@
         </div>
       </div>
       
-      <!-- Devices Section -->
       <div class="form-section">
         <h2><i class="fas fa-laptop"></i> Devices (Optional)</h2>
         <div class="form-group">
@@ -642,7 +690,6 @@
         </div>
       </div>
       
-      <!-- Accompanying Colleagues Section -->
       <div class="form-section">
         <h2><i class="fas fa-users"></i> Accompanying Colleagues</h2>
         <div class="form-group">
@@ -651,7 +698,6 @@
         </div>
       </div>
       
-      <!-- Affiliated Company Section -->
       <div class="form-section">
         <h2><i class="fas fa-briefcase"></i> Affiliated Company</h2>
         <div class="form-group">
@@ -664,7 +710,6 @@
         </div>
       </div>
       
-      <!-- Budgeting Section -->
       <div class="form-section">
         <h2><i class="fas fa-money-bill-wave"></i> Budgeting</h2>
         <div id="budgetItems"></div>
@@ -672,7 +717,6 @@
           <i class="fas fa-plus-circle"></i> Add Budget
         </button>
         
-        <!-- Quotation upload (initially hidden) -->
         <div id="quotationSection" class="form-group hidden">
           <label>Upload Quotation (XLSX only):</label>
           <div id="quotationUpload" class="file-upload">
@@ -685,7 +729,6 @@
         </div>
       </div>
       
-      <!-- Submit Button -->
       <div class="submit-section">
         <button type="submit" id="submitBtn" class="pulse">
           <i class="fas fa-paper-plane"></i> Submit Event
@@ -695,15 +738,11 @@
     </form>
   </div>
 
-  <!-- jQuery (required for Select2) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Select2 for better dropdowns -->
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <!-- Flatpickr for date/time -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
   <script>
-    
     var userInfo = {};
     var formOptions = {};
     var timeSlotCounter = 0;
@@ -715,35 +754,28 @@
     var mapsApiKey = "";
     var formLoaded = false;
     
-    
     function initForm() {
-      
       document.getElementById('initialLoader').classList.remove('hidden');
       document.getElementById('formContainer').classList.remove('loaded');
-      
       
       google.script.run
         .withSuccessHandler(handleUserInfo)
         .withFailureHandler(handleError)
         .getUserInfo();
       
-      
       google.script.run
         .withSuccessHandler(handleFormOptions)
         .withFailureHandler(handleError)
         .getFormOptions();
-      
       
       google.script.run
         .withSuccessHandler(initMapsApi)
         .withFailureHandler(handleError)
         .getMapsApiKey();
       
-      
       document.getElementById('addTimeSlot').addEventListener('click', addTimeSlot);
       document.getElementById('addBudget').addEventListener('click', addBudgetItem);
       document.getElementById('eventForm').addEventListener('submit', handleSubmit);
-      
       
       document.getElementById('timeSlots').addEventListener('click', function(e) {
         if (e.target && e.target.classList.contains('btn-danger')) {
@@ -763,7 +795,6 @@
         }
       });
       
-      
       setupFileUpload('documentUpload', 'documentFile', 'documentName', 'documentError', function(file) {
         if (file.size > 5 * 1024 * 1024) {
           document.getElementById('documentError').textContent = 'File size exceeds 5MB limit';
@@ -772,7 +803,6 @@
         documentFile = file;
         return true;
       });
-      
       
       setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
         if (!file.name.endsWith('.xlsx')) {
@@ -783,17 +813,14 @@
         return true;
       });
       
-      
       initDatepickers();
     }
-    
     
     function initDatepickers() {
       flatpickr("#startDate", {
         dateFormat: "Y-m-d",
         minDate: "today",
         onChange: function(selectedDates, dateStr) {
-          
           endDatePicker.set("minDate", dateStr);
           validateDates();
         }
@@ -808,10 +835,8 @@
       });
     }
     
-    
     function initMapsApi(apiKey) {
       mapsApiKey = apiKey;
-      
       
       var script = document.createElement('script');
       script.src = "https://maps.googleapis.com/maps/api/js?key=" + apiKey + "&libraries=places&callback=initGoogleMaps";
@@ -820,17 +845,14 @@
       document.head.appendChild(script);
     }
     
-    
     function handleUserInfo(info) {
       userInfo = info;
       document.getElementById('username').value = info.username;
       checkFormLoaded();
     }
     
-    
     function handleFormOptions(options) {
       formOptions = options;
-      
       
       var eventTypeSelect = document.getElementById('eventType');
       eventTypeSelect.innerHTML = '<option value="">Select Event Type</option>';
@@ -841,7 +863,6 @@
         eventTypeSelect.appendChild(option);
       });
       
-      
       var assetsSelect = document.getElementById('officeAssets');
       assetsSelect.innerHTML = '';
       options.officeAssets.forEach(function(asset) {
@@ -850,7 +871,6 @@
         option.textContent = asset;
         assetsSelect.appendChild(option);
       });
-      
       
       var devicesSelect = document.getElementById('devices');
       devicesSelect.innerHTML = '';
@@ -861,7 +881,6 @@
         devicesSelect.appendChild(option);
       });
       
-      
       var colleaguesSelect = document.getElementById('colleagues');
       colleaguesSelect.innerHTML = '';
       options.colleagues.forEach(function(colleague) {
@@ -870,7 +889,6 @@
         option.textContent = colleague;
         colleaguesSelect.appendChild(option);
       });
-      
       
       $('.multiselect').select2({
         placeholder: "Select options",
@@ -882,11 +900,9 @@
       checkFormLoaded();
     }
     
-    
     function checkFormLoaded() {
       if (userInfo.username && formOptions.eventTypes && !formLoaded) {
         formLoaded = true;
-        
         
         setTimeout(function() {
           document.getElementById('initialLoader').classList.add('hidden');
@@ -894,7 +910,6 @@
         }, 1000);
       }
     }
-    
     
     function addTimeSlot() {
       var startDate = document.getElementById('startDate').value;
@@ -944,7 +959,6 @@
       
       document.getElementById('timeSlots').appendChild(timeSlotDiv);
       
-      
       flatpickr(dateInput, {
         dateFormat: "Y-m-d",
         minDate: startDate,
@@ -965,7 +979,6 @@
         time_24hr: true
       });
       
-      
       timeSlotDiv.style.opacity = '0';
       timeSlotDiv.style.transform = 'translateY(20px)';
       
@@ -976,11 +989,9 @@
       }, 10);
     }
     
-    
     function removeTimeSlot(id) {
       var timeSlot = document.getElementById('timeSlot-' + id);
       if (timeSlot) {
-        
         timeSlot.style.transition = 'all 0.3s ease';
         timeSlot.style.opacity = '0';
         timeSlot.style.transform = 'translateY(-20px)';
@@ -990,7 +1001,6 @@
         }, 300);
       }
     }
-    
     
     function addBudgetItem() {
       var id = budgetCounter++;
@@ -1002,12 +1012,10 @@
       budgetTypeSelect.name = 'budgetType-' + id;
       budgetTypeSelect.required = true;
       
-      
       var defaultOption = document.createElement('option');
       defaultOption.value = '';
       defaultOption.textContent = 'Select Budget Type';
       budgetTypeSelect.appendChild(defaultOption);
-      
       
       formOptions.budgetTypes.forEach(function(type) {
         var option = document.createElement('option');
@@ -1036,9 +1044,7 @@
       
       document.getElementById('budgetItems').appendChild(budgetDiv);
       
-      
       document.getElementById('quotationSection').classList.remove('hidden');
-      
       
       budgetDiv.style.opacity = '0';
       budgetDiv.style.transform = 'translateY(20px)';
@@ -1050,11 +1056,9 @@
       }, 10);
     }
     
-    
     function removeBudgetItem(id) {
       var budgetItem = document.getElementById('budget-' + id);
       if (budgetItem) {
-        
         budgetItem.style.transition = 'all 0.3s ease';
         budgetItem.style.opacity = '0';
         budgetItem.style.transform = 'translateY(-20px)';
@@ -1062,16 +1066,81 @@
         setTimeout(function() {
           budgetItem.parentNode.removeChild(budgetItem);
           
-          
           var budgetItems = document.getElementById('budgetItems');
           if (budgetItems.children.length === 0) {
-            
             document.getElementById('quotationSection').classList.add('hidden');
           }
         }, 300);
       }
     }
     
+    function deleteUploadedFile(fileType) {
+      if (fileType === 'document') {
+        documentFile = null;
+        
+        var docFileInput = document.getElementById('documentFile');
+        var docParent = docFileInput.parentNode;
+        var newDocInput = document.createElement('input');
+        newDocInput.type = 'file';
+        newDocInput.id = 'documentFile';
+        newDocInput.name = 'documentFile';
+        newDocInput.style.display = 'none';
+        docParent.replaceChild(newDocInput, docFileInput);
+        
+        var documentName = document.getElementById('documentName');
+        documentName.classList.add('removing');
+        
+        setTimeout(function() {
+          documentName.classList.add('hidden');
+          documentName.classList.remove('removing');
+          documentName.innerHTML = '';
+        }, 300);
+        
+        document.getElementById('documentError').textContent = '';
+        
+        setupFileUpload('documentUpload', 'documentFile', 'documentName', 'documentError', function(file) {
+          if (file.size > 5 * 1024 * 1024) {
+            document.getElementById('documentError').textContent = 'File size exceeds 5MB limit';
+            return false;
+          }
+          documentFile = file;
+          return true;
+        });
+        
+      } else if (fileType === 'quotation') {
+        quotationFile = null;
+        
+        var quotFileInput = document.getElementById('quotationFile');
+        var quotParent = quotFileInput.parentNode;
+        var newQuotInput = document.createElement('input');
+        newQuotInput.type = 'file';
+        newQuotInput.id = 'quotationFile';
+        newQuotInput.name = 'quotationFile';
+        newQuotInput.accept = '.xlsx';
+        newQuotInput.style.display = 'none';
+        quotParent.replaceChild(newQuotInput, quotFileInput);
+        
+        var quotationName = document.getElementById('quotationName');
+        quotationName.classList.add('removing');
+        
+        setTimeout(function() {
+          quotationName.classList.add('hidden');
+          quotationName.classList.remove('removing');
+          quotationName.innerHTML = '';
+        }, 300);
+        
+        document.getElementById('quotationError').textContent = '';
+        
+        setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
+          if (!file.name.endsWith('.xlsx')) {
+            document.getElementById('quotationError').textContent = 'Only XLSX files are allowed';
+            return false;
+          }
+          quotationFile = file;
+          return true;
+        });
+      }
+    }
     
     function setupFileUpload(dropAreaId, fileInputId, fileNameId, errorId, validateFn) {
       var dropArea = document.getElementById(dropAreaId);
@@ -1079,11 +1148,9 @@
       var fileNameDisplay = document.getElementById(fileNameId);
       var errorDisplay = document.getElementById(errorId);
       
-      
       dropArea.addEventListener('click', function() {
         fileInput.click();
       });
-      
       
       fileInput.addEventListener('change', function() {
         if (fileInput.files.length > 0) {
@@ -1091,7 +1158,13 @@
           errorDisplay.textContent = '';
           
           if (validateFn(file)) {
-            fileNameDisplay.innerHTML = '<i class="fas fa-file"></i> ' + file.name;
+            var fileType = fileNameId === 'documentName' ? 'document' : 'quotation';
+            fileNameDisplay.innerHTML = 
+              '<i class="fas fa-file"></i>' +
+              '<span class="file-text">' + file.name + '</span>' +
+              '<button type="button" class="file-delete-btn" onclick="deleteUploadedFile(\'' + fileType + '\')" title="Delete file">' +
+              '<i class="fas fa-times"></i>' +
+              '</button>';
             fileNameDisplay.classList.remove('hidden');
           } else {
             fileInput.value = '';
@@ -1099,7 +1172,6 @@
           }
         }
       });
-      
       
       ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(eventName) {
         dropArea.addEventListener(eventName, preventDefaults, false);
@@ -1127,9 +1199,14 @@
         errorDisplay.textContent = '';
         
         if (validateFn(file)) {
-          fileNameDisplay.innerHTML = '<i class="fas fa-file"></i> ' + file.name;
+          var fileType = fileNameId === 'documentName' ? 'document' : 'quotation';
+          fileNameDisplay.innerHTML = 
+            '<i class="fas fa-file"></i>' +
+            '<span class="file-text">' + file.name + '</span>' +
+            '<button type="button" class="file-delete-btn" onclick="deleteUploadedFile(\'' + fileType + '\')" title="Delete file">' +
+            '<i class="fas fa-times"></i>' +
+            '</button>';
           fileNameDisplay.classList.remove('hidden');
-          
           
           var dataTransfer = new DataTransfer();
           dataTransfer.items.add(file);
@@ -1140,7 +1217,6 @@
       });
     }
     
-    
     function validateDates() {
       var startDate = document.getElementById('startDate').value;
       var endDate = document.getElementById('endDate').value;
@@ -1150,7 +1226,6 @@
         document.getElementById('endDate').value = '';
       }
       
-      
       if (startDate && endDate) {
         var timeSlots = document.querySelectorAll('.timeslot-date');
         timeSlots.forEach(function(slot) {
@@ -1158,7 +1233,6 @@
           if (fp) {
             fp.set("minDate", startDate);
             fp.set("maxDate", endDate);
-            
             
             if (slot.value && (new Date(slot.value) < new Date(startDate) || new Date(slot.value) > new Date(endDate))) {
               fp.clear();
@@ -1168,11 +1242,9 @@
       }
     }
     
-    
     function initGoogleMaps() {
-      
       map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 3.1569, lng: 101.7123 }, 
+        center: { lat: 3.1569, lng: 101.7123 },
         zoom: 13,
         styles: [
           {
@@ -1199,10 +1271,8 @@
         ]
       });
       
-      
       var input = document.getElementById('location');
       autocomplete = new google.maps.places.Autocomplete(input);
-      
       
       autocomplete.addListener('place_changed', function() {
         var place = autocomplete.getPlace();
@@ -1212,7 +1282,6 @@
           document.getElementById('map').classList.add('hidden');
           return;
         }
-        
         
         var mapElement = document.getElementById('map');
         mapElement.classList.remove('hidden');
@@ -1224,11 +1293,9 @@
           mapElement.style.opacity = '1';
           mapElement.style.transform = 'translateY(0)';
           
-          
           google.maps.event.trigger(map, 'resize');
           map.setCenter(place.geometry.location);
         }, 10);
-        
         
         new google.maps.Marker({
           map: map,
@@ -1244,7 +1311,6 @@
           }
         });
         
-        
         document.getElementById('locationStatus').innerHTML = '<span class="loading"></span> Calculating distance...';
         
         google.script.run
@@ -1256,7 +1322,6 @@
       checkFormLoaded();
     }
     
-    
     function handleLocationStatus(result) {
       var statusElement = document.getElementById('locationStatus');
       
@@ -1265,7 +1330,6 @@
       } else {
         statusElement.innerHTML = '<i class="fas fa-info-circle"></i> Location Status: ' + result.status + ' (' + result.country + ')';
       }
-      
       
       statusElement.style.opacity = '0';
       statusElement.style.transform = 'translateY(10px)';
@@ -1277,24 +1341,19 @@
       }, 10);
     }
     
-    
     function handleLocationError(error) {
       document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error calculating distance';
       console.error('Location error:', error);
     }
     
-    
     function handleSubmit(e) {
       e.preventDefault();
-      
       
       if (!validateForm()) {
         return;
       }
       
-      
       var formData = collectFormData();
-      
       
       var submitBtn = document.getElementById('submitBtn');
       var submitStatus = document.getElementById('submitStatus');
@@ -1302,10 +1361,8 @@
       submitBtn.classList.remove('pulse');
       submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
 
-      
       var documentBlob = null;
       var quotationBlob = null;
-      
       
       if (documentFile) {
         var reader = new FileReader();
@@ -1315,7 +1372,6 @@
           mimeType: documentFile.type,
           filename: documentFile.name
         };
-          
           
           if (quotationFile) {
             var quotationReader = new FileReader();
@@ -1327,18 +1383,15 @@
             };
 
               
-              
               submitFormWithFiles(formData, documentBlob, quotationBlob);
             };
             quotationReader.readAsDataURL(quotationFile);
           } else {
-            
             submitFormWithFiles(formData, documentBlob, null);
           }
         };
         reader.readAsDataURL(documentFile);
       } else if (quotationFile) {
-        
         var quotationReader = new FileReader();
         quotationReader.onload = function(e) {
           quotationBlob = {
@@ -1347,16 +1400,13 @@
             filename: quotationFile.name
           };
           
-          
           submitFormWithFiles(formData, null, quotationBlob);
         };
         quotationReader.readAsDataURL(quotationFile);
       } else {
-        
         submitFormWithFiles(formData, null, null);
       }
     }
-    
     
     function submitFormWithFiles(formData, documentBlob, quotationBlob) {
       google.script.run
@@ -1365,15 +1415,12 @@
         .processForm(formData, documentBlob, quotationBlob);
     }
     
-    
     function validateForm() {
-      
       var timeSlots = document.getElementById('timeSlots');
       if (timeSlots.children.length === 0) {
         alert('Please add at least one time slot');
         return false;
       }
-      
       
       var timeSlotValues = [];
       var hasDuplicates = false;
@@ -1400,7 +1447,6 @@
         return false;
       }
 
-      
       var hasInvalidTimeRange = false;
 
       for (var i = 0; i < timeSlotCounter; i++) {
@@ -1408,7 +1454,6 @@
         var endTimeInput = document.querySelector('[name="timeSlotEndTime-' + i + '"]');
 
         if (startTimeInput && endTimeInput && startTimeInput.value && endTimeInput.value) {
-          
           if (startTimeInput.value >= endTimeInput.value) {
             hasInvalidTimeRange = true;
             break;
@@ -1421,7 +1466,6 @@
         return false;
       }
       
-      
       var budgetItems = document.getElementById('budgetItems');
       if (budgetItems.children.length > 0 && !quotationFile) {
         alert('Please upload a quotation file for your budget items');
@@ -1431,15 +1475,13 @@
       return true;
     }
     
-    
     function collectFormData() {
       var form = document.getElementById('eventForm');
       var formData = new FormData(form);
       var data = {};
       
-      
       data.username = formData.get('username');
-      data.email = userInfo.email; 
+      data.email = userInfo.email;
       data.eventName = formData.get('eventName');
       data.eventType = formData.get('eventType');
       data.location = formData.get('location');
@@ -1447,7 +1489,6 @@
       data.startDate = formData.get('startDate');
       data.endDate = formData.get('endDate');
       data.company = formData.get('company');
-      
       
       data.timeSlots = [];
       for (var i = 0; i < timeSlotCounter; i++) {
@@ -1464,21 +1505,17 @@
         }
       }
       
-      
       data.officeAssets = Array.from(document.getElementById('officeAssets').selectedOptions).map(function(option) {
         return option.value;
       });
-      
       
       data.devices = Array.from(document.getElementById('devices').selectedOptions).map(function(option) {
         return option.value;
       });
       
-      
       data.colleagues = Array.from(document.getElementById('colleagues').selectedOptions).map(function(option) {
         return option.value;
       });
-      
       
       data.budgetItems = [];
       for (var j = 0; j < budgetCounter; j++) {
@@ -1493,7 +1530,6 @@
         }
       }
       
-      
       if (documentFile) {
         data.documentName = documentFile.name;
       }
@@ -1505,7 +1541,6 @@
       return data;
     }
     
-    
     function handleSubmitSuccess(result) {
       var submitBtn = document.getElementById('submitBtn');
       var submitStatus = document.getElementById('submitStatus');
@@ -1515,11 +1550,9 @@
       submitBtn.classList.add('pulse');
       
       if (result.success) {
-        
         document.getElementById('eventForm').reset();
         document.getElementById('timeSlots').innerHTML = '';
         document.getElementById('budgetItems').innerHTML = '';
-        
         
         document.getElementById('documentName').innerHTML = '';
         document.getElementById('documentName').classList.add('hidden');
@@ -1529,7 +1562,6 @@
         document.getElementById('map').classList.add('hidden');
         document.getElementById('locationStatus').textContent = '';
 
-        
         var docFileInput = document.getElementById('documentFile');
         var docParent = docFileInput.parentNode;
         var newDocInput = document.createElement('input');
@@ -1549,17 +1581,13 @@
         newQuotInput.style.display = 'none';
         quotParent.replaceChild(newQuotInput, quotFileInput);
         
-        
         documentFile = null;
         quotationFile = null;
         
-        
         $('.multiselect').val(null).trigger('change');
-        
         
         timeSlotCounter = 0;
         budgetCounter = 0;
-        
         
         submitStatus.innerHTML = 
           '<div class="success-message">' +
@@ -1568,12 +1596,9 @@
           '<p>Event ID: ' + result.eventId + '</p>' +
           '</div>';
         
-        
         document.getElementById('username').value = userInfo.username;
         
-        
         submitStatus.scrollIntoView({ behavior: 'smooth' });
-        
         
         setupFileUpload('documentUpload', 'documentFile', 'documentName', 'documentError', function(file) {
           if (file.size > 5 * 1024 * 1024) {
@@ -1602,7 +1627,6 @@
       }
     }
     
-    
     function handleSubmitError(error) {
       var submitBtn = document.getElementById('submitBtn');
       var submitStatus = document.getElementById('submitStatus');
@@ -1619,10 +1643,8 @@
         '</div>';
     }
     
-    
     function handleError(error) {
       console.error('Error:', error);
-      
       
       document.getElementById('initialLoader').classList.add('hidden');
       document.getElementById('formContainer').classList.add('loaded');
@@ -1630,11 +1652,9 @@
       alert('An error occurred: ' + error);
     }
     
-    
     window.onload = function() {
       initForm();
     };
-    
     
     window.initGoogleMaps = initGoogleMaps;
   </script>
