@@ -362,7 +362,6 @@
       border-left: 4px solid #1976d2;
     }
     
-    /* Custom Modal Styles */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -475,6 +474,43 @@
     .modal-icon.info {
       color: var(--color-secondary);
     }
+
+    .file-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    .delete-file-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: auto;
+      height: auto;
+    }
+
+    .delete-file-btn:hover {
+      background-color: #ff3333;
+      transform: translateY(-2px);
+    }
+
+    .delete-file-btn:active {
+      transform: translateY(0);
+    }
+
+    .file-drop-area:not(.file-uploaded) .delete-file-btn {
+      display: none;
+    }
     
     @media (max-width: 768px) {
       .container {
@@ -502,34 +538,41 @@
       .modal {
         width: 95%;
       }
+
+      .file-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .delete-file-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
 
-        /* For WebKit Browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-lighter); /* light green */
+  background: var(--color-lighter);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary); /* deep purple */
+  background-color: var(--color-primary);
   border-radius: 10px;
   border: 2px solid var(--color-lighter);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-secondary); /* dark teal */
+  background-color: var(--color-secondary);
 }
 
-/* For Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-primary) var(--color-lighter);
 }
 
-/* CSS Variables */
 :root {
   --color-primary: #2D0C31;
   --color-secondary: #004D4D;
@@ -544,7 +587,6 @@
     <div class="loading-spinner"></div>
   </div>
   
-  <!-- Custom Modal -->
   <div id="customModal" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
@@ -647,7 +689,7 @@
     let itemCount = 1;
     let uploadedFilesCount = 0;
     let totalFilesNeeded = 0;
-    let eventIdMap = {}; 
+    let eventIdMap = {};
 
     function showSpinner() {
       document.getElementById('loadingOverlay').style.display = 'flex';
@@ -657,7 +699,6 @@
       document.getElementById('loadingOverlay').style.display = 'none';
     }
     
-    
     function showModal(type, title, message, callback) {
       const modal = document.getElementById('customModal');
       const modalTitle = document.getElementById('modalTitle');
@@ -666,10 +707,8 @@
       const modalIcon = document.getElementById('modalIcon');
       const closeBtn = document.getElementById('modalCloseBtn');
       
-      
       modalTitle.textContent = title;
       modalMessage.textContent = message;
-      
       
       if (type === 'success') {
         modalHeaderIcon.className = 'fas fa-check-circle';
@@ -682,7 +721,6 @@
         modalIcon.className = 'fas fa-info-circle modal-icon info';
       }
       
-      
       closeBtn.onclick = function() {
         hideModal();
         if (callback && typeof callback === 'function') {
@@ -690,9 +728,7 @@
         }
       };
       
-      
       modal.classList.add('active');
-      
       
       modal.onclick = function(e) {
         if (e.target === modal) {
@@ -774,9 +810,7 @@
     }
 
     function resetForm() {
-      
       document.getElementById('advancePaymentForm').reset();
-      
       
       const itemsContainer = document.getElementById('itemsContainer');
       itemsContainer.innerHTML = `
@@ -792,34 +826,50 @@
         </div>
       `;
       
-      
       itemCount = 1;
       
-      
       document.getElementById('totalAmount').innerHTML = '<i class="fas fa-money-bill-wave"></i> Total Amount: RM 0.00';
-      
       
       document.getElementById('invoiceForm').reset();
       document.getElementById('invoiceItemsContainer').innerHTML = '';
       document.getElementById('invoiceNotification').innerHTML = '';
       document.getElementById('submitInvoicesBtn').style.display = 'none';
       
-      
       uploadedFilesCount = 0;
       totalFilesNeeded = 0;
       
-      
       document.getElementById('eventId').value = '';
-      
       
       initializePage();
     }
 
-    
+    function deleteUploadedFile(rowIndex) {
+      const dropArea = document.getElementById(`dropArea${rowIndex}`);
+      const fileInput = document.getElementById(`file${rowIndex}`);
+      const fileName = dropArea.querySelector('.file-name');
+      const fileError = document.getElementById(`fileError${rowIndex}`);
+      
+      fileInput.value = '';
+      
+      dropArea.classList.remove('file-uploaded');
+      dropArea.querySelector('.file-icon').className = 'fas fa-file-upload file-icon';
+      
+      fileName.textContent = '';
+      
+      fileError.textContent = '';
+      
+      if (dropArea.classList.contains('counted')) {
+        uploadedFilesCount--;
+        dropArea.classList.remove('counted');
+        checkAllFilesUploaded();
+      }
+      
+      showModal('info', 'File Removed', 'The uploaded file has been removed successfully.');
+    }
+
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
         event.preventDefault();
-        
         
         if (document.activeElement === document.getElementById('transactionId')) {
           fetchInvoiceItems();
@@ -829,7 +879,6 @@
       }
     });
 
-    
     document.getElementById('eventName').addEventListener('change', function() {
       const selectedEvent = this.value;
       const eventId = eventIdMap[selectedEvent] || '';
@@ -846,7 +895,7 @@
       const formData = {
         username: document.getElementById('username').value,
         eventName: document.getElementById('eventName').value,
-        eventId: document.getElementById('eventId').value, 
+        eventId: document.getElementById('eventId').value,
         items: [],
         remarks: document.getElementById('remarks').value,
         totalAmount: parseFloat(document.getElementById('totalAmount').textContent.split('RM ')[1])
@@ -866,18 +915,16 @@
           submitBtn.disabled = false;
           spinner.style.display = 'none';
           
-          
           showModal(
             'success', 
             'Success!', 
             'Form submitted successfully. Advance Purchase ID: ' + transactionId,
-            resetForm 
+            resetForm
           );
         })
         .withFailureHandler(function(error) {
           submitBtn.disabled = false;
           spinner.style.display = 'none';
-          
           
           showModal('error', 'Error', 'Error submitting form: ' + error);
         })
@@ -918,7 +965,6 @@
           ${message}
         </div>
       `;
-      
       
       setTimeout(() => {
         notificationContainer.innerHTML = '';
@@ -966,6 +1012,11 @@
               <p class="file-name"></p>
               <p><i class="fas fa-info-circle"></i> Max file size: 5MB</p>
               <input type="file" id="file${row.rowIndex}" accept="image/*,.pdf" required style="display: none;">
+              <div class="file-controls">
+                <button type="button" class="delete-file-btn" onclick="deleteUploadedFile(${row.rowIndex})">
+                  <i class="fa-solid fa-x"></i>
+                </button>
+              </div>
             </div>
             <div class="file-error" id="fileError${row.rowIndex}"></div>
           `;
@@ -976,7 +1027,11 @@
           const fileError = div.querySelector('.file-error');
           const fileName = div.querySelector('.file-name');
           
-          dropArea.addEventListener('click', () => fileInput.click());
+          dropArea.addEventListener('click', function(e) {
+            if (!e.target.closest('.delete-file-btn')) {
+              fileInput.click();
+            }
+          });
           
           ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
@@ -1038,7 +1093,6 @@
 
     document.getElementById('invoiceForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      
       
       if (uploadedFilesCount === 0) {
         showModal('error', 'Error', 'Please upload at least one invoice file before submitting');
@@ -1111,18 +1165,16 @@
             submitBtn.disabled = false;
             spinner.style.display = 'none';
             
-            
             showModal(
               'success', 
               'Success!', 
               'Invoices submitted successfully!',
-              resetForm 
+              resetForm
             );
           })
           .withFailureHandler(function(error) {
             submitBtn.disabled = false;
             spinner.style.display = 'none';
-            
             
             showModal('error', 'Error', 'Error submitting invoices: ' + error);
           })
@@ -1132,7 +1184,6 @@
 
     function initializePage() {
       showSpinner();
-      
       
       document.getElementById('transactionId').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
@@ -1156,16 +1207,13 @@
               const select = document.getElementById('eventName');
               select.innerHTML = '<option value="" disabled selected>Select an event</option>';
               
-              
               eventIdMap = {};
-              
               
               eventData.forEach(function(event) {
                 const opt = document.createElement('option');
                 opt.value = event.name;
                 opt.textContent = event.name;
                 select.appendChild(opt);
-                
                 
                 eventIdMap[event.name] = event.id;
               });
@@ -1179,7 +1227,6 @@
 
       document.getElementById('itemsContainer').addEventListener('input', updateTotalAmount);
       
-      
       document.querySelectorAll('form').forEach(form => {
         form.addEventListener('keydown', function(e) {
           if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
@@ -1188,7 +1235,6 @@
           }
         });
       });
-      
       
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
