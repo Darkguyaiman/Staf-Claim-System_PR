@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings Tab</title>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -464,7 +463,6 @@
             align-items: flex-start;
         }
 
-        /* Searchable Accessories Dropdown Styles */
         .accessories-dropdown {
             position: relative;
             margin-top: 5px;
@@ -554,7 +552,6 @@
             font-size: 0.9rem;
         }
 
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -669,7 +666,6 @@
             transform: none;
         }
 
-        /* Button spinner styles */
         .btn-spinner {
             width: 16px;
             height: 16px;
@@ -680,7 +676,6 @@
             margin-right: 5px;
         }
 
-        /* Alert modal */
         .alert-modal {
             display: none;
             position: fixed;
@@ -743,7 +738,6 @@
             gap: 10px;
         }
 
-        /* Confirmation modal */
         .confirm-modal {
             display: none;
             position: fixed;
@@ -868,8 +862,6 @@
           scrollbar-color: var(--color-primary) var(--color-lighter);
         }
 
-
-        /* Sidebar Styles */
         .sidebar {
           width: 250px;
           height: 100vh;
@@ -883,8 +875,8 @@
           z-index: 100;
           transition: all 0.3s ease;
           overflow-y: auto;
-          scrollbar-width: none; /* Firefox */
-          -ms-overflow-style: none; /* Internet Explorer 10+ */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
         }
 
         .sidebar::-webkit-scrollbar {
@@ -988,7 +980,7 @@
         .sidebar-toggle {
           position: fixed;
           top: 10px;
-          left: 260px; /* Positioned outside the sidebar */
+          left: 260px;
           width: 40px;
           height: 40px;
           background-color: var(--color-primary);
@@ -1048,7 +1040,6 @@
           width: calc(100% - 60px);
         }
 
-        /* Mobile styles */
         @media (max-width: 768px) {
           .sidebar {
             transform: translateX(-100%);
@@ -1069,7 +1060,7 @@
           .main-content {
             margin-left: 0;
             width: 100%;
-            padding-top: 60px; /* Space for the mobile toggle button */
+            padding-top: 60px;
           }
           
           .main-content.expanded {
@@ -1085,7 +1076,6 @@
             display: flex;
           }
           
-          /* Add overlay when sidebar is open on mobile */
           .sidebar-overlay {
             display: none;
             position: fixed;
@@ -1101,13 +1091,11 @@
             display: block;
           }
           
-          /* Adjust container padding for mobile */
           .container {
             padding: 15px;
           }
         }
 
-        /* Small mobile devices */
         @media (max-width: 480px) {
           .sidebar {
             width: 85%;
@@ -1128,7 +1116,6 @@
     </style>
 </head>
 <body>
-<!-- Sidebar HTML -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">
@@ -1168,17 +1155,14 @@
   </div>
 </aside>
 
-<!-- Sidebar toggle button -->
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
   <i class="fas fa-bars"></i>
 </button>
 
-<!-- Mobile sidebar toggle button -->
 <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" aria-label="Toggle mobile sidebar">
   <i class="fas fa-bars"></i>
 </button>
 
-<!-- Main content -->
 <main class="main-content" id="mainContent">
     <div class="container">
         <header>
@@ -1196,7 +1180,6 @@
         </div>
         
         <div id="content" style="display: none;">
-            <!-- Users Section -->
             <section class="section">
                 <div class="section-header">
                     <h2><i class="fas fa-users section-icon"></i> Users</h2>
@@ -1204,12 +1187,10 @@
                 </div>
                 <div class="subsection">
                     <div id="users-container" class="cards-container">
-                        <!-- Users will be populated here -->
                     </div>
                 </div>
             </section>
             
-            <!-- Admins Section -->
             <section class="section">
                 <div class="section-header">
                     <h2><i class="fas fa-user-shield section-icon"></i> Administrators</h2>
@@ -1217,12 +1198,10 @@
                 </div>
                 <div class="subsection">
                     <div id="admins-container" class="cards-container">
-                        <!-- Admins will be populated here -->
                     </div>
                 </div>
             </section>
             
-            <!-- Events Section -->
             <section class="section">
                 <div class="section-header">
                     <h2><i class="fas fa-calendar-alt section-icon"></i> Events</h2>
@@ -1233,12 +1212,10 @@
                         <button class="add-btn-small" onclick="openAddModal('eventType')"><i class="fas fa-plus"></i> Add Event Type</button>
                     </div>
                     <div id="event-types-container" class="list-container">
-                        <!-- Event types will be populated here -->
                     </div>
                 </div>
             </section>
             
-            <!-- Petty Cash Section -->
             <section class="section">
                 <div class="section-header">
                     <h2><i class="fas fa-money-bill-wave section-icon"></i> Petty Cash</h2>
@@ -1249,12 +1226,10 @@
                         <button class="add-btn-small" onclick="openAddModal('pettyCashType')"><i class="fas fa-plus"></i> Add Transaction Type</button>
                     </div>
                     <div id="petty-cash-container" class="list-container">
-                        <!-- Petty cash types will be populated here -->
                     </div>
                 </div>
             </section>
             
-            <!-- Expenses and Budget Section -->
             <section class="section">
                 <div class="section-header">
                     <h2><i class="fas fa-chart-pie section-icon"></i> Expenses and Budget</h2>
@@ -1265,12 +1240,10 @@
                         <button class="add-btn-small" onclick="openAddModal('expensesBudgetType')"><i class="fas fa-plus"></i> Add Expense Type</button>
                     </div>
                     <div id="expenses-budget-container" class="list-container">
-                        <!-- Expenses and budget types will be populated here -->
                     </div>
                 </div>
             </section>
             
-            <!-- Company Assets Section -->
             <section class="section">
                 <div class="section-header">
                     <h2><i class="fas fa-building section-icon"></i> Company Assets</h2>
@@ -1282,7 +1255,6 @@
                         <button class="add-btn-small" onclick="openAddModal('officeAsset')"><i class="fas fa-plus"></i> Add Office Asset</button>
                     </div>
                     <div id="office-assets-container" class="list-container">
-                        <!-- Office assets will be populated here -->
                     </div>
                 </div>
                 
@@ -1292,7 +1264,6 @@
                         <button class="add-btn-small" onclick="openAddModal('companyCar')"><i class="fas fa-plus"></i> Add Company Car</button>
                     </div>
                     <div id="company-cars-container" class="list-container">
-                        <!-- Company cars will be populated here -->
                     </div>
                 </div>
                 
@@ -1302,7 +1273,6 @@
                         <button class="add-btn-small" onclick="openAddModal('device')"><i class="fas fa-plus"></i> Add Device</button>
                     </div>
                     <div id="devices-container" class="cards-container">
-                        <!-- Devices will be populated here -->
                     </div>
                 </div>
                 
@@ -1312,14 +1282,12 @@
                         <button class="add-btn-small" onclick="openAddModal('accessory')"><i class="fas fa-plus"></i> Add Accessory</button>
                     </div>
                     <div id="accessories-container" class="list-container">
-                        <!-- Accessories will be populated here -->
                     </div>
                 </div>
             </section>
         </div>
     </div>
 
-    <!-- Modal for Add/Edit -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1327,7 +1295,6 @@
                 <button class="close" onclick="closeModal()">&times;</button>
             </div>
             <div id="modal-body">
-                <!-- Form content will be populated here -->
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
@@ -1336,7 +1303,6 @@
         </div>
     </div>
 
-    <!-- Alert Modal -->
     <div id="alert-modal" class="alert-modal">
         <div class="alert-content">
             <div id="alert-icon" class="alert-icon">
@@ -1350,7 +1316,6 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
     <div id="confirm-modal" class="confirm-modal">
         <div class="confirm-content">
             <div class="confirm-icon">
@@ -1482,7 +1447,7 @@
             availableAccessories = data.accessories || [];
             document.getElementById('content').style.display = 'block';
 
-            populateUsers(data.users);
+            populateUsers(data.users, data.admins);
             populateAdmins(data.admins);
             populateEventTypes(data.eventTypes);
             populatePettyCashTypes(data.pettyCashTypes);
@@ -1503,22 +1468,28 @@
             document.getElementById('error-message').textContent = message;
         }
 
-        function populateUsers(users) {
+        function populateUsers(users, admins) {
             const container = document.getElementById('users-container');
             container.innerHTML = '';
             
-            if (users.length === 0) {
+            const adminEmails = new Set(admins.map(admin => admin.email));
+            
+            const filteredUsers = users.filter(user => !adminEmails.has(user.email));
+            
+            if (filteredUsers.length === 0) {
                 container.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i>No users found</div>';
                 return;
             }
             
-            users.forEach((user, index) => {
+            filteredUsers.forEach((user, index) => {
+                const originalIndex = users.findIndex(u => u.username === user.username && u.email === user.email);
+                
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
                     <div class="card-actions">
-                        <button class="action-btn edit-btn" onclick="editUser(${index})" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn delete-btn" onclick="deleteUser(${index})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                        <button class="action-btn edit-btn" onclick="editUser(${originalIndex})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteUser(${originalIndex})" title="Delete"><i class="fas fa-trash-alt"></i></button>
                     </div>
                     <div class="card-content">
                         <div class="card-title">${escapeHtml(user.username)}</div>
@@ -1762,7 +1733,6 @@
                                     <i class="fas fa-search accessories-search-icon"></i>
                                 </div>
                                 <div id="accessoriesDropdownList" class="accessories-dropdown-list">
-                                    <!-- Dropdown items will be populated here -->
                                 </div>
                             </div>
                         </div>
@@ -2054,11 +2024,16 @@
             switch(type) {
                 case 'user':
                     currentData.users.push(data);
-                    populateUsers(currentData.users);
+                    populateUsers(currentData.users, currentData.admins);
                     break;
                 case 'admin':
                     currentData.admins.push(data);
+                    const existingUser = currentData.users.find(user => user.email === data.email);
+                    if (!existingUser) {
+                        currentData.users.push(data);
+                    }
                     populateAdmins(currentData.admins);
+                    populateUsers(currentData.users, currentData.admins);
                     break;
                 case 'eventType':
                     currentData.eventTypes.push(data);
@@ -2096,11 +2071,21 @@
             switch(type) {
                 case 'user':
                     currentData.users[index] = data;
-                    populateUsers(currentData.users);
+                    populateUsers(currentData.users, currentData.admins);
                     break;
                 case 'admin':
+                    const oldAdmin = currentData.admins[index];
                     currentData.admins[index] = data;
+                    
+                    const userIndex = currentData.users.findIndex(user => user.email === oldAdmin.email);
+                    if (userIndex !== -1) {
+                        currentData.users[userIndex] = data;
+                    } else {
+                        currentData.users.push(data);
+                    }
+                    
                     populateAdmins(currentData.admins);
+                    populateUsers(currentData.users, currentData.admins);
                     break;
                 case 'eventType':
                     currentData.eventTypes[index] = data;
@@ -2179,7 +2164,7 @@
             showConfirm('Delete User', 'Are you sure you want to delete this user?', function() {
                 performDelete('user', index, function() {
                     currentData.users.splice(index, 1);
-                    populateUsers(currentData.users);
+                    populateUsers(currentData.users, currentData.admins);
                 });
             });
         }
@@ -2187,8 +2172,16 @@
         function deleteAdmin(index) {
             showConfirm('Delete Administrator', 'Are you sure you want to delete this administrator?', function() {
                 performDelete('admin', index, function() {
+                    const deletedAdmin = currentData.admins[index];
                     currentData.admins.splice(index, 1);
+                    
+                    const userIndex = currentData.users.findIndex(user => user.email === deletedAdmin.email);
+                    if (userIndex !== -1) {
+                        currentData.users.splice(userIndex, 1);
+                    }
+                    
                     populateAdmins(currentData.admins);
+                    populateUsers(currentData.users, currentData.admins);
                 });
             });
         }
