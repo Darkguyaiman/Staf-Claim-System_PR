@@ -48,7 +48,7 @@ function getAvailableEvents(username) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const eventSheet = ss.getSheetByName('Event Creation');
   
-  const eventData = eventSheet.getRange('A4:M').getValues();
+  const eventData = eventSheet.getRange('A4:Q').getValues();
   const availableEvents = [];
   
   for (const row of eventData) {
@@ -70,7 +70,7 @@ function getAvailableEvents(username) {
     }
     
     availableEvents.push({
-      id: row[0],
+      id: row[16],
       name: row[3],
       type: row[4],
       location: row[5],
