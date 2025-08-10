@@ -2077,17 +2077,19 @@
 
                 <div class="info-section">
                     <h3 class="section-title"><i class="fas fa-clock"></i>Time Slots</h3>
-                    <div class="info-item">
-                        <div class="info-value" id="timeSlots-display">${currentEvent.timeSlots || 'N/A'}</div>
-                        <div class="form-group" id="timeSlots-edit" style="display: none;">
-                            <div class="time-slots-container" id="timeSlots-container">
-                                <!-- Time slots will be populated here -->
-                            </div>
-                            <button type="button" class="add-time-slot" onclick="addTimeSlot()">
-                                <i class="fas fa-plus"></i> Add Time Slot
-                            </button>
-                        </div>
-                    </div>
+                      <div class="info-item">
+                          <div class="info-value" id="timeSlots-display">
+                              ${createDisplayChips(currentEvent.timeSlots, 'timeSlots')}
+                          </div>
+                          <div class="form-group" id="timeSlots-edit" style="display: none;">
+                              <div class="time-slots-container" id="timeSlots-container">
+                                  <!-- Time slots will be populated here -->
+                              </div>
+                              <button type="button" class="add-time-slot" onclick="addTimeSlot()">
+                                  <i class="fas fa-plus"></i> Add Time Slot
+                              </button>
+                          </div>
+                      </div>
                 </div>
 
                 <div class="info-section">
