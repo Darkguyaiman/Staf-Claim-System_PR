@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Claims & Allowance Management</title>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -498,7 +497,6 @@
             color: var(--color-danger);
         }
 
-        /* Allowance breakdown styles */
         .allowance-container {
             background: var(--color-white);
             border: 1px solid #e0e0e0;
@@ -617,59 +615,6 @@
             margin-right: 8px;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .claims-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 5% auto;
-            }
-
-            .detail-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .detail-item strong {
-                width: 100%;
-                display: block;
-                margin-bottom: 2px;
-            }
-
-            .daily-item-details {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        ::-webkit-scrollbar {
-          width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: var(--color-lighter);
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: var(--color-primary);
-          border-radius: 10px;
-          border: 2px solid var(--color-lighter);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background-color: var(--color-secondary);
-        }
-
-        * {
-          scrollbar-width: thin;
-          scrollbar-color: var(--color-primary) var(--color-lighter);
-        }
-
-        /* Sidebar Styles */
         .sidebar {
           width: 250px;
           height: 100vh;
@@ -849,7 +794,500 @@
           width: calc(100% - 60px);
         }
 
+        .report-button {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+            color: var(--color-white);
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+            transition: all 0.3s ease;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+        }
+
+        .report-button i {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .report-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        .report-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            background: #ccc;
+            box-shadow: none;
+        }
+
+        .report-modal-content {
+            background-color: var(--color-white);
+            margin: 1% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 95%;
+            max-width: 1000px;
+            max-height: 95vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s;
+        }
+
+        .report-form {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--color-text-light);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: var(--color-accent);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            background-color: var(--color-white);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+        }
+
+        .user-selection {
+            grid-column: 1 / -1;
+        }
+
+        /* New styles for searchable dropdown with chips */
+        .user-selector-container {
+            position: relative;
+        }
+
+        .user-search-input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            background-color: var(--color-white);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .user-search-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-lighter);
+            pointer-events: none;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--color-white);
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .user-dropdown-item.selected {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--color-accent);
+        }
+
+        .user-dropdown-item i {
+            margin-right: 8px;
+            color: var(--color-accent);
+        }
+
+        .select-all-item {
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+
+        .selected-users-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        .user-chip {
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+            color: var(--color-white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            animation: chipFadeIn 0.2s ease;
+        }
+
+        @keyframes chipFadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .user-chip .remove-chip {
+            margin-left: 8px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .user-chip .remove-chip:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-secondary) 100%);
+            color: var(--color-white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px auto 0;
+        }
+
+        .generate-btn i {
+            margin-right: 8px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .report-results {
+            padding: 20px;
+            display: none;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-accent);
+        }
+
+        .report-title {
+            color: var(--color-primary);
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .report-title i {
+            margin-right: 8px;
+            color: var(--color-accent);
+        }
+
+        .export-btn {
+            background-color: var(--color-secondary);
+            color: var(--color-white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+            font-size: 0.9em;
+        }
+
+        .export-btn i {
+            margin-right: 6px;
+        }
+
+        .export-btn:hover {
+            background-color: var(--color-primary);
+        }
+
+        .user-report {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .user-report-header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: var(--color-white);
+            padding: 12px 16px;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-report-header i {
+            margin-right: 8px;
+        }
+
+        .user-report-content {
+            padding: 16px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--color-accent);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .summary-card i {
+            font-size: 1.5em;
+            color: var(--color-accent);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .summary-card .value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .summary-card .label {
+            color: var(--color-text-light);
+            font-size: 0.85em;
+        }
+
+        .breakdown-section {
+            margin-bottom: 20px;
+        }
+
+        .breakdown-title {
+            color: var(--color-secondary);
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .breakdown-title i {
+            margin-right: 6px;
+            color: var(--color-accent);
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .breakdown-item {
+            background: var(--color-white);
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .breakdown-item .amount {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+
+        .breakdown-item .type {
+            color: var(--color-text-light);
+            font-size: 0.8em;
+        }
+
+        .location-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .location-stat {
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.1) 0%, rgba(0, 77, 77, 0.1) 100%);
+            border: 1px solid var(--color-accent);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .location-stat .count {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+
+        .location-stat .location {
+            color: var(--color-text-light);
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .no-report-data {
+            text-align: center;
+            color: var(--color-text-lighter);
+            font-style: italic;
+            padding: 30px;
+        }
+
+        .no-report-data i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+            color: var(--color-accent);
+        }
+
         @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .claims-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content, .report-modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-item strong {
+                width: 100%;
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            .daily-item-details {
+                grid-template-columns: 1fr;
+            }
+
+            .report-button {
+                top: 60px;
+                right: 10px;
+                padding: 12px 16px;
+                font-size: 0.9em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+
+            .breakdown-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .location-stats {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
           .sidebar {
             transform: translateX(-100%);
             width: 80%;
@@ -899,28 +1337,6 @@
           .sidebar-overlay.active {
             display: block;
           }
-          
-          .container {
-            padding: 15px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .sidebar {
-            width: 85%;
-          }
-          
-          .sidebar-item {
-            padding: 12px 15px;
-          }
-          
-          .sidebar-logo {
-            font-size: 28px;
-          }
-          
-          .sidebar-title {
-            font-size: 18px;
-          }
         }
 
         #filterBar input:focus, 
@@ -929,10 +1345,31 @@
           box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
         }
 
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: var(--color-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: var(--color-primary);
+          border-radius: 10px;
+          border: 2px solid var(--color-lighter);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: var(--color-secondary);
+        }
+
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: var(--color-primary) var(--color-lighter);
+        }
     </style>
 </head>
 <body>
-<!-- Sidebar HTML -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">
@@ -972,17 +1409,18 @@
   </div>
 </aside>
 
-<!-- Sidebar toggle button -->
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
   <i class="fas fa-bars"></i>
 </button>
 
-<!-- Mobile sidebar toggle button -->
 <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" aria-label="Toggle mobile sidebar">
   <i class="fas fa-bars"></i>
 </button>
 
-<!-- Main content -->
+<button class="report-button" id="reportButton" onclick="openReportModal()" disabled>
+    <i class="fas fa-chart-line"></i>Generate Report
+</button>
+
 <main class="main-content" id="mainContent">
     <div class="container">
         <div class="header">
@@ -1010,7 +1448,6 @@
             gap: 15px;
             align-items: center;
         ">
-          <!-- Search input -->
           <div style="position: relative; flex: 2;">
             <i class="fas fa-search" style="
                 position: absolute;
@@ -1025,7 +1462,6 @@
                     border-radius: 6px; font-size: 1em; outline: none;" />
           </div>
 
-          <!-- Status filter -->
           <div style="position: relative; flex: 1;">
             <i class="fas fa-tasks" style="
                 position: absolute;
@@ -1052,7 +1488,6 @@
             </select>
           </div>
 
-          <!-- Person filter -->
           <div style="position: relative; flex: 1;">
             <i class="fas fa-user" style="
                 position: absolute;
@@ -1077,7 +1512,6 @@
         <div id="claimsContainer" class="claims-grid" style="display: none;"></div>
     </div>
 
-    <!-- Modal for claim details -->
     <div id="claimModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1085,19 +1519,78 @@
                 <button class="close" onclick="closeModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body" id="modalBody">
-                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal">
+        <div class="report-modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-line"></i>User Claims & Allowance Report Generator</h2>
+                <button class="close" onclick="closeReportModal()"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="report-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="reportStartDate">
+                            <i class="fas fa-calendar-alt"></i>Start Date
+                        </label>
+                        <input type="date" id="reportStartDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportEndDate">
+                            <i class="fas fa-calendar-alt"></i>End Date
+                        </label>
+                        <input type="date" id="reportEndDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group user-selection">
+                    <label>
+                        <i class="fas fa-users"></i>Select Users for Report
+                    </label>
+                    <div class="user-selector-container">
+                        <input type="text" id="userSearchInput" class="user-search-input" placeholder="Search and select users..." autocomplete="off">
+                        <i class="fas fa-search search-icon"></i>
+                        <div class="user-dropdown" id="userDropdown"></div>
+                    </div>
+                    <div class="selected-users-chips" id="selectedUsersChips"></div>
+                </div>
+
+                <button class="generate-btn" id="generateReportBtn" onclick="generateReport()">
+                    <i class="fas fa-chart-bar"></i>Generate User Report
+                </button>
+            </div>
+
+            <div class="report-results" id="reportResults">
+                <div class="report-header">
+                    <div class="report-title">
+                        <i class="fas fa-file-alt"></i>Claims Report
+                    </div>
+                    <button class="export-btn" onclick="exportReportPDF()">
+                        <i class="fas fa-download"></i>Download Report
+                    </button>
+                </div>
+                <div id="reportContent">
+                </div>
             </div>
         </div>
     </div>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
         let allClaims = [];
         let currentClaimNumber = null;
+        let reportData = [];
+        let allUsers = [];
+        let selectedUsers = new Set();
 
         window.onload = function() {
             loadClaims();
         };
-
 
         document.addEventListener('DOMContentLoaded', function() {
           const sidebar = document.getElementById('sidebar');
@@ -1179,6 +1672,8 @@
               item.classList.add('active');
             }
           });
+
+          initializeUserSelector();
         });
 
         function loadClaims() {
@@ -1186,6 +1681,9 @@
             document.getElementById('loading').style.flexDirection = 'column';
             document.getElementById('error').style.display = 'none';
             document.getElementById('claimsContainer').style.display = 'none';
+
+            const reportButton = document.getElementById('reportButton');
+            reportButton.disabled = true;
 
             google.script.run
                 .withSuccessHandler(onClaimsLoaded)
@@ -1217,11 +1715,16 @@
                 personFilter.appendChild(option);
             });
 
+            allUsers = Array.from(personSet).sort();
+
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
             document.getElementById('personFilter').addEventListener('change', applyFilters);
 
             document.getElementById('loading').style.display = 'none';
+
+            const reportButton = document.getElementById('reportButton');
+            reportButton.disabled = false;
 
             if (claims.length === 0) {
                 document.getElementById('errorText').innerHTML = 'No claims found.';
@@ -1237,6 +1740,9 @@
             document.getElementById('loading').style.display = 'none';
             document.getElementById('errorText').innerHTML = 'Error loading claims: ' + error.message;
             document.getElementById('error').style.display = 'flex';
+
+            const reportButton = document.getElementById('reportButton');
+            reportButton.disabled = false;
         }
 
         function displayClaims(claims) {
@@ -1264,7 +1770,6 @@
 
           displayClaims(filtered);
       }
-
 
         function createClaimCard(claim) {
             const card = document.createElement('div');
@@ -1294,6 +1799,10 @@
                 <div class="claim-info">
                     <i class="fas fa-calendar-alt"></i>
                     <strong>Date:</strong> ${formatDate(claim.createdDate)}
+                </div>
+                <div class="claim-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <strong>Location:</strong> ${claim.locationStatus || 'N/A'}
                 </div>
                 <div class="claim-info">
                     <i class="fas fa-business-time"></i>
@@ -1402,7 +1911,6 @@
                 }
             }
 
-    
             if (!parsedData) {
                 if (typeof allowanceData === 'string') {
                     const trimmed = allowanceData.trim();
@@ -1520,7 +2028,7 @@
                 return '<span class="no-data"><i class="fas fa-receipt"></i> No Receipt Available</span>';
 
             let validUrl = url;
-            if (!url.startsWith('http://') && !url.startsWith('https:
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 validUrl = 'https://' + url;
             }
 
@@ -1552,6 +2060,10 @@
                         <div class="detail-item">
                             <i class="fa-solid fa-calendar-day"></i>
                             <strong>Event Name:</strong> ${claim.eventName || 'N/A'}
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <strong>Location Status:</strong> ${claim.locationStatus || 'N/A'}
                         </div>
                         <div class="detail-item" style="flex-direction: column; align-items: flex-start;">
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
@@ -1817,10 +2329,543 @@
             currentClaimNumber = null;
         }
 
+        function openReportModal() {
+            document.getElementById('reportModal').style.display = 'block';
+            document.getElementById('reportResults').style.display = 'none';
+            resetUserSelector();
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function initializeUserSelector() {
+            const searchInput = document.getElementById('userSearchInput');
+            const dropdown = document.getElementById('userDropdown');
+            
+            searchInput.addEventListener('input', handleUserSearch);
+            searchInput.addEventListener('focus', showUserDropdown);
+
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.user-selector-container')) {
+                    hideUserDropdown();
+                }
+            });
+        }
+
+
+        function handleUserSearch() {
+            const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (searchTerm.length === 0) {
+                populateUserDropdown(allUsers);
+            } else {
+                const filteredUsers = allUsers.filter(user => 
+                    user.toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredUsers.length === 0) {
+                    dropdown.innerHTML = '';
+                    dropdown.classList.add('show');
+                    return;
+                }
+                
+                populateUserDropdown(filteredUsers);
+            }
+            
+            showUserDropdown();
+        }
+
+        function populateUserDropdown(users) {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.innerHTML = '';
+
+            const selectAllDiv = document.createElement('div');
+            selectAllDiv.className = 'user-dropdown-item select-all-item';
+            selectAllDiv.innerHTML = `
+                <i class="fas fa-check-double"></i>
+                <strong>Select All</strong>
+            `;
+            selectAllDiv.onclick = () => selectAllUsers(users);
+            dropdown.appendChild(selectAllDiv);
+
+            users.forEach(user => {
+                const div = document.createElement('div');
+                div.className = `user-dropdown-item ${selectedUsers.has(user) ? 'selected' : ''}`;
+                div.innerHTML = `
+                    <i class="fas ${selectedUsers.has(user) ? 'fa-check-circle' : 'fa-user'}"></i>
+                    ${user}
+                `;
+                div.onclick = () => toggleUserSelection(user);
+                dropdown.appendChild(div);
+            });
+        }
+
+        function showUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            if (allUsers.length > 0) {
+                populateUserDropdown(allUsers);
+                dropdown.classList.add('show');
+            }
+        }
+
+        function hideUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.remove('show');
+        }
+
+        function toggleUserSelection(user) {
+            if (selectedUsers.has(user)) {
+                selectedUsers.delete(user);
+            } else {
+                selectedUsers.add(user);
+            }
+            updateSelectedUsersDisplay();
+            updateDropdownSelection();
+        }
+
+        function selectAllUsers(users) {
+            users.forEach(user => selectedUsers.add(user));
+            updateSelectedUsersDisplay();
+            updateDropdownSelection();
+        }
+
+        function updateSelectedUsersDisplay() {
+            const chipsContainer = document.getElementById('selectedUsersChips');
+            chipsContainer.innerHTML = '';
+            
+            selectedUsers.forEach(user => {
+                const chip = document.createElement('div');
+                chip.className = 'user-chip';
+                chip.innerHTML = `
+                    ${user}
+                    <span class="remove-chip" onclick="removeUserSelection('${user}')">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+                chipsContainer.appendChild(chip);
+            });
+        }
+
+        function removeUserSelection(user) {
+            selectedUsers.delete(user);
+            updateSelectedUsersDisplay();
+            updateDropdownSelection();
+        }
+
+        function updateDropdownSelection() {
+            const dropdownItems = document.querySelectorAll('.user-dropdown-item:not(.select-all-item)');
+            dropdownItems.forEach(item => {
+                const userName = item.textContent.trim();
+                const icon = item.querySelector('i');
+                if (selectedUsers.has(userName)) {
+                    item.classList.add('selected');
+                    icon.className = 'fas fa-check-circle';
+                } else {
+                    item.classList.remove('selected');
+                    icon.className = 'fas fa-user';
+                }
+            });
+        }
+
+        function resetUserSelector() {
+            selectedUsers.clear();
+            document.getElementById('userSearchInput').value = '';
+            updateSelectedUsersDisplay();
+            hideUserDropdown();
+        }
+
+        function generateReport() {
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            const selectedUsersArray = Array.from(selectedUsers);
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates.');
+                return;
+            }
+
+            if (selectedUsersArray.length === 0) {
+                alert('Please select at least one user.');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date cannot be after end date.');
+                return;
+            }
+
+            const generateBtn = document.getElementById('generateReportBtn');
+            const originalBtnText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            generateBtn.disabled = true;
+            
+            const filteredClaims = allClaims.filter(claim => {
+                if (claim.eventStatus !== 'Approved') return false;
+                if (!selectedUsersArray.includes(claim.personOfSubmission)) return false;
+
+                const claimDate = new Date(claim.createdDate);
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+
+                return claimDate >= start && claimDate <= end;
+            });
+
+            reportData = generateReportData(filteredClaims, selectedUsersArray, startDate, endDate);
+            
+            displayReport(reportData);
+            
+            generateBtn.innerHTML = originalBtnText;
+            generateBtn.disabled = false;
+            
+            document.getElementById('reportResults').style.display = 'block';
+        }
+
+        function generateReportData(claims, selectedUsers, startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            const reportData = {
+                dateRange: { start: startDate, end: endDate },
+                users: []
+            };
+
+            selectedUsers.forEach(user => {
+                const userClaims = claims.filter(claim => {
+                    const claimDate = new Date(claim.createdDate);
+                    return (
+                        claim.personOfSubmission === user &&
+                        claimDate >= start &&
+                        claimDate <= end
+                    );
+                });
+
+                const userData = {
+                    name: user,
+                    totalApplications: userClaims.length,
+                    totalAmount: 0,
+                    stayClaimsTotal: 0,
+                    mealAllowanceTotal: 0,
+                    otherAllowanceTotal: 0,
+                    extraClaimsTotal: 0,
+                    extraClaimsCount: 0,
+                    locationStats: {},
+                    totalWorkingTime: { hours: 0, minutes: 0 },
+                    breakdown: {
+                        stayClaims: [],
+                        mealAllowances: [],
+                        otherAllowances: [],
+                        extraClaims: []
+                    }
+                };
+
+                userClaims.forEach(claim => {
+                    userData.totalAmount += parseFloat(claim.totalClaim || 0);
+
+                    const location = claim.locationStatus || 'Unknown';
+                    userData.locationStats[location] = (userData.locationStats[location] || 0) + 1;
+
+                    if (claim.totalTimeOnDuty && claim.totalTimeOnDuty.hours !== undefined) {
+                        userData.totalWorkingTime.hours += parseInt(claim.totalTimeOnDuty.hours || 0);
+                        userData.totalWorkingTime.minutes += parseInt(claim.totalTimeOnDuty.minutes || 0);
+                    }
+
+                    if (claim.stays && claim.stays.length > 0) {
+                        claim.stays.forEach(stay => {
+                            const amount = parseFloat(stay.stayCost || 0);
+                            userData.stayClaimsTotal += amount;
+                            userData.breakdown.stayClaims.push({
+                                type: stay.stayType,
+                                amount: amount,
+                                applicationNumber: claim.applicationNumber
+                            });
+                        });
+                    }
+
+                    const mealAmount = extractAllowanceAmount(claim.mealAllowance);
+                    if (mealAmount > 0) {
+                        userData.mealAllowanceTotal += mealAmount;
+                        userData.breakdown.mealAllowances.push({
+                            amount: mealAmount,
+                            applicationNumber: claim.applicationNumber
+                        });
+                    }
+
+                    const otherAmount = extractAllowanceAmount(claim.otherAllowances);
+                    if (otherAmount > 0) {
+                        userData.otherAllowanceTotal += otherAmount;
+                        userData.breakdown.otherAllowances.push({
+                            amount: otherAmount,
+                            applicationNumber: claim.applicationNumber
+                        });
+                    }
+
+                    if (claim.extraClaims && claim.extraClaims.length > 0) {
+                        claim.extraClaims.forEach(extra => {
+                            const amount = parseFloat(extra.claimAmount || 0);
+                            userData.extraClaimsTotal += amount;
+                            userData.extraClaimsCount++;
+                            userData.breakdown.extraClaims.push({
+                                description: extra.claimDescription,
+                                amount: amount,
+                                applicationNumber: claim.applicationNumber
+                            });
+                        });
+                    }
+                });
+
+                userData.totalWorkingTime.hours += Math.floor(userData.totalWorkingTime.minutes / 60);
+                userData.totalWorkingTime.minutes = userData.totalWorkingTime.minutes % 60;
+
+                reportData.users.push(userData);
+            });
+
+            return reportData;
+        }
+
+        function extractAllowanceAmount(allowanceData) {
+            if (!allowanceData) return 0;
+
+            let parsedData;
+            
+            if (typeof allowanceData === 'object' && allowanceData.label) {
+                try {
+                    parsedData = JSON.parse(allowanceData.label);
+                } catch (e) {
+                    return 0;
+                }
+            } else if (typeof allowanceData === 'string') {
+                try {
+                    parsedData = JSON.parse(allowanceData);
+                } catch (e) {
+                    return 0;
+                }
+            } else if (typeof allowanceData === 'object') {
+                parsedData = allowanceData;
+            } else {
+                return 0;
+            }
+
+            return parseFloat(parsedData.totalAmount || parsedData.amount || 0);
+        }
+
+        function displayReport(data) {
+            const container = document.getElementById('reportContent');
+            let html = '';
+
+            if (data.users.length === 0) {
+                html = `
+                    <div class="no-report-data">
+                        <i class="fas fa-chart-line"></i>
+                        No approved claims found for the selected criteria.
+                    </div>
+                `;
+            } else {
+                data.users.forEach(user => {
+                    html += generateUserReportHTML(user);
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        function generateUserReportHTML(user) {
+            const formatTime = (hours, minutes) => {
+                return `${hours}h ${minutes}m`;
+            };
+
+            let html = `
+                <div class="user-report">
+                    <div class="user-report-header">
+                        <i class="fas fa-user"></i>${user.name}
+                    </div>
+                    <div class="user-report-content">
+                        <div class="summary-grid">
+                            <div class="summary-card">
+                                <i class="fas fa-file-alt"></i>
+                                <div class="value">${user.totalApplications}</div>
+                                <div class="label">Total Applications</div>
+                            </div>
+                            <div class="summary-card">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div class="value">RM ${formatCurrency(user.totalAmount)}</div>
+                                <div class="label">Total Claims</div>
+                            </div>
+                            <div class="summary-card">
+                                <i class="fas fa-clock"></i>
+                                <div class="value">${formatTime(user.totalWorkingTime.hours, user.totalWorkingTime.minutes)}</div>
+                                <div class="label">Total Working Time</div>
+                            </div>
+                            <div class="summary-card">
+                                <i class="fas fa-plus-circle"></i>
+                                <div class="value">${user.extraClaimsCount}</div>
+                                <div class="label">Extra Claims Count</div>
+                            </div>
+                        </div>
+
+                        <div class="breakdown-section">
+                            <div class="breakdown-title">
+                                <i class="fas fa-chart-pie"></i>Claims Breakdown
+                            </div>
+                            <div class="breakdown-grid">
+                                <div class="breakdown-item">
+                                    <div class="amount">RM ${formatCurrency(user.stayClaimsTotal)}</div>
+                                    <div class="type">Stay Claims</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="amount">RM ${formatCurrency(user.mealAllowanceTotal)}</div>
+                                    <div class="type">Meal Allowances</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="amount">RM ${formatCurrency(user.otherAllowanceTotal)}</div>
+                                    <div class="type">Other Allowances</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="amount">RM ${formatCurrency(user.extraClaimsTotal)}</div>
+                                    <div class="type">Extra Claims</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="breakdown-section">
+                            <div class="breakdown-title">
+                                <i class="fas fa-map-marker-alt"></i>Location Statistics
+                            </div>
+                            <div class="location-stats">
+            `;
+
+            Object.entries(user.locationStats).forEach(([location, count]) => {
+                html += `
+                    <div class="location-stat">
+                        <div class="count">${count}</div>
+                        <div class="location">${location}</div>
+                    </div>
+                `;
+            });
+
+            html += `
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function exportReportPDF() {
+            if (!reportData || !reportData.users || reportData.users.length === 0) {
+                alert('No report data to export.');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait' });
+
+            const primaryColor = [45, 12, 49];
+            const accentColor = [0, 184, 148];
+            const lightGray = [245, 245, 245];
+            const white = [255, 255, 255];
+            const black = [0, 0, 0];
+            const tagColor = [220, 220, 220];
+
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 20, 'F');
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...white);
+            doc.text('USER CLAIM & ALLOWANCE REPORT', 15, 13);
+
+            const dateRange = `Report Date Range: ${reportData.dateRange.start} to ${reportData.dateRange.end}`;
+            doc.setFillColor(...accentColor);
+            doc.rect(0, 22, 210, 8, 'F');
+            doc.setFontSize(12);
+            doc.setTextColor(...white);
+            doc.text(dateRange, 15, 28);
+
+            doc.setTextColor(...black);
+
+            let y = 40;
+            reportData.users.forEach(user => {
+                if (y > 250) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.setFillColor(...lightGray);
+                doc.roundedRect(10, y, 190, 65, 4, 4, 'F');
+
+                doc.setFillColor(...accentColor);
+                doc.roundedRect(10, y, 190, 10, 4, 4, 'F');
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(...white);
+                doc.text(user.name, 15, y + 7);
+
+                doc.setTextColor(...black);
+                doc.setFontSize(10);
+
+                let detailY = y + 16;
+                doc.text(`Total Applications: ${user.totalApplications}`, 15, detailY);
+                doc.text(`Total Amount (RM): ${user.totalAmount.toFixed(2)}`, 115, detailY);
+
+                detailY += 8;
+                doc.text(`Stay Claims (RM): ${user.stayClaimsTotal.toFixed(2)}`, 15, detailY);
+                doc.text(`Meal Allowances (RM): ${user.mealAllowanceTotal.toFixed(2)}`, 115, detailY);
+
+                detailY += 8;
+                doc.text(`Other Allowances (RM): ${user.otherAllowanceTotal.toFixed(2)}`, 15, detailY);
+                doc.text(`Extra Claims (RM): ${user.extraClaimsTotal.toFixed(2)}`, 115, detailY);
+
+                detailY += 8;
+                doc.text(`Extra Claims Count: ${user.extraClaimsCount}`, 15, detailY);
+                doc.text(`Total Time: ${user.totalWorkingTime.hours}h ${user.totalWorkingTime.minutes}m`, 115, detailY);
+
+                detailY += 10;
+                doc.setFontSize(9);
+                let tagX = 15;
+                Object.entries(user.locationStats).forEach(([loc, count]) => {
+                    const tagText = `${loc}: ${count}`;
+                    const textWidth = doc.getTextWidth(tagText) + 6;
+                    doc.setFillColor(...tagColor);
+                    doc.roundedRect(tagX, detailY - 5, textWidth, 6, 2, 2, 'F');
+                    doc.text(tagText, tagX + 3, detailY - 1);
+                    tagX += textWidth + 4;
+                });
+
+                y += 75;
+            });
+
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFillColor(...primaryColor);
+                doc.rect(0, 285, 210, 12, 'F');
+
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(...white);
+                doc.text('Generated by Staff Claim and Allowance System', 15, 292);
+                doc.text(`Page ${i} of ${pageCount}`, 180, 292);
+                doc.text(new Date().toLocaleDateString(), 15, 296);
+            }
+
+            const fileName = `claims_report_${reportData.dateRange.start}_to_${reportData.dateRange.end}.pdf`;
+            doc.save(fileName);
+        }
+
         window.onclick = function(event) {
-            const modal = document.getElementById('claimModal');
-            if (event.target === modal) {
+            const claimModal = document.getElementById('claimModal');
+            const reportModal = document.getElementById('reportModal');
+            
+            if (event.target === claimModal) {
                 closeModal();
+            }
+            if (event.target === reportModal) {
+                closeReportModal();
             }
         }
     </script>
