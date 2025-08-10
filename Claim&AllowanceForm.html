@@ -1225,9 +1225,9 @@
     
       document.addEventListener('DOMContentLoaded', function() {
         google.script.run
-          .withSuccessHandler(handleCombinedResults)
+          .withSuccessHandler(handleInitialData) 
           .withFailureHandler(handleError)
-          .getUserInfoAndApplicationNumber();
+          .getInitialFormData(); 
       
       document.getElementById('eventName').addEventListener('change', handleEventChange);
       document.getElementById('addTransportation').addEventListener('click', addTransportation);
@@ -1245,42 +1245,32 @@
       });
     });
 
-  function handleCombinedResults(result) {
 
-    document.getElementById('applicationNumber').value = result.applicationNumber;
+  function handleInitialData(data) {
+    document.getElementById('applicationNumber').value = data.applicationNumber;
+    document.getElementById('username').value = data.userInfo.username;
+    document.getElementById('email').value = data.userInfo.email;
     
-
-    document.getElementById('username').value = result.userInfo.username;
-    document.getElementById('email').value = result.userInfo.email;
+    availableEvents = data.availableEvents; 
+    const eventSelect = document.getElementById('eventName');
     
-
-    google.script.run
-      .withSuccessHandler(handleAvailableEvents)
-      .withFailureHandler(handleError)
-      .getAvailableEvents(result.userInfo.username);
+    while (eventSelect.options.length > 1) {
+      eventSelect.remove(1);
+    }
+    
+    data.availableEvents.forEach(function(event) {
+      const option = document.createElement('option');
+      option.value = event.name;
+      option.textContent = event.name;
+      option.dataset.id = event.id; 
+      eventSelect.appendChild(option);
+    });
+    
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('claimForm').style.display = 'block';
   }
 
   
-    function handleAvailableEvents(events) {
-      availableEvents = events;
-      const eventSelect = document.getElementById('eventName');
-      
-      while (eventSelect.options.length > 1) {
-        eventSelect.remove(1);
-      }
-      
-      events.forEach(function(event) {
-        const option = document.createElement('option');
-        option.value = event.name;
-        option.textContent = event.name;
-        option.dataset.id = event.id; 
-        eventSelect.appendChild(option);
-      });
-      
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('claimForm').style.display = 'block';
-    }
-    
     function handleEventChange() {
       const eventSelect = document.getElementById('eventName');
       const eventName = eventSelect.value;
@@ -2586,9 +2576,9 @@
       
 
       google.script.run
-        .withSuccessHandler(handleCombinedResults)
+        .withSuccessHandler(handleInitialData) 
         .withFailureHandler(handleError)
-        .getUserInfoAndApplicationNumber();
+        .getInitialFormData(); 
     }
 
     function resetFormState() {
