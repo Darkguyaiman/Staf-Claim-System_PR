@@ -1,18 +1,18 @@
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Claim&AllowanceForm')
+  return HtmlService.createHtmlOutputFromFile('Claim&AllowanceForm') 
     .setTitle('Claims & Allowances Form')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
-
-function getUserInfoAndApplicationNumber() {
+function getInitialFormData() {
   const userEmail = Session.getActiveUser().getEmail();
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   const sheets = {
     settings: ss.getSheetByName('Settings'),
-    claim: ss.getSheetByName('Claim&Allowance')
+    claim: ss.getSheetByName('Claim&Allowance'),
+    event: ss.getSheetByName('Event Creation') 
   };
 
   const [emailRange, usernameRange, existingNumbers] = [
@@ -25,7 +25,8 @@ function getUserInfoAndApplicationNumber() {
   for (let i = 0; i < emailRange.length; i++) {
     if (emailRange[i][0] === userEmail) {
       username = usernameRange[i][0];
-      break;     }
+      break;
+    }
   }
 
   let newNumber;
@@ -34,41 +35,33 @@ function getUserInfoAndApplicationNumber() {
     const randomNum = Math.floor(1000000 + Math.random() * 9000000);
     newNumber = 'HRM' + randomNum;
   } while (existingSet.has(newNumber));
-  
-  return {
-    userInfo: {
-      email: userEmail,
-      username: username
-    },
-    applicationNumber: newNumber
-  };
-}
 
-function getAvailableEvents(username) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const eventSheet = ss.getSheetByName('Event Creation');
-  
-  const eventData = eventSheet.getRange('A4:Q').getValues();
+  const userInfo = {
+    email: userEmail,
+    username: username
+  };
+
+  const eventData = sheets.event.getRange('A4:Q').getValues();
   const availableEvents = [];
-  
+
   for (const row of eventData) {
-    if (!row[3]) continue;
-    
+    if (!row[3]) continue; 
+
     const assignedUser = row[2];
     const multipleUsers = row[12];
-    
-    if (assignedUser !== username && 
+
+    if (assignedUser !== username &&
         !(multipleUsers && multipleUsers.toString().includes(username))) {
-      continue;
+      continue; 
     }
-    
+
     if (multipleUsers && assignedUser !== username) {
-      const userList = multipleUsers.toString().split(',');
-      if (!userList.some(u => u.trim() === username)) {
-        continue;
+      const userList = multipleUsers.toString().split(',').map(u => u.trim());
+      if (!userList.some(u => u === username)) {
+        continue; 
       }
     }
-    
+
     availableEvents.push({
       id: row[16],
       name: row[3],
@@ -78,8 +71,12 @@ function getAvailableEvents(username) {
       timeSlots: row[9] ? row[9].toString().split(',').map(slot => slot.trim()) : []
     });
   }
-  
-  return availableEvents;
+
+  return {
+    userInfo: userInfo,
+    applicationNumber: newNumber,
+    availableEvents: availableEvents
+  };
 }
 
 function getCompanyCars() {
@@ -130,19 +127,20 @@ function submitFormData(formData) {
     const totalHours = calculateTotalHours(formData.timeSlots);
 
     const mainRow = [
-      timestamp,
-      'Submitted',
-      formData.applicationNumber,
-      formData.username,
-      formData.eventName,
-      formData.timeSlots.join(', '),
-      JSON.stringify(formData.mealAllowance),
-      JSON.stringify(formData.otherAllowances),
-      formData.totalClaim,
-      formData.remarks,
-      formData.eventId,
-      '',
-      totalHours,
+      timestamp,                                    
+      'Submitted',                                  
+      formData.applicationNumber,                   
+      formData.username,                           
+      formData.eventName,                          
+      formData.timeSlots.join(', '),               
+      JSON.stringify(formData.mealAllowance),      
+      JSON.stringify(formData.otherAllowances),    
+      formData.totalClaim,                         
+      formData.remarks,                            
+      formData.eventId,                            
+      '',                                          
+      totalHours,                                  
+      formData.locationStatus                      
     ];
 
     const mainLastRow = mainSheet.getLastRow() + 1;
@@ -215,7 +213,6 @@ function submitFormData(formData) {
     };
   }
 }
-
 
 function calculateTotalHours(timeSlots) {
   let total = 0;
