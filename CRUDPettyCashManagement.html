@@ -1488,11 +1488,11 @@
     }
 
     function onDataLoaded(data) {
-      currentData = data;
-      filteredData = data;
+      currentData = data.reverse();
+      filteredData = data.reverse();
       hideLoading();
-      displayData(data);
-      populateFilters(data);
+      displayData(data.reverse());
+      populateFilters(data.reverse());
       loadStatusOptions();
       loadUsernames();
     }
@@ -1828,6 +1828,9 @@
       
       google.script.run
         .withSuccessHandler(function() {
+          submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i>Top Up';
+          submitBtn.disabled = false;
+          
           closeTopupModal();
           loadData();
           showAlert('Success', 'Top up successful!', 'success');
@@ -1840,6 +1843,7 @@
         })
         .processTopup(username, amount);
     }
+
 
     function loadBalanceData() {
       document.getElementById('balanceLoading').style.display = 'block';
