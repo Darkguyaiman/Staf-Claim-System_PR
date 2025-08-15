@@ -1827,8 +1827,8 @@
     }
 
     function onEventsLoaded(events) {
-      allEvents = events;
-      currentEvents = events;
+      allEvents = events.reverse();
+      currentEvents = events.reverse();
       populateFilterDropdowns();
       displayEvents(events);
       document.getElementById('loading').style.display = 'none';
