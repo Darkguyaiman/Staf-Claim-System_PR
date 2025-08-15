@@ -218,14 +218,11 @@ function updateRecord(data) {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Petty Cash');
     const username = getCurrentUsername();
     
-    
-    sheet.getRange(data.rowNumber, 4).setValue(data.purpose); 
-    sheet.getRange(data.rowNumber, 7).setValue(data.amount); 
-    sheet.getRange(data.rowNumber, 9).setValue(data.remarks); 
-    sheet.getRange(data.rowNumber, 10).setValue(data.status); 
-    
-    
-    sheet.getRange(data.rowNumber, 3).setValue(username); 
+    sheet.getRange(data.rowNumber, 5).setValue(data.purpose);
+    sheet.getRange(data.rowNumber, 7).setValue(data.amount);
+    sheet.getRange(data.rowNumber, 9).setValue(data.remarks);
+    sheet.getRange(data.rowNumber, 10).setValue(data.status);
+    sheet.getRange(data.rowNumber, 3).setValue(username);
     
     return true;
   } catch (error) {
