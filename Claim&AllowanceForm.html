@@ -1219,9 +1219,9 @@
     let currentEventData = null;
     let mealAllowanceBreakdown = [];
     
-    const TRANSPORTATION_FOLDER_ID = '1qdhuvtUEL5CN83fWXLrKST9IBs6NKYYO';
-    const STAY_FOLDER_ID = '13EyxVxkqFYT9dzk7SW8xKddB34AmVPEe';
-    const EXTRA_CLAIMS_FOLDER_ID = '13dcgisDDfFbkuTqX2JAlDy6rCkSZA4j7';
+    const TRANSPORTATION_FOLDER_ID = 'YOUR_TRANSPORTATION_FOLDER_ID';
+    const STAY_FOLDER_ID = 'YOUR_STAY_FOLDER_ID';
+    const EXTRA_CLAIMS_FOLDER_ID = 'YOUR_EXTRA_CLAIMS_FOLDER_ID';
     
       document.addEventListener('DOMContentLoaded', function() {
         google.script.run
@@ -1251,7 +1251,7 @@
     document.getElementById('username').value = data.userInfo.username;
     document.getElementById('email').value = data.userInfo.email;
     
-    availableEvents = data.availableEvents; 
+    availableEvents = data.availableEvents.reverse(); 
     const eventSelect = document.getElementById('eventName');
     
     while (eventSelect.options.length > 1) {
@@ -2458,7 +2458,6 @@
         .then(function(fileResults) {
           const selectedTimeSlots = getSelectedTimeSlots();
           const uniqueDays = getUniqueDaysFromTimeSlots(selectedTimeSlots);
-          
 
           let mealAllowanceData = {
             type: '',
@@ -2479,15 +2478,15 @@
             }
           }
           
-
+          let dailyRate = 0;
           let otherAllowancesAmount = 0;
+
           if (currentEventData && selectedTimeSlots.length > 0) {
             const totalDays = uniqueDays.length;
             const eventType = currentEventData.type.toLowerCase();
             const locationStatus = currentEventData.locationStatus.toLowerCase();
             const location = currentEventData.location ? currentEventData.location.toLowerCase() : '';
             
-            let dailyRate = 0;
             const isSabahSarawak = location.includes('sabah') || location.includes('sarawak');
             
             if (['sales', 'marketing', 'demo session', 'exhibition'].includes(eventType)) {
@@ -2496,8 +2495,7 @@
               } else if (locationStatus === 'overseas') {
                 dailyRate = 200.00;
               }
-            } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && 
-                       locationStatus === 'outstation') {
+            } else if (['pl3d', 'rf', 'cryo', 'pl3d-rf', 'cub'].includes(eventType) && locationStatus === 'outstation') {
               dailyRate = 50.00;
             } else if (eventType === 'training') {
               if (isSabahSarawak) {
@@ -2528,7 +2526,7 @@
             mealAllowance: mealAllowanceData,
             otherAllowances: {
               type: 'Per day calculation',
-              amount: otherAllowancesAmount,
+              amount: dailyRate,
               totalAmount: otherAllowancesAmount
             },
             extraClaims: getExtraClaimsData(fileResults),
@@ -2566,6 +2564,7 @@
           document.getElementById('submitButton').disabled = false;
         });
     }
+
     
     function resetForm() {
       document.getElementById('successModal').classList.remove('active');
