@@ -134,6 +134,148 @@
         color: var(--color-secondary);
         margin-bottom: 6px;
       }
+
+      /* Added file upload styles */
+      .file-upload-container {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 2px dashed #e0e0e0;
+        border-radius: 12px;
+        background-color: #fafafa;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+      
+      .file-upload-container.drag-over {
+        border-color: var(--color-accent);
+        background-color: rgba(0, 184, 148, 0.05);
+        transform: scale(1.02);
+      }
+      
+      .file-upload-area {
+        cursor: pointer;
+        padding: 20px;
+        transition: all 0.3s ease;
+      }
+      
+      .file-upload-area:hover {
+        background-color: rgba(0, 184, 148, 0.02);
+      }
+      
+      .file-upload-icon {
+        font-size: 48px;
+        color: var(--color-accent);
+        margin-bottom: 15px;
+      }
+      
+      .file-upload-text {
+        font-size: 16px;
+        color: var(--color-secondary);
+        margin-bottom: 10px;
+      }
+      
+      .file-upload-subtext {
+        font-size: 14px;
+        color: var(--color-text-secondary);
+        margin-bottom: 15px;
+      }
+      
+      .file-upload-button {
+        background-color: var(--color-accent);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .file-upload-button:hover {
+        background-color: var(--color-secondary);
+        transform: translateY(-1px);
+      }
+      
+      .uploaded-file {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: rgba(0, 184, 148, 0.1);
+        border: 2px solid var(--color-accent);
+        border-radius: 8px;
+        margin-top: 15px;
+      }
+      
+      .uploaded-file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+      
+      .uploaded-file-icon {
+        font-size: 24px;
+        color: var(--color-accent);
+      }
+      
+      .uploaded-file-details {
+        flex: 1;
+      }
+      
+      .uploaded-file-name {
+        font-weight: 500;
+        color: var(--color-secondary);
+        margin-bottom: 2px;
+      }
+      
+      .uploaded-file-size {
+        font-size: 12px;
+        color: var(--color-text-secondary);
+      }
+      
+      .delete-file-button {
+        background-color: #ff4757;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      .delete-file-button:hover {
+        background-color: #ff3742;
+        transform: translateY(-1px);
+      }
+      
+      .file-input {
+        display: none;
+      }
+      
+      .upload-progress {
+        width: 100%;
+        height: 6px;
+        background-color: #e0e0e0;
+        border-radius: 3px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+      
+      .upload-progress-bar {
+        height: 100%;
+        background-color: var(--color-accent);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
       
       .form-actions {
         margin-top: 35px;
@@ -475,6 +617,50 @@
           </div>
           <div id="eventId" class="event-id-value"></div>
         </div>
+
+        <!-- Added file upload section -->
+        <div class="form-group">
+          <label>
+            <i class="fas fa-file-upload"></i>
+            Event Expenses Document
+          </label>
+          <div class="file-upload-container" id="fileUploadContainer">
+            <div class="file-upload-area" id="fileUploadArea">
+              <div class="file-upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <div class="file-upload-text">
+                Drag and drop your file here
+              </div>
+              <div class="file-upload-subtext">
+                Supported formats: PDF, XLSX, XLS, PPTX (Max 5MB)
+              </div>
+              <button type="button" class="file-upload-button" id="fileUploadButton">
+                <i class="fas fa-folder-open"></i>
+                Choose File
+              </button>
+            </div>
+            <input type="file" id="fileInput" class="file-input" accept=".pdf,.xlsx,.xls,.pptx" />
+            <div id="uploadProgress" class="upload-progress" style="display: none;">
+              <div class="upload-progress-bar" id="uploadProgressBar"></div>
+            </div>
+            <div id="uploadedFile" class="uploaded-file" style="display: none;">
+              <div class="uploaded-file-info">
+                <div class="uploaded-file-icon">
+                  <i class="fas fa-file"></i>
+                </div>
+                <div class="uploaded-file-details">
+                  <div class="uploaded-file-name" id="uploadedFileName"></div>
+                  <div class="uploaded-file-size" id="uploadedFileSize"></div>
+                </div>
+              </div>
+              <button type="button" class="delete-file-button" id="deleteFileButton">
+                <i class="fas fa-trash"></i>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
         
         <div id="budgetItemsContainer">
           <h2>
@@ -525,6 +711,7 @@
     <script>
       let allEventData = {};
       let selectedEventId = '';
+      let uploadedFile = null;
       
       document.addEventListener('DOMContentLoaded', function() {
         showLoadingSpinner();
@@ -555,7 +742,151 @@
         });
         
         document.getElementById('expensesForm').addEventListener('submit', handleFormSubmit);
+        
+        initializeFileUpload();
       });
+
+      function initializeFileUpload() {
+        const fileUploadContainer = document.getElementById('fileUploadContainer');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileUploadButton = document.getElementById('fileUploadButton');
+        const fileInput = document.getElementById('fileInput');
+        const deleteFileButton = document.getElementById('deleteFileButton');
+        
+
+        fileUploadArea.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          fileUploadContainer.classList.add('drag-over');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          fileUploadContainer.classList.remove('drag-over');
+        });
+        
+        fileUploadArea.addEventListener('drop', function(e) {
+          e.preventDefault();
+          fileUploadContainer.classList.remove('drag-over');
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleFileSelection(files[0]);
+          }
+        });
+        
+
+        fileUploadButton.addEventListener('click', function() {
+          fileInput.click();
+        });
+        
+        fileUploadArea.addEventListener('click', function(e) {
+          if (e.target === fileUploadArea || e.target.closest('.file-upload-area')) {
+            fileInput.click();
+          }
+        });
+        
+        fileInput.addEventListener('change', function(e) {
+          if (e.target.files.length > 0) {
+            handleFileSelection(e.target.files[0]);
+          }
+        });
+        
+
+        deleteFileButton.addEventListener('click', function() {
+          deleteUploadedFile();
+        });
+      }
+      
+      function handleFileSelection(file) {
+
+        const allowedTypes = [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+          'application/vnd.ms-excel', 
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation' 
+        ];
+        
+        if (!allowedTypes.includes(file.type)) {
+          showErrorModal('Invalid file type. Please upload PDF, XLSX, XLS, or PPTX files only.');
+          return;
+        }
+        
+
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+          showErrorModal('File size exceeds 5MB limit. Please choose a smaller file.');
+          return;
+        }
+        
+
+        uploadedFile = file;
+        
+
+        showUploadedFile(file);
+      }
+      
+      function showUploadedFile(file) {
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const uploadedFileDiv = document.getElementById('uploadedFile');
+        const uploadedFileName = document.getElementById('uploadedFileName');
+        const uploadedFileSize = document.getElementById('uploadedFileSize');
+        
+        fileUploadArea.style.display = 'none';
+        uploadedFileDiv.style.display = 'flex';
+        
+        uploadedFileName.textContent = file.name;
+        uploadedFileSize.textContent = formatFileSize(file.size);
+        
+
+        const fileIcon = uploadedFileDiv.querySelector('.uploaded-file-icon i');
+        if (file.type.includes('pdf')) {
+          fileIcon.className = 'fas fa-file-pdf';
+        } else if (file.type.includes('spreadsheet') || file.type.includes('excel')) {
+          fileIcon.className = 'fas fa-file-excel';
+        } else if (file.type.includes('presentation')) {
+          fileIcon.className = 'fas fa-file-powerpoint';
+        } else {
+          fileIcon.className = 'fas fa-file';
+        }
+      }
+      
+      function deleteUploadedFile() {
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const uploadedFileDiv = document.getElementById('uploadedFile');
+        const fileInput = document.getElementById('fileInput');
+        
+        uploadedFile = null;
+        fileInput.value = '';
+        
+        fileUploadArea.style.display = 'block';
+        uploadedFileDiv.style.display = 'none';
+      }
+      
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+      
+      function uploadFileToGoogleDrive(file, eventId) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const fileBlob = Utilities.newBlob(
+              Utilities.base64Decode(e.target.result.split(',')[1]),
+              file.type,
+              file.name
+            );
+            
+            google.script.run
+              .withSuccessHandler(resolve)
+              .withFailureHandler(reject)
+              .uploadFile(fileBlob, file.name, eventId);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
       
       function showLoadingSpinner() {
         document.getElementById('loadingOverlay').style.display = 'flex';
@@ -656,49 +987,82 @@
         });
       }
       
-      function handleFormSubmit(event) {
-        event.preventDefault();
-        
-        if (!selectedEventId) {
-          showErrorModal('Please select an event');
-          return;
-        }
-        
-        const budgetItems = document.querySelectorAll('.budget-item');
-        const expenses = [];
-        
-        budgetItems.forEach(item => {
-          const type = item.querySelector('input[readonly][data-type]').dataset.type;
-          const actualAmount = parseFloat(item.querySelector('.actual-expense').value);
-          
-          if (!isNaN(actualAmount)) {
-            expenses.push({
-              type: type,
-              actualAmount: actualAmount
-            });
+function handleFormSubmit(event) {
+  event.preventDefault();
+  
+  if (!selectedEventId) {
+    showErrorModal('Please select an event');
+    return;
+  }
+  
+  const budgetItems = document.querySelectorAll('.budget-item');
+  const expenses = [];
+  
+  budgetItems.forEach(item => {
+    const type = item.querySelector('input[readonly][data-type]').dataset.type;
+    const actualAmount = parseFloat(item.querySelector('.actual-expense').value);
+    
+    if (!isNaN(actualAmount)) {
+      expenses.push({
+        type: type,
+        actualAmount: actualAmount
+      });
+    }
+  });
+  
+  if (expenses.length === 0) {
+    showErrorModal('Please enter at least one expense amount');
+    return;
+  }
+  
+  document.getElementById('submitBtn').disabled = true;
+  
+  showLoadingSpinner();
+  document.querySelector('.loading-text').textContent = 'Submitting expenses...';
+  
+  const formData = {
+    eventId: selectedEventId,
+    expenses: expenses
+  };
+  
+  if (uploadedFile) {
+    document.querySelector('.loading-text').textContent = 'Uploading file...';
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64Data = e.target.result.split(',')[1];
+      
+      google.script.run
+        .withSuccessHandler(function(uploadResult) {
+          if (uploadResult.success) {
+            document.querySelector('.loading-text').textContent = 'Submitting expenses...';
+            
+            google.script.run
+              .withSuccessHandler(handleSubmitSuccess)
+              .withFailureHandler(handleSubmitError)
+              .submitExpenses(formData);
+          } else {
+            hideLoadingSpinner();
+            showErrorModal('File upload failed: ' + uploadResult.error);
+            document.getElementById('submitBtn').disabled = false;
           }
-        });
-        
-        if (expenses.length === 0) {
-          showErrorModal('Please enter at least one expense amount');
-          return;
-        }
-        
-        document.getElementById('submitBtn').disabled = true;
-        
-        showLoadingSpinner();
-        document.querySelector('.loading-text').textContent = 'Submitting expenses...';
-        
-        const formData = {
-          eventId: selectedEventId,
-          expenses: expenses
-        };
-        
-        google.script.run
-          .withSuccessHandler(handleSubmitSuccess)
-          .withFailureHandler(handleSubmitError)
-          .submitExpenses(formData);
-      }
+        })
+        .withFailureHandler(function(error) {
+          hideLoadingSpinner();
+          showErrorModal('File upload failed: ' + error.toString());
+          document.getElementById('submitBtn').disabled = false;
+        })
+        .uploadFile(base64Data, uploadedFile.type, uploadedFile.name, selectedEventId);
+    };
+    reader.readAsDataURL(uploadedFile);
+  } else {
+    google.script.run
+      .withSuccessHandler(handleSubmitSuccess)
+      .withFailureHandler(handleSubmitError)
+      .submitExpenses(formData);
+  }
+}
+
       
       function handleSubmitSuccess(response) {
         hideLoadingSpinner();
@@ -744,6 +1108,8 @@
         document.getElementById('budgetItems').innerHTML = '<div class="placeholder"><i class="fas fa-info-circle"></i> Select an event to view budget items</div>';
         document.getElementById('submitBtn').disabled = false;
         selectedEventId = '';
+        
+        deleteUploadedFile();
         
         showLoadingSpinner();
         document.querySelector('.loading-text').textContent = 'Refreshing data...';
