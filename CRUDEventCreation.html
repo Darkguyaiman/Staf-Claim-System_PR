@@ -2229,6 +2229,8 @@
                 </div>
               </div>
             </div>
+            
+            ${currentEvent.totalBudget ? `
             <div class="info-item">
               <div class="info-label"><i class="fas fa-file-alt"></i>Budget Proposal Document</div>
               <div class="info-value" id="quotationDocument-display">
@@ -2246,6 +2248,35 @@
                 </div>
               </div>
             </div>
+            <div class="info-item">
+              <div class="info-label"><i class="fas fa-receipt"></i>Event Expenses Document</div>
+              <div class="info-value" id="eventExpensesDocument-display">
+                ${currentEvent.eventExpensesDocument ?
+                  `<a href="${currentEvent.eventExpensesDocument}" target="_blank" class="file-link">
+                    <i class="fas fa-receipt"></i> View File
+                  </a>` : 'N/A'}
+              </div>
+              <div class="form-group" id="eventExpensesDocument-edit" style="display: none;">
+                <div class="file-upload">
+                  <input type="file" class="file-input" id="eventExpensesDocument-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" onchange="handleFileSelect('eventExpensesDocument')" ${!currentEvent.quotationDocument ? 'disabled' : ''}>
+                </div>
+                <div class="file-status" id="eventExpensesDocument-status">
+                  <i class="fas fa-receipt"></i>Current: ${currentEvent.eventExpensesDocument ? 'File uploaded' : 'No file'} ${!currentEvent.quotationDocument ? '(Budget Proposal Document required first)' : '(Documents only, max 5MB)'}
+                </div>
+              </div>
+            </div>
+            ` : `
+            <div class="info-item">
+              <div class="info-label" style="color: #666; font-style: italic;">
+                <i class="fas fa-info-circle"></i>Budget & Expenses Documents
+              </div>
+              <div class="info-value" style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; color: #666; font-size: 14px;">
+                <i class="fas fa-exclamation-triangle" style="color: #ffc107; margin-right: 8px;"></i>
+                Please create a budget first to add budget and expenses related documents
+              </div>
+            </div>
+            `}
+            
             <div class="info-item">
               <div class="info-label"><i class="fas fa-briefcase"></i>Office Assets</div>
               <div class="info-value" id="officeAssets-display">${createDisplayChips(currentEvent.officeAssets, 'Office Assets')}</div>
@@ -2466,7 +2497,7 @@
         fileInput.value = '';
         return;
       }
-      
+
       if (fileType === 'quotationDocument') {
         const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
         const fileExt = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
@@ -2477,7 +2508,6 @@
           return;
         }
       }
-
 
       const reader = new FileReader();
       reader.onload = function(e) {
