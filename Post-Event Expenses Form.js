@@ -53,6 +53,55 @@ function getAllEventData() {
   };
 }
 
+function uploadFile(base64Data, mimeType, fileName, eventId) {
+  try {
+    const folderId = 'YOUR_FOLDER_ID';
+    const folder = DriveApp.getFolderById(folderId);
+    
+    const blob = Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName);
+    const file = folder.createFile(blob);
+    file.setName(fileName);
+    
+    const fileUrl = file.getUrl();
+    
+    updateEventSheetWithFileUrl(eventId, fileUrl);
+    
+    return {
+      success: true,
+      fileUrl: fileUrl,
+      fileName: fileName
+    };
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    return {
+      success: false,
+      error: error.toString()
+    };
+  }
+}
+
+
+function updateEventSheetWithFileUrl(eventId, fileUrl) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const eventSheet = ss.getSheetByName('Event Creation');
+    
+
+    const eventIdRange = eventSheet.getRange('Q4:Q' + eventSheet.getLastRow()).getValues();
+    
+    for (let i = 0; i < eventIdRange.length; i++) {
+      if (eventIdRange[i][0] === eventId) {
+        const rowNumber = i + 4; 
+        eventSheet.getRange(`U${rowNumber}`).setValue(fileUrl);
+        break;
+      }
+    }
+  } catch (error) {
+    console.error('Error updating event sheet with file URL:', error);
+    throw error;
+  }
+}
+
 function submitExpenses(formData) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const expensesSheet = ss.getSheetByName('Post-Event Expenses');
