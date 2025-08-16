@@ -2230,7 +2230,7 @@
               </div>
             </div>
             
-            ${currentEvent.totalBudget ? `
+            
             <div class="info-item">
               <div class="info-label"><i class="fas fa-file-alt"></i>Budget Proposal Document</div>
               <div class="info-value" id="quotationDocument-display">
@@ -2248,6 +2248,8 @@
                 </div>
               </div>
             </div>
+            
+            ${currentEvent.totalBudget ? `
             <div class="info-item">
               <div class="info-label"><i class="fas fa-receipt"></i>Event Expenses Document</div>
               <div class="info-value" id="eventExpensesDocument-display">
@@ -2268,11 +2270,11 @@
             ` : `
             <div class="info-item">
               <div class="info-label" style="color: #666; font-style: italic;">
-                <i class="fas fa-info-circle"></i>Budget & Expenses Documents
+                <i class="fas fa-receipt"></i>Event Expenses Document
               </div>
               <div class="info-value" style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; color: #666; font-size: 14px;">
-                <i class="fas fa-exclamation-triangle" style="color: #ffc107; margin-right: 8px;"></i>
-                Please create a budget first to add budget and expenses related documents
+                <i class="fas fa-info-circle" style="color: #17a2b8; margin-right: 8px;"></i>
+                To upload an Event Expenses Document: upload a Budget Proposal Document first, then create a budget in the Budget and Expenses tab, and fill up the post event expenses form.
               </div>
             </div>
             `}
