@@ -934,16 +934,16 @@
         </button>
         
         <div id="quotationSection" class="form-group hidden">
-          <label>Upload Quotation (XLSX only):</label>
+          <label>Upload Budget Proposal Document:</label>
           <div id="quotationUpload" class="file-upload">
-            <i class="fas fa-file-excel"></i>
-            <p>Drag & drop an Excel file here or click to select</p>
-            <input type="file" id="quotationFile" name="quotationFile" accept=".xlsx" style="display: none;">
+            <i class="fas fa-file"></i>
+            <p>Drag & drop a document here or click to select</p>
+            <input type="file" id="quotationFile" name="quotationFile" style="display: none;">
           </div>
           <div id="quotationName" class="file-name hidden"></div>
           <div id="quotationError" class="error"></div>
         </div>
-      </div>
+
       
       <div class="submit-section">
         <button type="submit" id="submitBtn" class="pulse">
@@ -1202,15 +1202,20 @@
       });
       
       setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
-        if (!file.name.endsWith('.xlsx')) {
-          showModal('Invalid File Type', 'Only XLSX files are allowed for quotations.', 'error');
+        const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
+        const fileExt = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+        
+        if (!allowedExtensions.includes(fileExt)) {
+          showModal('Invalid File Type', 'Only document files (PDF, Word, Excel, PowerPoint) are allowed.', 'error');
           return false;
         }
+        
         quotationFile = file;
         return true;
       });
-      
+
       initDatepickers();
+
     }
     
     function initDatepickers() {
@@ -1531,7 +1536,7 @@
         newQuotInput.type = 'file';
         newQuotInput.id = 'quotationFile';
         newQuotInput.name = 'quotationFile';
-        newQuotInput.accept = '.xlsx';
+        newQuotInput.accept = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx';
         newQuotInput.style.display = 'none';
         quotParent.replaceChild(newQuotInput, quotFileInput);
         
@@ -1547,13 +1552,18 @@
         document.getElementById('quotationError').textContent = '';
         
         setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
-          if (!file.name.endsWith('.xlsx')) {
-            showModal('Invalid File Type', 'Only XLSX files are allowed for quotations.', 'error');
+          const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
+          const fileExt = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+          
+          if (!allowedExtensions.includes(fileExt)) {
+            showModal('Invalid File Type', 'Only document files (PDF, Word, Excel, PowerPoint) are allowed.', 'error');
             return false;
           }
+          
           quotationFile = file;
           return true;
         });
+
       }
     }
     
@@ -2002,7 +2012,7 @@
         newQuotInput.type = 'file';
         newQuotInput.id = 'quotationFile';
         newQuotInput.name = 'quotationFile';
-        newQuotInput.accept = '.xlsx';
+        newQuotInput.accept = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx';
         newQuotInput.style.display = 'none';
         quotParent.replaceChild(newQuotInput, quotFileInput);
         
@@ -2035,13 +2045,18 @@
         });
         
         setupFileUpload('quotationUpload', 'quotationFile', 'quotationName', 'quotationError', function(file) {
-          if (!file.name.endsWith('.xlsx')) {
-            showModal('Invalid File Type', 'Only XLSX files are allowed for quotations.', 'error');
+          const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
+          const fileExt = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+          
+          if (!allowedExtensions.includes(fileExt)) {
+            showModal('Invalid File Type', 'Only document files (PDF, Word, Excel, PowerPoint) are allowed.', 'error');
             return false;
           }
+          
           quotationFile = file;
           return true;
         });
+
       } else {
         submitStatus.innerHTML = 
           '<div class="error-message">' +
