@@ -300,23 +300,28 @@ function uploadFile(fileBlob, fileName, fileType) {
   try {
     console.log('uploadFile called with:', fileName, fileType);
     
-    const folderId = '1YOUR_FOLDER_ID';
+    const folderId = 'YOUR_FOLDER_ID';
     const folder = DriveApp.getFolderById(folderId);
     
-    
+
     if (fileBlob.getBytes().length > 5 * 1024 * 1024) {
       return { success: false, message: 'File size exceeds 5MB limit' };
     }
     
-    
-    if (fileType === 'quotation' && !fileName.toLowerCase().endsWith('.xlsx')) {
-      return { success: false, message: 'Quotation documents must be in XLSX format' };
+
+    if (fileType === 'quotation') {
+      const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
+      const ext = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+      
+      if (!allowedExtensions.includes(ext)) {
+        return { success: false, message: 'Budget Proposal Document must be in PDF, Word, Excel, or PowerPoint format' };
+      }
     }
-    
-    
+  
+
     const file = folder.createFile(fileBlob.setName(fileName));
     
-    
+
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     
     const fileUrl = file.getUrl();
@@ -329,6 +334,7 @@ function uploadFile(fileBlob, fileName, fileType) {
     return { success: false, message: 'Error uploading file: ' + error.toString() };
   }
 }
+
 
 function calculateLocationStatus(location) {
   try {
