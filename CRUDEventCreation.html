@@ -1827,8 +1827,9 @@
     }
 
     function onEventsLoaded(events) {
-      allEvents = events.reverse();
-      currentEvents = events.reverse();
+      events = events.slice().reverse();
+      allEvents = events;
+      currentEvents = events;
       populateFilterDropdowns();
       displayEvents(events);
       document.getElementById('loading').style.display = 'none';
@@ -2229,19 +2230,19 @@
               </div>
             </div>
             <div class="info-item">
-              <div class="info-label"><i class="fas fa-file-excel"></i>Quotation Document</div>
+              <div class="info-label"><i class="fas fa-file-alt"></i>Budget Proposal Document</div>
               <div class="info-value" id="quotationDocument-display">
                 ${currentEvent.quotationDocument ?
                   `<a href="${currentEvent.quotationDocument}" target="_blank" class="file-link">
-                    <i class="fas fa-file-excel"></i> View File
+                    <i class="fas fas fa-file"></i> View File
                   </a>` : 'N/A'}
               </div>
               <div class="form-group" id="quotationDocument-edit" style="display: none;">
                 <div class="file-upload">
-                  <input type="file" class="file-input" id="quotationDocument-input" accept=".xlsx" onchange="handleFileSelect('quotationDocument')">
+                  <input type="file" class="file-input" id="quotationDocument-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" onchange="handleFileSelect('quotationDocument')">
                 </div>
                 <div class="file-status" id="quotationDocument-status">
-                  <i class="fas fa-file-excel"></i>Current: ${currentEvent.quotationDocument ? 'File uploaded' : 'No file'} (XLSX only, max 5MB)
+                  <i class="fas fa-file"></i>Current: ${currentEvent.quotationDocument ? 'File uploaded' : 'No file'} (Documents only, max 5MB)
                 </div>
               </div>
             </div>
@@ -2465,12 +2466,18 @@
         fileInput.value = '';
         return;
       }
+      
+      if (fileType === 'quotationDocument') {
+        const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
+        const fileExt = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
 
-      if (fileType === 'quotationDocument' && !file.name.toLowerCase().endsWith('.xlsx')) {
-        showAlert('Quotation documents must be in XLSX format', 'error');
-        fileInput.value = '';
-        return;
+        if (!allowedExtensions.includes(fileExt)) {
+          showAlert('Budget Proposal Document must be a PDF, Word, Excel, or PowerPoint file', 'error');
+          fileInput.value = '';
+          return;
+        }
       }
+
 
       const reader = new FileReader();
       reader.onload = function(e) {
